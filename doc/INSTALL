@@ -1,0 +1,47 @@
+
+Read these instructions before disregarding them.
+To install Brainix:
+
+--------------------------------------------------------------------------------
+
+Extract the source:
+	· Type: tar xfvz Brainix-YYYY-MM-DD.tar.gz
+	· Type: cd Brainix-0.0
+
+--------------------------------------------------------------------------------
+
+Edit include/config.h (if necessary):
+	· This should be self-explanatory.  If it isn't, just skip it.
+
+--------------------------------------------------------------------------------
+
+Edit GNUmakefile (if necessary):
+	· Modify FDDEV to point to your floppy device.
+	· Modify FDMNT to point to your floppy mount point.
+
+--------------------------------------------------------------------------------
+
+Compile:
+	· Type: make clean
+	· Type: make
+
+--------------------------------------------------------------------------------
+
+Create a boot disk:
+	· Insert a disk into your floppy drive.
+	· As root, type: make floppy
+
+--------------------------------------------------------------------------------
+
+Boot:
+	· Boot from the disk created in the previous step.
+
+--------------------------------------------------------------------------------
+
+If something goes wrong, then email any member of Team Brainix with a detailed
+description of your problem.  (Email addresses are provided in: doc/credits)
+We'll reply as quickly as we can.
+
+Happy hacking!  :-)
+Team Brainix
+
