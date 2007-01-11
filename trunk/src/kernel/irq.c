@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------*\
  |	irq.c - 8259A PIC (Programmable Interrupt Controller) code	      |
  |									      |
- |	Copyright © 2002-2006, Team Brainix, original authors.		      |
+ |	Copyright © 2002-2007, Team Brainix, original authors.		      |
  |		All rights reserved.					      |
 \*----------------------------------------------------------------------------*/
 

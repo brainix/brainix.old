@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------*\
  |	dirent.h - format of directory entries				      |
  |									      |
- |	Copyright © 2002-2006, Team Brainix, original authors.		      |
+ |	Copyright © 2002-2007, Team Brainix, original authors.		      |
  |		All rights reserved.					      |
 \*----------------------------------------------------------------------------*/
 
