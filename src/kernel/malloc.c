@@ -43,6 +43,7 @@
 #define SLAB_NEW(pg_dir, kernel) \
 	((slab_t *) pg_alloc(pg_dir, kernel, HEAP))
 
+/* Data structure: */
 typedef struct slab
 {
 	bool used;
@@ -81,6 +82,10 @@ void pg_unmap(unsigned long pg_dir, unsigned long lin);
 \*----------------------------------------------------------------------------*/
 bool heap_pg_fault(bool kernel, unsigned long lin)
 {
+
+/* A page-fault exception has occurred in heap space.  Try to handle it.  Return
+ * true on success or false on failure. */
+
 	pde_t *dir;
 	pte_t *tbl;
 	unsigned long pg_dir;
@@ -88,6 +93,9 @@ bool heap_pg_fault(bool kernel, unsigned long lin)
 	unsigned char us;
 
 	if (!kernel)
+		/* Oops.  The page-fault exception occurred in user heap space.
+		 * Brainix doesn't (yet) support swapping, so this can only be
+		 * the result of shitty programming.  Vomit. */
 		return false;
 
 	dir = pg_dir_map(reference_pg_dir);
@@ -108,6 +116,10 @@ bool heap_pg_fault(bool kernel, unsigned long lin)
 \*----------------------------------------------------------------------------*/
 bool heap_init(unsigned long target_pg_dir, bool kernel)
 {
+
+/* In the specified virtual address space, initialize either the kernel or user
+ * heap.  Return true on success or false on failure. */
+
 	unsigned long current_pg_dir;
 	slab_t *slab;
 	bool ret_val;
@@ -173,7 +185,7 @@ void *common_sbrk(bool kernel, ptrdiff_t increment)
 void split(slab_t *slab, size_t size)
 {
 
-/* Split a slab.  This is done to avoid wastage. */
+/* Split a slab.  This is done to reduce wastage. */
 
 	slab_t *new_slab = (slab_t *) ((char *) slab + sizeof(slab_t) + size);
 	new_slab->used = false;
@@ -190,7 +202,7 @@ void split(slab_t *slab, size_t size)
 void merge(slab_t *slab)
 {
 
-/* Merge a slab with the next slab.  This is done to avoid fragmentation. */
+/* Merge a slab with the next slab.  This is done to reduce fragmentation. */
 
 	slab->size += sizeof(slab_t) + slab->next->size;
 	(slab->next = slab->next->next)->prev = slab;
