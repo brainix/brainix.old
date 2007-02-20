@@ -1,0 +1,11 @@
+#summary The relationship between the process manager server and the file system server.
+
+= The File System's Relationship to the Process Manager? =
+
+The file system has a file /proc.c which governs the execve() and fork() system calls that (for some reason) the file server deals with. Why does the file server deal with this rather than the process manager?
+
+The file system server should deal solely with the file-related system calls; the process manager should deal solely with the process management system calls, and that includes imho the execution of programs.
+
+Just curious if there was any purpose or whether it was just laziness, etc. ?
+
+
