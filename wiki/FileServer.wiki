@@ -1,0 +1,22 @@
+#summary The Plan and Outline for the File System Server.
+
+= Introduction =
+
+This is a mere outline of the things that are on my mind about the file system server.
+
+
+== Virtual File System ==
+
+Since we're dealing with a microkernel and a set of servers, it'd be wasteful to have a virtual file system server and a file system server. Instead, why not have the file system server behave like a virtual file system, allowing for file systems to be mounted and unmounted? This would save overhead for needless communication between the VFS server and the FS server, since they'd be one in the same.
+
+This is partly inspired by the GNU-Hurd "Ext2fs translator" idea, but this is practical since it's not limited to only one type of file system. It can support a limitless number of file systems.
+
+
+== Using Linux API == 
+
+Perhaps this is out of laziness, but I'm going to follow the Linux API for system calls dealing with the file system. To begin with, the only system calls that really need to be addressed are: read, write, mount, umount, open, and readdir. Once those are done, we can move on to others like rm, rmdir, mknod, link, unlink, creat, chroot, chmod, chdir, etc.
+
+
+== Memory Management ==
+
+Hmmm...I didn't know where to put this, but virtual memory eventually needs to be supported.
