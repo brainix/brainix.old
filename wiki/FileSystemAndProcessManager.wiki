@@ -10,6 +10,6 @@ Just curious if there was any purpose or whether it was just laziness, etc.?
 
 = Raj's Comment =
 
-These three syscalls require some work in the memory manager, some work in the file system, and some work in the process manager.  For example, when a parent process *fork()*s a child, the memory manager must allocate memory for the child, the file system must set the child's root and working directories to the same as its parent's, and, finally, the process scheduler must enque the child.
+These three syscalls require some work in the memory manager, some work in the file system, and some work in the process manager.  For example, when a parent process *fork()*s a child, the memory manager must allocate memory for the child, the file system must set the child's root and working directories to the same as its parent's, and, finally, the process scheduler must enqueue the child.
 
 In other words, POSIX wasn't designed with a microkernel in mind, so these distinctions can become somewhat artificial and unnatural.  But I can't think of a better way to do it than to split such syscalls up between different servers.  Can you?
