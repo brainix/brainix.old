@@ -2,10 +2,14 @@
 
 = The File System's Relationship to the Process Manager? =
 
-The file system has a file /proc.c which governs the execve() and fork() system calls that (for some reason) the file server deals with. Why does the file server deal with this rather than the process manager?
+The file system has a file *proc.c* which governs the *fork()*, *execve()*, and *exit()* system calls that (for some reason) the file server deals with. Why does the file server deal with this rather than the process manager?
 
 The file system server should deal solely with the file-related system calls; the process manager should deal solely with the process management system calls, and that includes imho the execution of programs.
 
-Just curious if there was any purpose or whether it was just laziness, etc. ?
+Just curious if there was any purpose or whether it was just laziness, etc.?
 
+= Raj's Comment =
 
+These three syscalls require some work in the memory manager, some work in the file system, and some work in the process manager.  For example, when a parent process *fork()*s a child, the memory manager must allocate memory for the child, the file system must set the child's root and working directories to the same as its parent's, and, finally, the process scheduler must enque the child.
+
+In other words, POSIX wasn't designed with a microkernel in mind, so these distinctions can become somewhat artificial and unnatural.  But I can't think of a better way to do it than to split such syscalls up between different servers.  Can you?
