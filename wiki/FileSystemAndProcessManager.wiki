@@ -2,7 +2,7 @@
 
 = The File System's Relationship to the Process Manager? =
 
-The file system has a file *proc.c* which governs the *fork()*, *execve()*, and *exit()* system calls that (for some reason) the file server deals with. Why does the file server deal with this rather than the process manager?
+The file system has a file *[http://brainix.googlecode.com/svn/trunk/src/fs/proc.c proc.c]* which governs the *fork()*, *execve()*, and *exit()* system calls that (for some reason) the file server deals with. Why does the file server deal with this rather than the process manager?
 
 The file system server should deal solely with the file-related system calls; the process manager should deal solely with the process management system calls, and that includes imho the execution of programs.
 
