@@ -36,4 +36,6 @@ I need to sleep a little more on this though, I'm sure there's a more effecient 
 
 Okay, I just looked on wikipedia the GNU Hurd project and they have a server dedicated to the execution of programs; but judging the "success" of Hurd, I don't know if we'd want to copy them.
 
-I'll look into what Minix 3 does, then I'll reply again. (Psst...it's on page 425 of the Minix 3 book)
+I'll look into what Minix 3 does, then I'll reply again. (Psst...it's on page 425 of the Minix 3 book:
+
+"Fork, exit, wait, waitpid, brk, and exec are closely related to memory allocation and deallocation. The calls kill, alarm, and pause are all related to signals, as are sigaction, sigsuspend, sigpending, sigmask, and sigreturn. These also can affect what is in memory, because when a signal kills a process the memory used by that process is deallocated. The seven get/set calls have nothing to do with memory management at all, but they certainly relate to process management. Other calls could go either in the file system or the PM, since every system call is handled by one or the other. They were put here simply because the file system was large enough already." Check it out ;) )
