@@ -21,3 +21,5 @@ Hmm...well I have a few ideas, but I don't know how effecient they'd be; so let'
 = Raj's Reply =
 
 I haven't looked at Minix 3, but previous versions cheat a little by keeping all processes in a single address space.  Brainix is a little purer by creating true user processes, even for system servers, each isolated in its own address space.  As far as the actual design goes, I believe Minix uses a similar method of splitting certain syscalls up between different servers.  Please give me a few days, and I'll post a more complete response.
+
+What are your ideas?  I like your goal of getting a shell up as quickly as possible.  Maybe we shouldn't worry so much about efficiency for now?
