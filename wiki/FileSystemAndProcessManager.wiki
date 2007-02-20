@@ -23,3 +23,11 @@ Hmm...well I have a few ideas, but I don't know how effecient they'd be; so let'
 I haven't looked at Minix 3, but previous versions cheat a little by keeping all processes in a single address space.  Brainix is a little purer by creating true user processes, even for system servers, each isolated in its own address space.  As far as the actual design goes, I believe Minix uses a similar method of splitting certain syscalls up between different servers.  Please give me a few days, and I'll post a more complete response.
 
 What are your ideas?  I like your goal of getting a shell up as quickly as possible.  Maybe we shouldn't worry so much about efficiency for now?
+
+= Alex's Idea = 
+
+This will add a little over head to the program, but here's my idea: the system call can be decomposed into several "sub-system calls" that are carried out by each respective server.
+
+For example, when a parent process *fork()*s a child, there is a message sent to the memory manager server allocates memory for the child, one sent to the file system to set the child's root and working directories to the same as its parent's, and, finally, another sent to the process manager to schedule the child. So 3 messages are sent instead of 1.
+
+I need to sleep a little more on this though, I'm sure there's a more effecient way of doing it.
