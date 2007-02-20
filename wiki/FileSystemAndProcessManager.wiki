@@ -8,26 +8,33 @@ The file system server should deal solely with the file-related system calls; th
 
 Just curious if there was any purpose or whether it was just laziness, etc.?
 
-= Raj's Comment =
+== Raj's Comment ==
 
 These three syscalls require some work in the memory manager, some work in the file system, and some work in the process manager.  For example, when a parent process *fork()*s a child, the memory manager must allocate memory for the child, the file system must set the child's root and working directories to the same as its parent's, and, finally, the process manager must schedule the child.
 
 In other words, POSIX wasn't designed with a microkernel in mind, so these distinctions can become somewhat artificial and unnatural.  But I can't think of a better way to do it than to split such syscalls up between different servers.  Can you?
 
-= Alex's Reply =
+== Alex's Reply ==
 
 Hmm...well I have a few ideas, but I don't know how effecient they'd be; so let's look at some microkernel that's posix compliant. Like how Minix 3 deals with it; or is *this* how Minix 3 deals with it?
 
-= Raj's Reply =
+== Raj's Reply ==
 
 I haven't looked at Minix 3, but previous versions cheat a little by keeping all processes in a single address space.  Brainix is a little purer by creating true user processes, even for system servers, each isolated in its own address space.  As far as the actual design goes, I believe Minix uses a similar method of splitting certain syscalls up between different servers.  Please give me a few days, and I'll post a more complete response.
 
 What are your ideas?  I like your goal of getting a shell up as quickly as possible.  Maybe we shouldn't worry so much about efficiency for now?
 
-= Alex's Idea = 
+== Alex's Idea ==
 
 This will add a little over head to the program, but here's my idea: the system call can be decomposed into several "sub-system calls" that are carried out by each respective server.
 
 For example, when a parent process *fork()*s a child, there is a message sent to the memory manager server allocates memory for the child, one sent to the file system to set the child's root and working directories to the same as its parent's, and, finally, another sent to the process manager to schedule the child. So 3 messages are sent instead of 1.
 
 I need to sleep a little more on this though, I'm sure there's a more effecient way of doing it.
+
+== This is what Hurd Does ==
+
+Okay, I just looked on wikipedia the GNU Hurd project and they have a server dedicated to the execution of programs; but judging the "success" of Hurd, I don't know if we'd want to copy them.
+
+I'll look into what Minix 3 does, then I'll reply again.
+
