@@ -13,3 +13,7 @@ Just curious if there was any purpose or whether it was just laziness, etc.?
 These three syscalls require some work in the memory manager, some work in the file system, and some work in the process manager.  For example, when a parent process *fork()*s a child, the memory manager must allocate memory for the child, the file system must set the child's root and working directories to the same as its parent's, and, finally, the process manager must schedule the child.
 
 In other words, POSIX wasn't designed with a microkernel in mind, so these distinctions can become somewhat artificial and unnatural.  But I can't think of a better way to do it than to split such syscalls up between different servers.  Can you?
+
+= Alex's Reply =
+
+Hmm...well I have a few ideas, but I don't know how effecient they'd be; so let's look at some microkernel that's posix compliant. Like how Minix 3 deals with it; or is *this* how Minix 3 deals with it?
