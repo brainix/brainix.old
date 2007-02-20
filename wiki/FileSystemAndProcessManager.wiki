@@ -36,5 +36,4 @@ I need to sleep a little more on this though, I'm sure there's a more effecient 
 
 Okay, I just looked on wikipedia the GNU Hurd project and they have a server dedicated to the execution of programs; but judging the "success" of Hurd, I don't know if we'd want to copy them.
 
-I'll look into what Minix 3 does, then I'll reply again.
-
+I'll look into what Minix 3 does, then I'll reply again. (Psst...it's on page 425 of the Minix 3 book)
