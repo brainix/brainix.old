@@ -1,0 +1,9 @@
+#summary Random Questions
+
+== Is it kosher to just use panic("Ahhh!");? ==
+
+I'm looking through the code and I've found a number of *panic();* functions, my question is simply thus: it's kosher to use *panic("Error!");* or is there more to it due to Microkernel craziness?
+
+== Coding Style ==
+
+I've realized that I've been using a java-like coding style (xml documentation in comments that is). Is there a set coding style that I should be using?
