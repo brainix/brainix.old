@@ -15,22 +15,22 @@ Okey dokey, I just did some tabulations and using the old school unix file syste
 *Using unsigned shorts*
 
 In each inode, there would be 64 unsigned shorts, with 62 of them being direct addresses and 1 being indirect and 1 being doubly indirect. This gives us a maximum of:
-(62 blocks addresses * .5 KB per block address) + ( (512/2) indirect block addresses * .5 KB per block address) + ( (512/2)*(512/2) doubly indirect block addresses * .5 KB per block address) = 33685535 KB per inode
+(62 blocks addresses times .5 KB per block address) + ( (512/2) indirect block addresses times .5 KB per block address) + ( (512/2)times(512/2) doubly indirect block addresses times .5 KB per block address) = 33685535 KB per inode
 
-With a maximum HD partition supportable of: 2^(8*2) bytes = 2^16 bytes = 65536 bytes (approximately 65 KB). This is normal to have such a bizarre KB per inode to supportable HD partition; there are more addresses stuffed into the inode than supportable (good news! We only need one inode!).
+With a maximum HD partition supportable of: 2 ^ (8*2) ^ bytes = 2 ^ 16 ^ bytes = 65536 bytes (approximately 65 KB). This is normal to have such a bizarre KB per inode to supportable HD partition; there are more addresses stuffed into the inode than supportable (good news! We only need one inode!).
 
 *Using unsigned longs*
 
 In each inode, there would be 32 unsigned longs, with 30 being direct addresses, 1 being indirect, and 1 being doubly indirect. This gives us a maximum of:
-(30 block addresses * .5 KB per block address) + ( (512/4) indirect block addresses * .5 B) + ( (512/4)*(512/4) doubly indirect block addresses * .5 KB per block address) = 8271 KB per inode.
+(30 block addresses times .5 KB per block address) + ( (512/4) indirect block addresses times .5 B) + ( (512/4)times(512/4) doubly indirect block addresses times .5 KB per block address) = 8271 KB per inode.
 
-With a maximum HD partition supportable of: 2^(8*4) bytes = 4 GB. Again, this is using a rather linear approach, without block groups and whatnot; just to get a feel on things. If we were using block groups, this would be a completely different story (it'd be far bigger inodes and partitions supportable).
+With a maximum HD partition supportable of: 2 ^ (8*4) ^ bytes = 4 GB. Again, this is using a rather linear approach, without block groups and whatnot; just to get a feel on things. If we were using block groups, this would be a completely different story (it'd be far bigger inodes and partitions supportable).
 
 *Using unsigned long longs*
 
 In each inode, there would be 16 unsigned longs, with 14 being direct addresses, 1 being indirect, and 1 being doubly indirect. This gives us a maximum of:
-(14 block addresses * .5 KB per block address) + ( (512/8) indirect block addresses * .5 B) + ( (512/8)*(512/8) doubly indirect block addresses * .5 KB per block address) = 2087 KB per inode.
+(14 block addresses times .5 KB per block address) + ( (512/8) indirect block addresses times .5 B) + ( (512/8)times(512/8) doubly indirect block addresses times .5 KB per block address) = 2087 KB per inode.
 
-With a maximum HD partition supportable of: 2^(8*8) bytes = (4 * 2^30)^2 B = 18 exabytes = 18000 petabytes = 18000000 terabytes. Granted in this case there would be (2^64)/(2^11) = 2^53 inodes for all the theoretical HD to be supported, and each inode takes up 2^7 Bytes, which leaves 2^64 - 2^60 = 15 exabytes. This would be 1-[(18-15)/18] = 83.33% effecient, just to let you know (for the unsigned longs, it would be 2^13 B supported per Inode and thus 2^19 inodes per partition; 2^32 B - 2^26 B = 2^31.99997799 B and thus a 1 - [2^32-2^31.99997799/2^32] = 99.99847412% effeciency; for the unsigned shorts, it would be 2^35 bytes per inode, with a 2^16 B partition, that's less than one inode would support the entire partition, supposing it is one inode, well that's so ineffecient I should stop here and say it's negligible).
+With a maximum HD partition supportable of: 2 ^ (8*8) ^ bytes = (4 times 2 ^ 30 ^ ) ^ 2 ^ B = 18 exabytes = 18000 petabytes = 18000000 terabytes. Granted in this case there would be (2 ^ 64 ^)/(2 ^ 11 ^) = 2 ^ 53 ^ inodes for all the theoretical HD to be supported, and each inode takes up 2^7^ Bytes, which leaves 2 ^ 64 ^ - 2 ^ 60 ^ = 15 exabytes. This would be 1-[(18-15)/18] = 83.33% effecient, just to let you know (for the unsigned longs, it would be 2 ^ 13^ B supported per Inode and thus 2^19^ inodes per partition; 2 ^ 32^ B - 2 ^ 26^ B = 2 ^ 31.99997799^ B and thus a 1 - [32-19/32] = 1.5625% effeciency; for the unsigned shorts, it would be 2^35^ bytes per inode, with a 2 ^ 16^ B partition, that's less than one inode would support the entire partition, supposing it is one inode, well that's so ineffecient I should stop here and say it's negligible).
 
-In no situation will all of the hard drive be used up, nor will there really be an effecient linear solution (except using longs, that appears to be nearly 100% great). (Double check my math, I did it while exhausted!) This is just something I thought was interesting so I thought I'd post it; also I'll be working on a "toy" file system to get the ball rolling, which will use either unsigned longs or unsigned long longs depending on the partition size.
+In no situation will all of the hard drive be used up, nor will there really be an effecient linear solution. (Double check my math, I did it while exhausted!) This is just something I thought was interesting so I thought I'd post it; also I'll be working on a "toy" file system to get the ball rolling, which will use either unsigned longs or unsigned long longs depending on the partition size.
