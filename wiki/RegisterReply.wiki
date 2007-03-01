@@ -40,3 +40,13 @@ and add replying code to the FS (fs/main.c):
 }}}
 
 Corrections, offers are welcome.. 
+
+= Alex's Reply/Rant =
+
+Okey dokey, that looks pretty damn good to me.
+
+However...
+
+The IPC message passing system is (?) going to change (the message struct is going to become considerably less bloated). This will directly affect the work that you've done; it may or may not be preserved after the message struct is changed.
+
+Just my 2 cents.
