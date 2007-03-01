@@ -1,0 +1,42 @@
+#summary FS's "register" reply
+
+Without any introductions :)
+
+In function void drvr_reg_fs() (driver.c) we send "register" message to FS and return without waiting FS's "ready" reply. If drvr_reg_fs()'s caller will try to access FS until it's not ready, system crashes.
+
+I offer to modify drvr_reg_fs() as shown below:
+{{{
+void drvr_reg_fs(bool block, unsigned char maj)
+{
+
+/* Register a driver with the file system. */
+
+	/* Send a register message to the file system. */
+	msg_t *msg = msg_alloc(FS_PID, REGISTER);
+	msg->args.brnx_reg.block = block;
+	msg->args.brnx_reg.maj = maj;
+	msg_send(msg);
+
+	/* Await the file system's reply. */
+	msg = msg_receive(FS_PID);
+	msg_free(msg);
+}
+}}}
+
+and add replying code to the FS (fs/main.c):
+
+{{{
+		/* Send a reply (if necessary). */
+		switch (msg->op)
+		{
+			case SYS_EXECVE:
+[...]
+			case REGISTER:
+				msg_reply(msg);
+
+				dev_t dev;
+				if (msg->args.brnx_reg.block && msg->args.brnx_reg.maj == ROOT_MAJ)
+[...]
+}}}
+
+Corrections, offers are welcome.. 
