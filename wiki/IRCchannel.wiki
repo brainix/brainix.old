@@ -1,4 +1,4 @@
-#summary IRC channel on the frinode
+#summary IRC channel on the freenode
 
 ##brainix
 
