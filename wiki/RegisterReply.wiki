@@ -50,3 +50,8 @@ However...
 The IPC message passing system is (?) going to change (the message struct is going to become considerably less bloated). This will directly affect the work that you've done; it may or may not be preserved after the message struct is changed.
 
 Just my 2 cents.
+
+= mirat's reply =
+No, it doesn't depend on the message structure. It just makes messaging between driver and filesystem simultaneous. OS have been not working half-year ago until this change is  made. I think, it can produce more problems in future.
+
+Another offer: block sender until receiver will not send reply. So, messages will be absolutely sync. QNX works same. 
