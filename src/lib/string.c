@@ -502,7 +502,19 @@ size_t strspn(const char *s1, const char *s2)
 
 	for (p1 = s1; *p1; p1++)
 	{
-		for (p2 = s2; *p2 && *p2 != *p1; p2++)
+		/*
+		 | Here, the original line was:
+		 |
+		 |	for (p2 = s2; *p2 && *p2 != *p1; p2++)
+		 |
+		 | For some reason, it didn't work for Jagtesh who submitted the
+		 | patch to change it to:
+		 |
+		 |	for (p2 = s2; *p2 && *p2 != *p1; *p2++)
+		 |
+		 | Why didn't the original line work?  Did GCC bitch and moan?
+		 */
+		for (p2 = s2; *p2 && *p2 != *p1; *p2++)
 			;
 		if (*p2 == '\0')
 			break;
