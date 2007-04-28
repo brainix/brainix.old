@@ -507,12 +507,8 @@ size_t strspn(const char *s1, const char *s2)
 		 |
 		 |	for (p2 = s2; *p2 && *p2 != *p1; p2++)
 		 |
-		 | For some reason, it didn't work for Jagtesh who submitted the
-		 | patch to change it to:
-		 |
-		 |	for (p2 = s2; *p2 && *p2 != *p1; *p2++)
-		 |
-		 | Why didn't the original line work?  Did GCC bitch and moan?
+		 | This should've worked, but GCC bitched and moaned about the
+		 | pointer arithmetic.  Thanks for the fix, Jagtesh.
 		 */
 		for (p2 = s2; *p2 && *p2 != *p1; *p2++)
 			;
