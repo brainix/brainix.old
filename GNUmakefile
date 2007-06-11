@@ -10,7 +10,7 @@ FDMNT = /mnt/floppy
 IMG   = /home/rajiv/tmp/emulator/bootdisk.img
 
 CC      = gcc
-CFLAGS  = -ffreestanding -pedantic -Wall -Werror -O0 -Iinc -Iinc/lib -march=i386
+CFLAGS  = -ffreestanding -fno-stack-protector -O0 -Iinc -Iinc/lib -march=i386
 LDFLAGS = -nostdlib -Wl,-Ttext -Wl,100000
 
 KERNEL = bin/kernel/boot.o	\
