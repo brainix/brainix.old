@@ -167,7 +167,7 @@ void drvr_main(drvr_t *drvr)
 				break;
 			default:
 				//char* foo = strcat("unexpected message: ", ((*drvr->msg)->op));
-				scream("drvr_main", "unexpected message", "driver");
+				scream("drvr_main", (*drvr->msg)->op, "driver");
 		}
 		(*drvr->cleanup)();
 	}

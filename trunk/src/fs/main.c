@@ -198,7 +198,7 @@ void fs_main(void)
 
 //				dev_t dev;
 //				if (msg->args.brnx_reg.block && msg->args.brnx_reg.maj == ROOT_MAJ)
-//				break;
+				break;
 			default:
 				msg_reply(msg);
 		}
