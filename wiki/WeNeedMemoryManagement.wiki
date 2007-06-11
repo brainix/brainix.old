@@ -1,0 +1,20 @@
+#We Need Memory Management
+
+= Introduction =
+
+Whenever you try to run the Brainix OS now you will always get a page fault exception and then, well, so it goes.
+
+We need to implement memory management for the Brainix OS is basically what I'm saying.
+
+
+= Details =
+
+Hmm...lemme look up some sites on memory management.
+There is the [http://groups.google.com/group/alt.os.development/search?group=alt.os.development&q=memory+management&qt_g=Search+this+group Alt.Os.Dev Google Search for Memory Management]
+An article [http://www.enderunix.org/simsek/articles/memory.pdf Memory Management for Systems Programmers] (pdf).
+[http://linux-mm.org/ Linux Memory Management]
+[http://www.memorymanagement.org/ The Memory Management Reference]
+For books:
+There is _The Minix Book_ Chapter 4, _Understanding the Linux Kernel_ chapters 8 and 15, and Chapter 5 of _The Design and Implementation of the FreeBSD Operating System version 5.2_.
+
+So feel free for all to partake in the discussions.
