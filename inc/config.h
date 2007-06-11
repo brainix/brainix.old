@@ -24,7 +24,7 @@
  |			     Kernel Configuration:			      |
 \*----------------------------------------------------------------------------*/
 
-#define NUM_PROCS	32 /* Maximum number of running processes. */
+#define NUM_PROCS	8 /* Maximum number of running processes. */
 #define HZ		60 /* What's the frequency, Kenneth?       */
 
 

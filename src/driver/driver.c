@@ -124,7 +124,7 @@ void drvr_do_nothing(void)
 
 /*----------------------------------------------------------------------------*\
  |				  drvr_main()				      |
-\*----------------------------------------------------------------------------*/
+\*-------------------------------------msg_free(*drvr->msg);---------------------------------------*/
 void drvr_main(drvr_t *drvr)
 {
 	/* Initialize the driver. */
@@ -148,26 +148,32 @@ void drvr_main(drvr_t *drvr)
 			case SYS_OPEN:
 				(*drvr->open)();
 				msg_reply(*drvr->msg);
+				msg_free(*drvr->msg);
 				break;
 			case SYS_CLOSE:
 				(*drvr->close)();
 				msg_reply(*drvr->msg);
+				msg_free(*drvr->msg);
 				break;
 			case SYS_READ:
 				(*drvr->read)();
 				msg_reply(*drvr->msg);
+				msg_free(*drvr->msg);
 				break;
 			case SYS_WRITE:
 				(*drvr->write)();
 				msg_reply(*drvr->msg);
+				msg_free(*drvr->msg);
 				break;
 			case SYS_IOCTL:
 				(*drvr->ioctl)();
 				msg_reply(*drvr->msg);
+				msg_free(*drvr->msg);
 				break;
 			default:
 				//char* foo = strcat("unexpected message: ", ((*drvr->msg)->op));
-				scream("drvr_main", (*drvr->msg)->op, "driver");
+				msg_free(*drvr->msg);
+				scream("drvr_main", "unexpected message", "driver");
 		}
 		(*drvr->cleanup)();
 	}
