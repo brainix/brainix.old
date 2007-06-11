@@ -194,11 +194,11 @@ void fs_main(void)
 			case SYS_FORK:
 			case SYS_SYNC:
 			case REGISTER:
-				msg_reply(msg);
+//				msg_reply(msg);
 
-				dev_t dev;
-				if (msg->args.brnx_reg.block && msg->args.brnx_reg.maj == ROOT_MAJ)
-				break;
+//				dev_t dev;
+//				if (msg->args.brnx_reg.block && msg->args.brnx_reg.maj == ROOT_MAJ)
+//				break;
 			default:
 				msg_reply(msg);
 		}

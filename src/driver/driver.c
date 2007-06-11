@@ -25,6 +25,7 @@
  */
 
 #include <driver/driver.h>
+#include <lib/string.h>
 
 /* Function prototypes: */
 void drvr_reg_kernel(unsigned char irq);
@@ -165,6 +166,7 @@ void drvr_main(drvr_t *drvr)
 				msg_reply(*drvr->msg);
 				break;
 			default:
+				//char* foo = strcat("unexpected message: ", ((*drvr->msg)->op));
 				scream("drvr_main", "unexpected message", "driver");
 		}
 		(*drvr->cleanup)();
