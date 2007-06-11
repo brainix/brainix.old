@@ -40,9 +40,6 @@ void fs_main(void)
 	dev_init();   /* Initialize the device driver PID table.          */
 	descr_init(); /* Init the file ptr and proc-specific info tables. */
 
-	while (true)
-		msg_free(msg_receive(ANYONE));
-
 	/* Wait for a message. */
 	while ((msg = msg_receive(ANYONE))->op != SHUTDOWN)
 	{
