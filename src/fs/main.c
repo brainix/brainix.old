@@ -43,45 +43,45 @@ void fs_main(void)
 	/* Wait for a message. */
 	while ((msg = msg_receive(ANYONE))->op != SHUTDOWN)
 	{
-		super_user = proc_info(msg->from, EUID) == 0;
+		super_user = (proc_info(msg->from, EUID) == 0);
 		err_code = 0;
 
 		/* Do the requested work. */
 		switch (msg->op)
 		{
-			case SYS_EXECVE:
+			case SYS_EXECVE: //tested
 				msg->args.execve.ret_val =
 					do_fs_execve(msg->args.execve.path,
 						     msg->args.execve.argv,
 						     msg->args.execve.envp);
 				break;
-			case SYS_EXIT:
+			case SYS_EXIT: //tested
 					do_fs_exit(msg->args.exit.status);
 				break;
-			case SYS_FORK:
+			case SYS_FORK: //tested
 					do_fs_fork(msg->from,
 						   msg->args.fork.ret_val);
 				break;
-			case SYS_ACCESS:
-				msg->args.access.ret_val =
+			case SYS_ACCESS: //tested
+				msg->args.access.ret_val = 
 					do_fs_access(msg->args.access.path,
 						     msg->args.access.amode);
 				break;
-			case SYS_CLOSE:
+			case SYS_CLOSE: 
 				msg->args.close.ret_val =
 					do_fs_close(msg->args.close.fildes);
 				break;
-			case SYS_DUP:
-				msg->args.dup.ret_val =
+			case SYS_DUP: //tested
+				msg->args.dup.ret_val = 
 					do_fs_dup(msg->args.dup.fildes);
 				break;
-			case SYS_DUP2:
-				msg->args.dup2.ret_val =
+			case SYS_DUP2: //tested
+				msg->args.dup2.ret_val = 
 					do_fs_dup2(msg->args.dup2.fildes,
 						   msg->args.dup2.fildes2);
 				break;
-			case SYS_FCNTL:
-				msg->args.fcntl.ret_val =
+			case SYS_FCNTL: //tested
+				msg->args.fcntl.ret_val = 
 					do_fs_fcntl(msg->args.fcntl.fildes,
 						    msg->args.fcntl.cmd,
 						    msg->args.fcntl.arg);
@@ -91,8 +91,8 @@ void fs_main(void)
 					do_fs_fstat(msg->args.fstat.fildes,
 						    msg->args.fstat.buf);
 				break;
-			case SYS_IOCTL:
-				msg->args.ioctl.ret_val =
+			case SYS_IOCTL: //tested but goes one step beyond where it normally goes when it crashes
+				msg->args.ioctl.ret_val = 
 					do_fs_ioctl(msg->args.ioctl.fildes,
 						    msg->args.ioctl.request,
 						    msg->args.ioctl.arg);
@@ -146,13 +146,13 @@ void fs_main(void)
 				msg->args.unlink.ret_val =
 					do_fs_unlink(msg->args.unlink.path);
 				break;
-			case SYS_CHMOD:
+			case SYS_CHMOD: //tested
 				msg->args.chmod.ret_val =
 					do_fs_chmod(msg->args.chmod.path,
 						    msg->args.chmod.mode);
 				break;
-			case SYS_CHOWN:
-				msg->args.chown.ret_val =
+			case SYS_CHOWN: //tested, this gets to 16
+				msg->args.chown.ret_val = 
 					do_fs_chown(msg->args.chown.path,
 						    msg->args.chown.owner,
 						    msg->args.chown.group);
@@ -166,13 +166,13 @@ void fs_main(void)
 					do_fs_utime(msg->args.utime.path,
 						    msg->args.utime.times);
 				break;
-			case REGISTER:
+			case REGISTER: //bingo this is the problem
 					fs_register(msg->args.brnx_reg.block,
 						    msg->args.brnx_reg.maj,
 						    msg->from);
 				break;
 			default:
-				panic("fs_main", "unexpected message");
+				scream("fs_main", "unexpected message", "file system");
 				break;
 		}
 
@@ -194,7 +194,10 @@ void fs_main(void)
 			case SYS_FORK:
 			case SYS_SYNC:
 			case REGISTER:
-				msg_free(msg);
+				msg_reply(msg);
+
+				dev_t dev;
+				if (msg->args.brnx_reg.block && msg->args.brnx_reg.maj == ROOT_MAJ)
 				break;
 			default:
 				msg_reply(msg);

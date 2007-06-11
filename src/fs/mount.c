@@ -159,6 +159,7 @@ void mount_root(void)
 	super_ptr->mount_point_inode_ptr = NULL;
 	super_ptr->root_dir_inode_ptr = inode_get(ROOT_DEV, EXT2_ROOT_INO);
 	super_ptr->dirty = true;
+/**/
 }
 
 /*----------------------------------------------------------------------------*\
