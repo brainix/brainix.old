@@ -1,0 +1,37 @@
+#Where we are and where we could go?
+
+= Introduction =
+
+All right, just a review of things that have been accomplished thus far:
+  * We have the system booting.
+  * We have the file system recognizing drivers and registering them successfully
+  * We have a non-crashing system
+  * It boots! I know that's all ready there but I thought I'd add it twice...
+  * There is output to the screen, and there is minimal input from the keyboard. A little more work could go into this, but it's an *amazing* feat so far. Good job and props to the tty hackers.
+  * The message passing is decently efficient after tweaking the driver class, props to the hacker(s) that designed that code.
+
+Things that we would like to have done in the shorter run (say, a month if not sooner?):
+  * Get a simple shell (a *CRA*-ppy *SH*-ell, CRASH) up and running.
+  * Get a few more elementary device drivers working; perhaps later on a lazier approach would be to have wrappers for Linux drivers?
+  * Be able to install Brainix onto a hard disk.
+  * Introduce Pipes and Sockets?
+
+Perhaps we should start worrying about efficiency and more complicated matters...perhaps it might be pushing to ask us to try to do things like:
+  * Make the message struct fit within a register to minimize overhead? (Even if it would change nothing, it would help my OCD ;))
+  * Somehow make the context switching have as minimal overhead as possible. This is perhaps one of the more paramount things to do as it seriously constrains us later on.
+  * Get virtual memory down.
+  * Hack the file system so it can be more easily readable and up-to-par with the ext2 file system (do we still want it to be *identical* to the ext2 file system or does it matter?).
+  * Get a virtual file system down, and start being able to support other file systems.
+
+Perhaps push for this all to be done by the end of summer?
+
+Perhaps we should outline some broad goals for the operating system as well? Like:
+  * Support GNU coreutils and other tools
+  * Be able to have some compiler supported so we can start modifying the operating system in its own environment
+  * Internet connectivity?
+  * Linux compatibility?
+  * SMP support?
+  * Porting to other architectures?
+  * Support X11 and desktop environments?
+  * Support for BASH?
+Things of this grand nature.
