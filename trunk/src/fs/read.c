@@ -31,7 +31,7 @@
 \*----------------------------------------------------------------------------*/
 ssize_t rw_fildes(bool read, int fildes, void *buf, size_t nbyte)
 {
-	file_ptr_t *open_descr = fildes_to_open_descr(fildes);
+/*	file_ptr_t *open_descr = fildes_to_open_descr(fildes);
 	inode_t *inode_ptr = fildes_to_inode(fildes);
 	off_t off = open_descr == NULL ? 0 : open_descr->offset;
 	ssize_t completed = 0, remaining = nbyte, size;
@@ -93,6 +93,7 @@ ssize_t rw_fildes(bool read, int fildes, void *buf, size_t nbyte)
 		super_ptr->dirty = true;
 	}
 	return completed;
+*/	return 0;
 }
 
 /*----------------------------------------------------------------------------*\

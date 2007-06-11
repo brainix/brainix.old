@@ -85,9 +85,9 @@ void fs_register(bool block, unsigned char maj, pid_t pid)
 		/* The driver for the device containing the root file system is
 		 * being registered. */
 		mount_root();
-		dev = maj_min_to_dev(ROOT_MAJ, ROOT_MIN);
-		fs_proc[FS_PID].root_dir = inode_get(dev, EXT2_ROOT_INO);
-		fs_proc[FS_PID].work_dir = inode_get(dev, EXT2_ROOT_INO);
+//		dev = maj_min_to_dev(ROOT_MAJ, ROOT_MIN);
+//		fs_proc[FS_PID].root_dir = inode_get(dev, EXT2_ROOT_INO);
+//		fs_proc[FS_PID].work_dir = inode_get(dev, EXT2_ROOT_INO);
 	}
 }
 
@@ -141,13 +141,16 @@ pid_t inode_to_pid(inode_t *inode_ptr)
 }
 
 /*----------------------------------------------------------------------------*\
+ |				dev_open()	  			      |
+\*----------------------------------------------------------------------------*
+int dev_open(dev_t dev, 
+
+/*----------------------------------------------------------------------------*\
  |				dev_open_close()			      |
 \*----------------------------------------------------------------------------*/
 int dev_open_close(dev_t dev, bool block, bool open)
 {
-
 /* If open is true, open a device.  Otherwise, close a device. */
-
 	unsigned char maj, min;
 	pid_t pid;
 	msg_t *m;
@@ -171,6 +174,7 @@ int dev_open_close(dev_t dev, bool block, bool open)
 	if (ret_val < 0)
 		err_code = -ret_val;
 	return ret_val;
+
 }
 
 /*----------------------------------------------------------------------------*\

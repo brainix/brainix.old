@@ -165,7 +165,7 @@ void drvr_main(drvr_t *drvr)
 				msg_reply(*drvr->msg);
 				break;
 			default:
-				panic("drvr_main", "unexpected message");
+				scream("drvr_main", "unexpected message", "driver");
 		}
 		(*drvr->cleanup)();
 	}
