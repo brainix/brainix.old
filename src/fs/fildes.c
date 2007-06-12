@@ -4,7 +4,7 @@
  |	Copyright © 2002-2007, Team Brainix, original authors.		      |
  |		All rights reserved.					      |
 \*----------------------------------------------------------------------------*/
-
+// To be implemented: getfd, setfd, setfl, setlkw, setown
 /*
  | This program is Free Software; you can redistribute it and/or modify it under
  | the terms of the GNU General Public License as published by the Free Software
@@ -25,6 +25,7 @@
  */
 
 #include <fs/fs.h>
+#include <fs/device.h>
 
 /*----------------------------------------------------------------------------*\
  |				  descr_init()				      |
@@ -165,51 +166,62 @@ int do_fs_fcntl(int fildes, int cmd, int arg)
 
 	if (cmd == F_GETFD)
 	{
-		/* Get file descriptor flags. */
+		/* Get the File Descriptor Flags */
+		//return (((open_descr->fp_cloexec >> fildes) & 01) ? -1 : 0);
 	}
-
 	if (cmd == F_SETFD)
 	{
+		//return -1*set_close_on_exec(fildes, arg & FD_CLOEXEC)
+		return 0;
 		/* Set file descriptor flags. */
 	}
 
 	if (cmd == F_GETFL)
 	{
 		/* Get file status flags and file access modes. */
+		return (-1*(open_descr->status));
 	}
 
 	if (cmd == F_SETFL)
 	{
+		//return (-1*setfl(fd, filp, arg));
 		/* Set file status flags. */
 	}
 
 	if (cmd == F_GETLK)
 	{
+		return (-1*(open_descr->status));
 		/* Get record locking information. */
 	}
 
 	if (cmd == F_SETLK)
 	{
+		//notionally left blank...
 		/* Set record locking information. */
 	}
 
 	if (cmd == F_SETLKW)
 	{
+		//return -1*fcntl_setlk(fd, filp, cmd, (struct flock __user *) arg);
 		/* Set record locking information; wait if blocked. */
 	}
 
 	if (cmd == F_GETOWN)
 	{
 		/* Get process or process group ID to receive SIGURG signals. */
+		return (-1*inode_to_pid(open_descr->inode_ptr));
 	}
 
 	if (cmd == F_SETOWN)
 	{
+		return 0; //return (-1*f_setown(filp, arg, 1));to be implemented
 		/* Set process or process group ID to receive SIGURG signals. */
 	}
 
 	return -(err_code = EINVAL);
 }
+
+
 
 /*----------------------------------------------------------------------------*\
  |				 do_fs_lseek()				      |
@@ -224,10 +236,10 @@ off_t do_fs_lseek(int fildes, off_t offset, int whence)
 
 	switch (whence)
 	{
-		case SEEK_CUR: start = open_descr->offset;            break;
+		case SEEK_CUR: start = open_descr->offset;    break;
 		case SEEK_END: start = open_descr->inode_ptr->i_size; break;
-		case SEEK_SET: start = 0;                             break;
-		default:       return -(err_code = EINVAL);           break;
+		case SEEK_SET: start = 0;     break;
+		default:       return -(err_code = EINVAL);   break;
 	}
 	return open_descr->offset = start + offset;
 }
