@@ -26,6 +26,9 @@
 
 #include <driver/driver.h>
 
+/* When debugging the floppy only, set this to be a high number like 10 */
+#define	FLOPPY_ESOTERIC	0
+
 /* Major number: */
 #define FDC_MAJ		2
 
@@ -129,11 +132,11 @@ void fdc_main(void);
 \*----------------------------------------------------------------------------*/
 unsigned char fdc_handle_alarm(msg_t *m)
 {
-	debug(1, "floppy.fdc_handle_alarm(): An alarm has been sounded, performing any necessary actions. Will return the cause of the alarm.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_handle_alarm(): An alarm has been sounded, performing any necessary actions. Will return the cause of the alarm.\n");
 /* An alarm has sounded.  Perform any necessary action.  Return the alarm's
  * cause. */
 
-	debug(2, "floppy.fdc_handle_alarm(): Perform any necessary action.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_handle_alarm(): Perform any necessary action.\n");
 	/* Perform any necessary action. */
 	switch (m->args.brnx_watch.type)
 	{
@@ -143,7 +146,7 @@ unsigned char fdc_handle_alarm(msg_t *m)
 		case ALARM_SETTLE  :                   break;
 	}
 
-	debug(2, "floppy.fdc_handle_alarm(): return the alarm's cause.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_handle_alarm(): return the alarm's cause.\n");
 	/* Return the alarm's cause. */
 	return m->args.brnx_watch.type;
 }
@@ -153,7 +156,7 @@ unsigned char fdc_handle_alarm(msg_t *m)
 \*----------------------------------------------------------------------------*/
 bool fdc_wait_irq(void)
 {
-	debug(1, "floppy.fdc_wait_irq(): Wait for the FDC to generate an IRQ or time out trying.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_wait_irq(): Wait for the FDC to generate an IRQ or time out trying.\n");
 /* Wait for the FDC to generate an IRQ, or time out, whichever happens first.
  * Return true on IRQ; false on timeout. */
 
@@ -162,21 +165,21 @@ bool fdc_wait_irq(void)
 
 	if (!fdc_behaving)
 	{
-		debug(2, "floppy.fdc_wait_irq(): The FDC is not responding. Abort.\n");
+		debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_wait_irq(): The FDC is not responding. Abort.\n");
 		/* The FDC is not responding.  Abort. */
 		return false;
 	}
-	debug(7, "floppy.fdc_wait_irq(): Setting the timeout alarm.\n");
+	debug(-FLOPPY_ESOTERIC+7, "floppy.fdc_wait_irq(): Setting the timeout alarm.\n");
 	/* Set the timeout alarm. */
 	drvr_set_alarm(fdc_ticks[ALARM_TIMEOUT], ALARM_TIMEOUT);
 
-	debug(7, "floppy.fdc_wait_irq(): Wait for the FDC to generate an IRQ or timeout.\n");
+	debug(-FLOPPY_ESOTERIC+7, "floppy.fdc_wait_irq(): Wait for the FDC to generate an IRQ or timeout.\n");
 	/* Wait for the FDC to generate an IRQ or time out. */
 	while (true)
 	{
 		if ((m = msg_check(HARDWARE)) != NULL)
 		{
-			debug(1,"floppy.fdc_wait_irq(): The FDC has generated an IRQ.\n");
+			debug(-FLOPPY_ESOTERIC+1,"floppy.fdc_wait_irq(): The FDC has generated an IRQ.\n");
 			/* The FDC has generated an IRQ.  Stop waiting. */
 			break;
 		}
@@ -184,7 +187,7 @@ bool fdc_wait_irq(void)
 		{
 			if (fdc_handle_alarm(m) == ALARM_TIMEOUT)
 			{
-				debug(3,"floppy.fdc_wait_irq(): The FDC has generated an IRQ.\n");
+				debug(-FLOPPY_ESOTERIC+3,"floppy.fdc_wait_irq(): The FDC has generated an IRQ.\n");
 				/* The FDC has timed out.  Stop waiting. */
 				irq = false;
 				break;
@@ -193,12 +196,12 @@ bool fdc_wait_irq(void)
 			{
 				/* A previous alarm has sounded - not the
 				 * timeout alarm.  Keep waiting. */
-				debug(3,"floppy.fdc_wait_irq(): A previous alarm has sounded - not the timeout alarm...keep waiting.\n");
+				debug(-FLOPPY_ESOTERIC+3,"floppy.fdc_wait_irq(): A previous alarm has sounded - not the timeout alarm...keep waiting.\n");
 				msg_free(m);
 				continue;
 			}
 		}
-		debug(2,"floppy.fdc_wait_irq(): The FDC has not yet generated an IRQ or timed out. Keep waiting.\n");
+		debug(-FLOPPY_ESOTERIC+2,"floppy.fdc_wait_irq(): The FDC has not yet generated an IRQ or timed out. Keep waiting.\n");
 		/* The FDC has not yet generated an IRQ or timed out.  Keep
 		 * waiting. */
 		proc_nap();
@@ -217,27 +220,27 @@ void fdc_start_motor(void)
 
 /* Turn on the floppy motor and wait for it to spin-up.  This function is called
  * before each floppy access. */
-	debug(7, "floppy.fdc_start_motor(): The floppy is now being accessed.\n");
+	debug(-FLOPPY_ESOTERIC+7, "floppy.fdc_start_motor(): The floppy is now being accessed.\n");
 	/* The floppy is now being accessed. */
 	fdc_motor_required = true;
 
 	if (fdc_motor_on)
 	{
-		debug(2, "floppy.fdc_start_motor(): The motor is already on and spinning at speed.\n");
+		debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_start_motor(): The motor is already on and spinning at speed.\n");
 		/* The motor is already on and spinning at speed. */
 		return;
 	}
 
-	debug(2, "floppy.fdc_start_motor(): Turn on the motor.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_start_motor(): Turn on the motor.\n");
 	/* Turn on the motor. */
 	out_byte(0x1C, FDC_DOR_PORT);
 
-	debug(2, "floppy.fdc_start_motor(): Wait for the motor to spin up.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_start_motor(): Wait for the motor to spin up.\n");
 	/* Wait for the motor to spin-up. */
 	drvr_set_wait_alarm(fdc_ticks[ALARM_SPIN_UP], ALARM_SPIN_UP,
 		fdc_handle_alarm);
 
-	debug(2, "floppy.fdc_start_motor(): The motor is now on and spinning at speed.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_start_motor(): The motor is now on and spinning at speed.\n");
 	/* The motor is now on and spinning at speed. */
 	fdc_motor_on = true;
 }
@@ -252,17 +255,17 @@ void fdc_stop_motor(void)
 
 	if (fdc_motor_required)
 	{
-		debug(1, "floppy.fdc_stop_motor(): The floppy is currently being accessed. The motor cannot be turned pff.\n");
+		debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_stop_motor(): The floppy is currently being accessed. The motor cannot be turned pff.\n");
 		/* The floppy is currently being accessed.  The motor cannot be
 		 * turned off. */
 		return;
 	}
 
-	debug(1, "floppy.fdc_stop_motor(): Turn off the motor.\n"); 
+	debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_stop_motor(): Turn off the motor.\n"); 
 	/* Turn off the motor. */
 	out_byte(0x0C, FDC_DOR_PORT);
 
-	debug(2, "floppy.fdc_stop_motor(): The motor is now off.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_stop_motor(): The motor is now off.\n");
 	/* The motor is now off. */
 	fdc_motor_on = false;
 }
@@ -279,11 +282,11 @@ void fdc_sched_motor(void)
  | has completed and before the 3 seconds have passed, the motor is left on and
  | is rescheduled to be turned off 3 seconds after the new access has completed.
  */
-	debug(1, "floppy.fdc_sched_motor(): The floppy is no longer being accessed.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_sched_motor(): The floppy is no longer being accessed.\n");
 	/* The floppy is no longer being accessed. */
 	fdc_motor_required = false;
 
-	debug(2, "floppy.fdc_sched_motor(): Schedule the motor to be turned off.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_sched_motor(): Schedule the motor to be turned off.\n");
 	/* Schedule the motor to be turned off. */
 	drvr_set_alarm(fdc_ticks[ALARM_MOTOR], ALARM_MOTOR);
 }
@@ -301,25 +304,25 @@ void fdc_send_byte(unsigned char cmd_param)
 
 	if (!fdc_behaving)
 	{
-		debug(2, "floppy.fdc_send_byte(): The FDC is not responding. Abort!\n");
+		debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_send_byte(): The FDC is not responding. Abort!\n");
 		/* The FDC is not responding.  Abort. */
 		return;
 	}
 
-	debug(1, "floppy.fdc_send_byte(): Wait until the FDC is ready.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_send_byte(): Wait until the FDC is ready.\n");
 	/* Wait until the FDC is ready. */
 	while (!FDC_SEND_READY(fdc_msr = in_byte(FDC_MSR_PORT)) && --timeout)
 		;
 
 	if (FDC_SEND_READY(fdc_msr))
 	{
-		debug(3, "floppy.fdc_send_byte(): The FDC is ready. Send the Command or parameter byte.\n"); 
+		debug(-FLOPPY_ESOTERIC+3, "floppy.fdc_send_byte(): The FDC is ready. Send the Command or parameter byte.\n"); 
 		/* The FDC is ready.  Send the command or parameter byte. */
 		out_byte(cmd_param, FDC_DATA_PORT);
 	}
 	else
 	{
-		debug(1, "floppy.fdc_send_byte(): The FDC is not responding, give it a good spank.\n");
+		debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_send_byte(): The FDC is not responding, give it a good spank.\n");
 		/* The FDC is not responding.  Give it a spanking. */
 		fdc_behaving = false;
 	}
@@ -339,14 +342,14 @@ unsigned char fdc_get_byte(void)
 
 	if (!fdc_behaving)
 	{
-		debug(2,"floppy.fdc_get_byte(): FDC is not responding...abort.\n");
+		debug(-FLOPPY_ESOTERIC+2,"floppy.fdc_get_byte(): FDC is not responding...abort.\n");
 
 		/* The FDC is not responding.  Abort. */
 		return result;
 	}
 
 	/* Wait until the FDC is ready. */
-	debug(2,"floppy.fdc_get_byte(): Waiting for the FDC to be ready.\n");
+	debug(-FLOPPY_ESOTERIC+2,"floppy.fdc_get_byte(): Waiting for the FDC to be ready.\n");
 
 	while (!FDC_GET_READY(fdc_msr = in_byte(FDC_MSR_PORT)) && --timeout)
 		;
@@ -354,13 +357,13 @@ unsigned char fdc_get_byte(void)
 	if (FDC_GET_READY(fdc_msr))
 	{
 
-		debug(2,"floppy.fdc_get_byte(): The FDC is ready, reading the result byte.\n");
+		debug(-FLOPPY_ESOTERIC+2,"floppy.fdc_get_byte(): The FDC is ready, reading the result byte.\n");
 		/* The FDC is ready.  Read the result byte. */
 		result = in_byte(FDC_DATA_PORT);
 	}
 	else
 	{
-		debug(2,"floppy.fdc_get_byte(): The FDC is not responding, preparing spank.\n");
+		debug(-FLOPPY_ESOTERIC+2,"floppy.fdc_get_byte(): The FDC is not responding, preparing spank.\n");
 		/* The FDC is not responding.  Give it a spanking. */
 		fdc_behaving = false;
 	}
@@ -377,7 +380,7 @@ void fdc_reset(void)
 
 	unsigned char j;
  
-	debug(2, "floppy.fdc_reset(): Causing a reset, programming the data rate, and waiting for an IRQ.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_reset(): Causing a reset, programming the data rate, and waiting for an IRQ.\n");
 	/* Cause a reset, program the data rate, and wait for an IRQ. */
 	out_byte(0x00, FDC_DOR_PORT); /* Strobe the DOR's reset bits low. */
 	out_byte(0x0C, FDC_DOR_PORT); /* Strobe them high again to reset. */
@@ -406,7 +409,7 @@ void fdc_reset(void)
 	fdc_send_byte(0xDF);         /* Send step rate, head unload time.  */
 	fdc_send_byte(0x02);         /* Send head load time, non-DMA flag. */
 
-	debug(1, "floppy.fdc_reset(): The FDC is now ready to accept commands.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_reset(): The FDC is now ready to accept commands.\n");
 	/* The FDC is now ready to accept commands. */
 }
 
@@ -424,7 +427,7 @@ void fdc_punish(void)
 	if (!first_time && fdc_behaving)
 		return;
 
-	debug(2, "floppy.fdc_punish(): (Re)initializing the flags, make sure they're in sync with reality.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_punish(): (Re)initializing the flags, make sure they're in sync with reality.\n");
 	/* (Re)initialize the flags.  Make sure they're in sync with reality. */
 	fdc_behaving = true;
 	fdc_motor_required = false;
@@ -432,24 +435,24 @@ void fdc_punish(void)
 
 	if (first_time)
 	{
-		debug(9, "floppy.fdc_punish(): Make sure the DMA buffer doesn't cross a 64 KB boundary.\n");
+		debug(-FLOPPY_ESOTERIC+9, "floppy.fdc_punish(): Make sure the DMA buffer doesn't cross a 64 KB boundary.\n");
 		/* Make sure the DMA buffer doesn't cross a 64 KB boundary. */
 		dma_buf_base = (unsigned long) dma_buf;
 		if (dma_buf_base % (64 * KB) > 64 * KB - 512)
 			dma_buf_base += 512;
 
-		debug(4, "floppy.fdc_punish(): Register the floppy driver with the kernel.\n");
+		debug(-FLOPPY_ESOTERIC+4, "floppy.fdc_punish(): Register the floppy driver with the kernel.\n");
 		/* Register the floppy driver with the kernel. */
 		drvr_reg_kernel(FDC_IRQ);
 	}
 
-	debug(2, "floppy.fdc_punish(): Resetting the FDC.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.fdc_punish(): Resetting the FDC.\n");
 	/* Reset the FDC. */
 	fdc_reset();
 
 	if (first_time)
 	{
-		debug(3, "floppy.fdc_punish(): Register the floppy driver with the file system.\n");
+		debug(-FLOPPY_ESOTERIC+3, "floppy.fdc_punish(): Register the floppy driver with the file system.\n");
 		/* Register the floppy driver with the file system. */
 		drvr_reg_fs(BLOCK, FDC_MAJ);
 
@@ -479,7 +482,7 @@ void fdc_geom(blkcnt_t block, char *head, char *track, char *sector)
 \*----------------------------------------------------------------------------*/
 void fdc_recal_seek(unsigned char fdc_ncn)
 {
-	debug(9, "floppy.fdc_recal_seek(): move the disk head to a track.\n");
+	debug(-FLOPPY_ESOTERIC+9, "floppy.fdc_recal_seek(): move the disk head to a track.\n");
 /* Move the disk head to a track. */
 
 	bool recal = fdc_ncn == 0;
@@ -487,29 +490,29 @@ void fdc_recal_seek(unsigned char fdc_ncn)
 
 	if (seek && fdc_ncn == fdc_pcn)
 	{
-		debug(3, "floppy.fdc_recal_seek(): The head is already at the requested track.\n");
+		debug(-FLOPPY_ESOTERIC+3, "floppy.fdc_recal_seek(): The head is already at the requested track.\n");
 		/* The head is already at the requested track. */
 		return;
 	}
 
 	if (recal)
 	{
-		debug(3, "floppy.fdc_recal_seek(): send the recalibrate command and parameter byte.\n");
+		debug(-FLOPPY_ESOTERIC+3, "floppy.fdc_recal_seek(): send the recalibrate command and parameter byte.\n");
 		/* Send the recalibrate command and parameter byte. */
 		fdc_send_byte(FDC_CMD_RECAL); /* Recalibrate command. */
-		debug(5, "floppy.fdc_recal_seek(): Recalibrate command sent.\n");
+		debug(-FLOPPY_ESOTERIC+5, "floppy.fdc_recal_seek(): Recalibrate command sent.\n");
 		fdc_send_byte(0x00);          /* Disk drive select.   */
-		debug(5, "floppy.fdc_recal_seek(): Disk drive select. \n");
+		debug(-FLOPPY_ESOTERIC+5, "floppy.fdc_recal_seek(): Disk drive select. \n");
 	}
 	if (seek)
 	{
-		debug(3, "floppy.fdc_recal_seek(): send the seek command and parameter bytes.\n");
+		debug(-FLOPPY_ESOTERIC+3, "floppy.fdc_recal_seek(): send the seek command and parameter bytes.\n");
 		/* Send the seek command and parameter bytes. */
-		debug(5, "floppy.fdc_recal_seek(): Seek command sent.\n");
+		debug(-FLOPPY_ESOTERIC+5, "floppy.fdc_recal_seek(): Seek command sent.\n");
 		fdc_send_byte(FDC_CMD_SEEK); /* Seek command.                 */
-		debug(5, "floppy.fdc_recal_seek(): Head address, disk drive selected.\n");
+		debug(-FLOPPY_ESOTERIC+5, "floppy.fdc_recal_seek(): Head address, disk drive selected.\n");
 		fdc_send_byte(0x00);         /* Head addr, disk drive select. */
-		debug(5, "floppy.fdc_recal_seek(): New Cylinder number selected.\n");
+		debug(-FLOPPY_ESOTERIC+5, "floppy.fdc_recal_seek(): New Cylinder number selected.\n");
 		fdc_send_byte(fdc_ncn);      /* New cylinder number.          */
 	}
 
@@ -531,7 +534,7 @@ void fdc_recal_seek(unsigned char fdc_ncn)
 
 	if (!FDC_SEEK_END(fdc_st0) || (seek && fdc_ncn != fdc_pcn))
 	{
-		debug(1, "floppy.fdc_recal_seek(): The FDC is not responding, give it a good spank.\n");
+		debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_recal_seek(): The FDC is not responding, give it a good spank.\n");
 		/* The FDC is not responding.  Give it a spanking. */
 		fdc_behaving = false;
 	}
@@ -558,11 +561,11 @@ bool fdc_rw_try(blkcnt_t block, bool read)
 	char head, track, sector;
 	fdc_geom(block, &head, &track, &sector);
 
-	debug(1, "floppy.rw_try(): Initialize the DMA controller.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.rw_try(): Initialize the DMA controller.\n");
 	/* Initialize the DMA controller. */
 	dma_xfer(FDC_DMA, dma_buf_base, 512, read);
 
-	debug(2, "floppy.rw_try(): Send the read/write command and parameter bytes.\n");
+	debug(-FLOPPY_ESOTERIC+2, "floppy.rw_try(): Send the read/write command and parameter bytes.\n");
 	/* Send the read or write command and parameter bytes. */
 	fdc_send_byte(cmd);           /* Read or write command.           */
 	fdc_send_byte(head << 2);     /* Head address, disk drive select. */
@@ -574,16 +577,16 @@ bool fdc_rw_try(blkcnt_t block, bool read)
 	fdc_send_byte(GEOM_GAP_3_RW); /* Gap length.                      */
 	fdc_send_byte(0xFF);          /* Special sector size.             */
 
-	debug(1, "floppy.rw_try(): Wait for Irq.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.rw_try(): Wait for Irq.\n");
 	/* Wait for an IRQ. */
 	if (!fdc_wait_irq())
 	{
-		debug(3, "floppy.rw_try(): The FDC is not responding so give it a good spanking.\n");
+		debug(-FLOPPY_ESOTERIC+3, "floppy.rw_try(): The FDC is not responding so give it a good spanking.\n");
 		/* The FDC is not responding.  Give it a spanking. */
 		return fdc_behaving = false;
 	}
 
-	debug(1, "floppy.rw_try(): Read the result bytes.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.rw_try(): Read the result bytes.\n");
 	/* Read the result bytes. */
 	fdc_st0 = fdc_get_byte(); /* Status register 0. */
 	fdc_st1 = fdc_get_byte(); /* Status register 1. */
@@ -593,7 +596,7 @@ bool fdc_rw_try(blkcnt_t block, bool read)
 	fdc_r = fdc_get_byte();   /* Sector address.    */
 	fdc_n = fdc_get_byte();   /* Sector size code.  */
 
-	debug(1, "floppy.rw_try(): Check the status.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.rw_try(): Check the status.\n");
 	/* Check the status. */
 	return FDC_NORM_TERM(fdc_st0);
 }
@@ -603,7 +606,7 @@ bool fdc_rw_try(blkcnt_t block, bool read)
 \*----------------------------------------------------------------------------*/
 bool fdc_rw_block(blkcnt_t block, bool read)
 {
-	debug(1,"floppy.fdc_rw_block(): Reading/Writing a 512 byte block to/from the DMA buffer.\n");
+	debug(-FLOPPY_ESOTERIC+1,"floppy.fdc_rw_block(): Reading/Writing a 512 byte block to/from the DMA buffer.\n");
 /* If read is true, read a 512-byte block from the floppy disk into the DMA
  * buffer.  Otherwise, write a 512-byte block from the DMA buffer to the floppy
  * disk.  Return whether the FDC is behaving. */
@@ -612,12 +615,12 @@ bool fdc_rw_block(blkcnt_t block, bool read)
 	char head, track, sector;
 	fdc_geom(block, &head, &track, &sector);
 
-	debug(1,"floppy.fdc_rw_block(): Prepare for the read/write.\n");
+	debug(-FLOPPY_ESOTERIC+1,"floppy.fdc_rw_block(): Prepare for the read/write.\n");
 	/* Prepare for the read/write. */
 	fdc_start_motor();
 	out_byte(0x00, FDC_CCR_PORT);
 
-	debug(1,"floppy.fdc_rw_block(): Attempt to position the head over the track 3 times.\n");
+	debug(-FLOPPY_ESOTERIC+1,"floppy.fdc_rw_block(): Attempt to position the head over the track 3 times.\n");
 	/* Attempt to position the head over the track 3 times, or until the
 	 * read/write has succeeded, whichever happens first. */
 	for (seek_try = 0; seek_try < 3; seek_try++)
@@ -625,26 +628,26 @@ bool fdc_rw_block(blkcnt_t block, bool read)
 		fdc_recal_seek(0);
 		fdc_recal_seek(track);
 
-		debug(2,"floppy.fdc_rw_block(): Attempt to read/write 3 times.\n");
+		debug(-FLOPPY_ESOTERIC+2,"floppy.fdc_rw_block(): Attempt to read/write 3 times.\n");
 		/* Attempt the read/write 3 times, or until it has succeeded,
 		 * whichever happens first. */
 		for (rw_try = 0; rw_try < 3; rw_try++)
 			if (fdc_rw_try(block, read))
 			{
-				debug(3,"floppy.fdc_rw_block(): Read/write is a success!\n");
+				debug(-FLOPPY_ESOTERIC+3,"floppy.fdc_rw_block(): Read/write is a success!\n");
 				/* The read/write has succeeded! */
 				fdc_sched_motor();
 				return fdc_behaving;
 			}
 
-		debug(2,"floppy.fdc_rw_block(): Read/write has failed 3 times.\n");
+		debug(-FLOPPY_ESOTERIC+2,"floppy.fdc_rw_block(): Read/write has failed 3 times.\n");
 		/* The read/write has failed 3 times.  This persisting failure
 		 * could be due to improper alignment between the head and the 
 		 * track.  Reposition the head and try the read/write again. */
 		fdc_recal_seek(0);
 	}
 
-	debug(1,"floppy.fdc_rw_block(): failed too many times, time for spanking.\n");
+	debug(-FLOPPY_ESOTERIC+1,"floppy.fdc_rw_block(): failed too many times, time for spanking.\n");
 	/* The FDC is not responding.  Give it a spanking. */
 	fdc_sched_motor();
 	return fdc_behaving = false;
@@ -655,7 +658,7 @@ bool fdc_rw_block(blkcnt_t block, bool read)
 \*----------------------------------------------------------------------------*/
 void fdc_alarm(void)
 {
-	debug(1, "floppy.fdc_alarm(): fdc_alarm called.\n");
+	debug(-FLOPPY_ESOTERIC+1, "floppy.fdc_alarm(): fdc_alarm called.\n");
 	fdc_handle_alarm(msg);
 }
 
@@ -664,16 +667,16 @@ void fdc_alarm(void)
 \*----------------------------------------------------------------------------*/
 void fdc_open_close(void)
 {
-	debug(5,"floppy.fdc_open_close(): Attempting to open or close the floppy.\n");
+	debug(-FLOPPY_ESOTERIC+5,"floppy.fdc_open_close(): Attempting to open or close the floppy.\n");
 	if (msg->args.open_close.min != 0)
 	{
-		debug(2,"floppy.fdc_open_close(): Nothing happened, the return values was set to %d.\n",-ENXIO);
+		debug(-FLOPPY_ESOTERIC+2,"floppy.fdc_open_close(): Nothing happened, the return values was set to %d.\n",-ENXIO);
 		msg->args.open_close.ret_val = -ENXIO;
 	}
 	else
 	{
 
-		debug(5,"floppy.fdc_open_close(): Nothing happened, the return value was just set to 0.");
+		debug(-FLOPPY_ESOTERIC+5,"floppy.fdc_open_close(): Nothing happened, the return value was just set to 0.");
 		msg->args.open_close.ret_val = 0;
 	}
 }
@@ -683,7 +686,7 @@ void fdc_open_close(void)
 \*----------------------------------------------------------------------------*/
 void fdc_read_write(void)
 {
-	debug(1,"fdc_read_write(): reading or writing to/from the floppy.\n");
+	debug(-FLOPPY_ESOTERIC+1,"fdc_read_write(): reading or writing to/from the floppy.\n");
 
 	bool read = msg->op == SYS_READ;
 	char *p1 = read ? msg->args.read_write.buf : (char *) dma_buf_base;
@@ -697,20 +700,20 @@ void fdc_read_write(void)
 	{
 		msg->args.read_write.ret_val = -ENXIO;
 
-		debug(2,"floppy.read_write(): ERROR IN READING/WRITING IN/OUT.\n");
+		debug(-FLOPPY_ESOTERIC+2,"floppy.read_write(): ERROR IN READING/WRITING IN/OUT.\n");
 
 		return;
 	}
 
 	while (remaining)
 	{
-		debug(2,"fdc_read_write(): %d bytes remaining.\n", remaining);
+		debug(-FLOPPY_ESOTERIC+2,"fdc_read_write(): %d bytes remaining.\n", remaining);
 
 		size = remaining < 512 ? remaining : 512;
 		if (read || index != 0 || size != 512)
 			if (!fdc_rw_block(block, READ))
 			{
-				debug(3,"fdc_read_write(): while loop broken method 1.\n");
+				debug(-FLOPPY_ESOTERIC+3,"fdc_read_write(): while loop broken method 1.\n");
 				break;
 			}
 		p1_addend = read ? completed : index;
@@ -719,7 +722,7 @@ void fdc_read_write(void)
 		if (!read)
 			if (!fdc_rw_block(block, WRITE))
 			{
-				debug(4,"fdc_read_write(): while loop broken method 2.\n");
+				debug(-FLOPPY_ESOTERIC+4,"fdc_read_write(): while loop broken method 2.\n");
 				break;
 			}
 		index = 0;
@@ -728,9 +731,9 @@ void fdc_read_write(void)
 		block++;
 	}
 	if(fdc_behaving)
-		debug(2,"fdc_read_write(): behaving...good boy.\n");
+		debug(-FLOPPY_ESOTERIC+2,"fdc_read_write(): behaving...good boy.\n");
 	else
-		debug(2,"fdc_read_write(): Things have gone awry here.\n");
+		debug(-FLOPPY_ESOTERIC+2,"fdc_read_write(): Things have gone awry here.\n");
 	msg->args.read_write.ret_val = fdc_behaving ? completed : -EIO;
 }
 

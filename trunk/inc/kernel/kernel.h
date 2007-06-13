@@ -27,8 +27,6 @@
 #ifndef _KERNEL_KERNEL_H
 #define _KERNEL_KERNEL_H
 
-#define DUM_DBUG	5	//to turn dumb debug mode off set to -1
-
 #include <errno.h>
 #include <limits.h>
 #include <signal.h>

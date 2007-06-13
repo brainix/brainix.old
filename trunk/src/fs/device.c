@@ -79,14 +79,14 @@ void fs_register(bool block, unsigned char maj, pid_t pid)
 
 	/* Register the device driver with the file system. */
 	driver_pid[block][maj] = pid;
-#if DEBUG
-	printf("FileSystem.fs_register(): Attempting to register the device with the file system.\n");
-#endif
+
+	debug(1-FS_ESOTERIC,"FileSystem.fs_register(): Attempting to register the device with the file system.\n");
+
 	if (block && maj == ROOT_MAJ)
 	{
-#if DEBUG
-	printf("FileSystem.fs_register(): The device is a major device.\n");
-#endif
+
+	debug(1-FS_ESOTERIC,"FileSystem.fs_register(): The device is a major device.\n");
+
 		/* The driver for the device containing the root file system is
 		 * being registered. */
 		mount_root();
@@ -150,34 +150,34 @@ pid_t inode_to_pid(inode_t *inode_ptr)
 \*----------------------------------------------------------------------------*/
 int dev_open_close(dev_t dev, bool block, bool open)
 {
-#if DEBUG
-	printf("FileSystem.dev_open_close(): If open is true, open a device.  Otherwise, close a device.\n");
-#endif
+
+	debug(1-FS_ESOTERIC,"FileSystem.dev_open_close(): If open is true, open a device.  Otherwise, close a device.\n");
+
 /* If open is true, open a device.  Otherwise, close a device. */
 	unsigned char maj, min;
 	pid_t pid;
 	msg_t *m;
 	int ret_val;
 
-#if DEBUG
-	printf("FileSystem.dev_open_close(): Find the device driver's PID.\n");
-#endif
+
+	debug(1-FS_ESOTERIC,"FileSystem.dev_open_close(): Find the device driver's PID.\n");
+
 	/* Find the device driver's PID. */
 	dev_to_maj_min(dev, &maj, &min);
 	pid = driver_pid[block][maj];
 	if (pid == NO_PID)
 		return -(err_code = ENXIO);
 
-#if DEBUG
-	printf("FileSystem.dev_open_close(): Send a message to the device driver.\n");
-#endif
+
+	debug(1-FS_ESOTERIC,"FileSystem.dev_open_close(): Send a message to the device driver.\n");
+
 	/* Send a message to the device driver. */
 	m = msg_alloc(pid, open ? SYS_OPEN : SYS_CLOSE);
 	m->args.open_close.min = min;
 	msg_send(m);
-#if DEBUG
-	printf("FileSystem.dev_open_close(): Waiting for a reply.\n");
-#endif
+
+	debug(1-FS_ESOTERIC,"FileSystem.dev_open_close(): Waiting for a reply.\n");
+
 	/* Await the device driver's reply. */
 	m = msg_receive(pid);
 	ret_val = m->args.open_close.ret_val;

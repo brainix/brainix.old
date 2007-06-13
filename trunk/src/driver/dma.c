@@ -26,6 +26,8 @@
 
 #include <driver/driver.h>
 
+#define DMA_ESOTERIC	0
+
 /* Registers: */
 #define DMA_MASK_PORT	0x0A /* Mask register. */
 #define DMA_MODE_PORT	0x0B /* Mode register. */
@@ -64,7 +66,7 @@ void dma_xfer(unsigned char chan, unsigned long addr, unsigned short len,
 void dma_xfer(unsigned char chan, unsigned long addr, unsigned short len,
 	bool read)
 {
-	debug(1, "dma.dma_xfer(): Setting up a DMA transfer over a specified Channel.\n");
+	debug(-DMA_ESOTERIC+1, "dma.dma_xfer(): Setting up a DMA transfer over a specified Channel.\n");
 /* Set up a DMA transfer over the specified channel, starting at the specified
  * address, for the specified length.  If read is true, the transfer is from the
  * device to RAM.  Otherwise, the transfer is from RAM to the device. */
@@ -74,13 +76,13 @@ void dma_xfer(unsigned char chan, unsigned long addr, unsigned short len,
 	unsigned short off = (addr & 0x00FFFF) >> 0;
 	len--;
 
-	debug(2, "dma.dma_xfer(): Masking the channel, clear the flip-flop, and set the mod.\n");
+	debug(-DMA_ESOTERIC+2, "dma.dma_xfer(): Masking the channel, clear the flip-flop, and set the mod.\n");
 	/* Mask the channel, clear the flip-flop, and set the mode. */
 	out_byte(chan | DMA_MASK_BIT, DMA_MASK_PORT);
 	out_byte(0x00, DMA_FLIP_FLOP);
 	out_byte(mode, DMA_MODE_PORT);
 
-	debug(2, "dma.dma_xfer(): set the starting address and length of transfer.\n");
+	debug(-DMA_ESOTERIC+2, "dma.dma_xfer(): set the starting address and length of transfer.\n");
 	/* Set the starting address and length of the transfer. */
 	out_byte(pg, dma_chan[chan].pg);
 	out_byte((off & 0x00FF) >> 0, dma_chan[chan].off);
@@ -88,7 +90,7 @@ void dma_xfer(unsigned char chan, unsigned long addr, unsigned short len,
 	out_byte((len & 0x00FF) >> 0, dma_chan[chan].len);
 	out_byte((len & 0xFF00) >> 8, dma_chan[chan].len);
 
-	debug(2, "dma.dma_xfer(); unmasking the channel.\n");
+	debug(-DMA_ESOTERIC+2, "dma.dma_xfer(); unmasking the channel.\n");
 	/* Unmask the channel. */
 	out_byte(chan, DMA_MASK_PORT);
 }

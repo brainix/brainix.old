@@ -42,6 +42,9 @@
 /* Build an attribute byte given blink, background, and foreground values: */
 #define ATTR(blink, bg, fg)	((blink << 7) | (bg << 4) | fg)
 
+/* This is the DUM_DBUG factor */
+#define DUM_DBUG	5	//to turn dumb debug mode off set to -1
+
 /* Variables: */
 unsigned char attr;  /* Attribute byte. */
 unsigned char x_pos; /* Cursor column.  */
@@ -54,7 +57,7 @@ void clear(void);
 void itoa(char *s, int base, int n);
 int putchar(int c);
 int printf(char *format, ...);
-void debug(int importance, char *format, void *buf);
+void debug(unsigned int importance, char *format, void *buf);
 void dbug(char *format, void *buf);
 
 /*----------------------------------------------------------------------------*\
@@ -261,7 +264,7 @@ int printf(char *format, ...)
 	}
 	return n;
 }
-void debug(int importance, char *format, void *buf)
+void debug(unsigned int importance, char *format, void *buf)
 {
 	if(!(importance > DUM_DBUG))
 		printf(format, buf);
