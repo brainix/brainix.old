@@ -31,9 +31,9 @@
 \*----------------------------------------------------------------------------*/
 int do_fs_open(const char *path, int oflag, mode_t mode)
 {
-#if DEBUG
-	printf("FileSystem.Open(): Attempting to open %s\n",path);
-#endif
+ 
+	debug(1-FS_ESOTERIC,"FileSystem.Open(): Attempting to open %s\n",path);
+ 
 	int fildes = 0;
 	inode_t *inode_ptr = NULL;
 	dev_t dev;
@@ -42,23 +42,23 @@ int do_fs_open(const char *path, int oflag, mode_t mode)
 	if (!err_code)
 	{
 		fildes = descr_get();
-#if DEBUG
-	printf("FileSystem.Open(): ERROR WITH OPENING THE DEVICE! %d\n",fildes);
-#endif
+ 
+	debug(1-FS_ESOTERIC,"FileSystem.Open(): ERROR WITH OPENING THE DEVICE! %d\n",fildes);
+ 
 	}
 	if (!err_code)
 	{
 		inode_ptr = path_to_inode(path);
-#if DEBUG
-	printf("FileSystem.Open(): No Error opening the device \n");
-#endif
+ 
+	debug(1-FS_ESOTERIC,"FileSystem.Open(): No Error opening the device \n");
+ 
 
 	}
 	if (err_code)
 	{
-#if DEBUG
-	printf("FileSystem.Open(): Cheap ass solution in place. \n");
-#endif
+ 
+	debug(1-FS_ESOTERIC,"FileSystem.Open(): Cheap ass solution in place. \n");
+ 
 		descr_put(fildes);
 		inode_put(inode_ptr);
 		return -err_code;

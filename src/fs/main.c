@@ -51,7 +51,7 @@ void fs_main(void)
 		{
 			case SYS_EXECVE: //tested
 #if DEBUG
-				debug(2,"FileSystem.execve()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.execve()\n");
 #endif
 				msg->args.execve.ret_val =
 					do_fs_execve(msg->args.execve.path,
@@ -60,20 +60,20 @@ void fs_main(void)
 				break;
 			case SYS_EXIT: //tested
 #if DEBUG
-				debug(2,"FileSystem.exit()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.exit()\n");
 #endif
 					do_fs_exit(msg->args.exit.status);
 				break;
 			case SYS_FORK: //tested
 #if DEBUG
-				debug(2,"FileSystem.fork()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.fork()\n");
 #endif
 					do_fs_fork(msg->from,
 						   msg->args.fork.ret_val);
 				break;
 			case SYS_ACCESS: //tested
 #if DEBUG
-				debug(2,"FileSystem.access()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.access()\n");
 #endif
 				msg->args.access.ret_val = 
 					do_fs_access(msg->args.access.path,
@@ -81,21 +81,21 @@ void fs_main(void)
 				break;
 			case SYS_CLOSE: 
 #if DEBUG
-				debug(2,"FileSystem.close()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.close()\n");
 #endif
 				msg->args.close.ret_val =
 					do_fs_close(msg->args.close.fildes);
 				break;
 			case SYS_DUP: //tested
 #if DEBUG
-				debug(2,"FileSystem.dup()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.dup()\n");
 #endif
 				msg->args.dup.ret_val = 
 					do_fs_dup(msg->args.dup.fildes);
 				break;
 			case SYS_DUP2: //tested
 #if DEBUG
-				debug(2,"FileSystem.dup2()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.dup2()\n");
 #endif
 				msg->args.dup2.ret_val = 
 					do_fs_dup2(msg->args.dup2.fildes,
@@ -103,7 +103,7 @@ void fs_main(void)
 				break;
 			case SYS_FCNTL: //tested
 #if DEBUG
-				debug(2,"FileSystem.fcntl()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.fcntl()\n");
 #endif
 				msg->args.fcntl.ret_val = 
 					do_fs_fcntl(msg->args.fcntl.fildes,
@@ -112,7 +112,7 @@ void fs_main(void)
 				break;
 			case SYS_FSTAT:
 #if DEBUG
-				debug(2,"FileSystem.fstat()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.fstat()\n");
 #endif
 				msg->args.fstat.ret_val =
 					do_fs_fstat(msg->args.fstat.fildes,
@@ -120,7 +120,7 @@ void fs_main(void)
 				break;
 			case SYS_IOCTL: //tested but goes one step beyond where it normally goes when it crashes
 #if DEBUG
-				debug(2,"FileSystem.ioctl()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.ioctl()\n");
 #endif
 				msg->args.ioctl.ret_val = 
 					do_fs_ioctl(msg->args.ioctl.fildes,
@@ -129,7 +129,7 @@ void fs_main(void)
 				break;
 			case SYS_LSEEK:
 #if DEBUG
-				debug(2,"FileSystem.lseek()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.lseek()\n");
 #endif
 				msg->args.lseek.ret_val =
 					do_fs_lseek(msg->args.lseek.fildes,
@@ -138,7 +138,7 @@ void fs_main(void)
 				break;
 			case SYS_OPEN:
 #if DEBUG
-				debug(2,"FileSystem.open()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.open()\n");
 #endif
 				msg->args.open.ret_val =
 					do_fs_open(msg->args.open.path,
@@ -147,7 +147,7 @@ void fs_main(void)
 				break;
 			case SYS_READ:
 #if DEBUG
-				debug(2,"FileSystem.read()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.read()\n");
 #endif
 				msg->args.read.ret_val =
 					do_fs_read(msg->args.read.fildes,
@@ -156,7 +156,7 @@ void fs_main(void)
 				break;
 			case SYS_STAT:
 #if DEBUG
-				debug(2,"FileSystem.stat()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.stat()\n");
 #endif
 				msg->args.stat.ret_val =
 					do_fs_stat(msg->args.stat.path,
@@ -164,7 +164,7 @@ void fs_main(void)
 				break;
 			case SYS_WRITE:
 #if DEBUG
-				debug(2,"FileSystem.write()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.write()\n");
 #endif
 				msg->args.write.ret_val =
 					do_fs_write(msg->args.write.fildes,
@@ -173,21 +173,21 @@ void fs_main(void)
 				break;
 			case SYS_CHDIR:
 #if DEBUG
-				debug(2,"FileSystem.chdir()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.chdir()\n");
 #endif
 				msg->args.chdir.ret_val =
 					do_fs_chdir(msg->args.chdir.path);
 				break;
 			case SYS_CHROOT:
 #if DEBUG
-				debug(2,"FileSystem.chroot()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.chroot()\n");
 #endif
 				msg->args.chroot.ret_val =
 					do_fs_chroot(msg->args.chroot.path);
 				break;
 			case SYS_LINK:
 #if DEBUG
-				debug(2,"FileSystem.link()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.link()\n");
 #endif
 				msg->args.link.ret_val =
 					do_fs_link(msg->args.link.path1,
@@ -195,20 +195,20 @@ void fs_main(void)
 				break;
 			case SYS_SYNC:
 #if DEBUG
-				debug(2,"FileSystem.sync()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.sync()\n");
 #endif
 					do_fs_sync();
 				break;
 			case SYS_UNLINK:
 #if DEBUG
-				debug(2,"FileSystem.ulink()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.ulink()\n");
 #endif
 				msg->args.unlink.ret_val =
 					do_fs_unlink(msg->args.unlink.path);
 				break;
 			case SYS_CHMOD: //tested
 #if DEBUG
-				debug(2,"FileSystem.chmod()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.chmod()\n");
 #endif
 				msg->args.chmod.ret_val =
 					do_fs_chmod(msg->args.chmod.path,
@@ -216,7 +216,7 @@ void fs_main(void)
 				break;
 			case SYS_CHOWN: //tested, this gets to 16
 #if DEBUG
-				debug(2,"FileSystem.chown() Change Owner\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.chown() Change Owner\n");
 #endif
 				msg->args.chown.ret_val = 
 					do_fs_chown(msg->args.chown.path,
@@ -225,14 +225,14 @@ void fs_main(void)
 				break;
 			case SYS_UMASK:
 #if DEBUG
-				debug(2,"FileSystem.umask()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.umask()\n");
 #endif
 				msg->args.umask.ret_val =
 					do_fs_umask(msg->args.umask.cmask);
 				break;
 			case SYS_UTIME:
 #if DEBUG
-				debug(2,"FileSystem.utime()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.utime()\n");
 #endif
 				msg->args.utime.ret_val =
 					do_fs_utime(msg->args.utime.path,
@@ -240,7 +240,7 @@ void fs_main(void)
 				break;
 			case REGISTER: //bingo this is the problem
 #if DEBUG
-				debug(2,"FileSystem.register()\n");
+				debug(-FS_ESOTERIC+2,"FileSystem.register()\n");
 #endif
 					fs_register(msg->args.brnx_reg.block,
 						    msg->args.brnx_reg.maj,

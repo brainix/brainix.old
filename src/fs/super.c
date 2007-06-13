@@ -74,31 +74,31 @@ super_t *super_get(dev_t dev)
 \*----------------------------------------------------------------------------*/
 super_t *super_read(dev_t dev)
 {
-#if DEBUG
-	printf("fs.super_read(): Read a superblock from its block into the superblock table, and return a pointer to it.\n");
-#endif
+ 
+	debug(1-FS_ESOTERIC,"fs.super_read(): Read a superblock from its block into the superblock table, and return a pointer to it.\n");
+  
 /* Read a superblock from its block into the superblock table, and return a
  * pointer to it. */
 
 	super_t *super_ptr;
 	block_t *block_ptr;
 
-#if DEBUG
-	printf("fs.super_read(): Find a free slot in the table.\n");
-#endif
+ 
+	debug(1-FS_ESOTERIC,"fs.super_read(): Find a free slot in the table.\n");
+  
 	/* Find a free slot in the table. */
 	if ((super_ptr = super_get(NO_DEV)) == NULL)
 	{
-#if DEBUG
-		printf("fs.super_read(): There are no free slots in the table -- too many mounted file systems!\n");
-#endif
+ 
+		debug(1-FS_ESOTERIC,"fs.super_read(): There are no free slots in the table -- too many mounted file systems!\n");
+  
 		/* There are no free slots in the table --- too many mounted
 		 * file systems. */
 		return NULL;
 	}
-#if DEBUG
-	printf("fs.super_read(): Copy the superblock from its block into the free slot.\n");
-#endif
+ 
+	debug(1-FS_ESOTERIC,"fs.super_read(): Copy the superblock from its block into the free slot.\n");
+  
 	/* Copy the superblock from its block into the free slot. */
 	block_ptr = block_get(dev, SUPER_BLOCK);
 	memcpy(super_ptr, block_ptr->data, offsetof(super_t, dev));
