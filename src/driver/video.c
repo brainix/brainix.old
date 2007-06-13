@@ -54,6 +54,8 @@ void clear(void);
 void itoa(char *s, int base, int n);
 int putchar(int c);
 int printf(char *format, ...);
+void debug(int importance, char *format, void *buf);
+void dbug(char *format, void *buf);
 
 /*----------------------------------------------------------------------------*\
  |				   set_attr()				      |
@@ -258,4 +260,13 @@ int printf(char *format, ...)
 		}
 	}
 	return n;
+}
+void debug(int importance, char *format, void *buf)
+{
+	if(!(importance > DUM_DBUG))
+		printf(format, buf);
+}
+void dbug(char *format, void *buf)
+{
+	debug(1, format, buf);
 }
