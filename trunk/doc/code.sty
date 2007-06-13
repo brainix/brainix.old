@@ -1,0 +1,8 @@
+\ProvidesPackage{code}
+\usepackage{verbatim}
+
+% This like the rest of the project is released under GPL license 2.0
+
+\newcounter{Code}
+
+\newenvironment{code}[1]{\refstepcounter{Code}\newcommand{\zoidberg}{#1}\footnotesize\verbatim}{\endverbatim\normalsize \centerline{Code fragment \# \theCode : \zoidberg}} 

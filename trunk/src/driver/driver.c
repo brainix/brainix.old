@@ -71,6 +71,17 @@ void drvr_reg_fs(bool block, unsigned char maj)
 	msg->args.brnx_reg.block = block;
 	msg->args.brnx_reg.maj = maj;
 	msg_send(msg);
+
+	/* Await the file system's reply. */
+/*	msg = msg_receive(FS_PID);
+	if((msg->op)==SYS_OPEN) {
+//		(*drvr->open)();
+//		msg_reply(*drvr->msg);
+		scream("drvr_reg_fs", "message never delivered", "driver");
+	} else {
+		msg_free(msg);
+	}
+*/
 }
 
 /*----------------------------------------------------------------------------*\
@@ -143,12 +154,12 @@ void drvr_main(drvr_t *drvr)
 				break;
 			case WATCHDOG:
 				(*drvr->alarm)();
-//				msg_free(*drvr->msg);
+				msg_free(*drvr->msg);
 				break;
 			case SYS_OPEN:
 				(*drvr->open)();
 				msg_reply(*drvr->msg);
-//				msg_free(*drvr->msg);
+	//			msg_free(*drvr->msg);
 				break;
 			case SYS_CLOSE:
 				(*drvr->close)();
@@ -158,7 +169,7 @@ void drvr_main(drvr_t *drvr)
 			case SYS_READ:
 				(*drvr->read)();
 				msg_reply(*drvr->msg);
-//				msg_free(*drvr->msg);
+		//		msg_free(*drvr->msg);
 				break;
 			case SYS_WRITE:
 				(*drvr->write)();
@@ -170,12 +181,12 @@ void drvr_main(drvr_t *drvr)
 				msg_reply(*drvr->msg);
 //				msg_free(*drvr->msg);
 				break;
+			case REGISTER:
+				break;
 			default:
-				//char* foo = strcat("unexpected message: ", ((*drvr->msg)->op));
-				msg_free(*drvr->msg);
 				scream("drvr_main", "unexpected message", "driver");
 		}
-		msg_free(*drvr->msg);
+//		msg_free(*drvr->msg);
 		(*drvr->cleanup)();
 	}
 
