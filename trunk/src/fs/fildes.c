@@ -32,14 +32,14 @@
 \*----------------------------------------------------------------------------*/
 void descr_init(void)
 {
-
+	debug(1-FS_ESOTERIC,"fildes.descr_init(): initializing the file pointer and the process-specific file system information table. \n");
 /* Initialize the file pointer table and the process-specific file system
  * information table. */
 
 	int ptr_index;
 	pid_t pid;
 	int descr_index;
-
+	debug(1-FS_ESOTERIC,"fildes.descr_init(): Initialize te file pointer table.\n");
 	/* Initialize the file pointer table. */
 	for (ptr_index = 0; ptr_index < NUM_FILE_PTRS; ptr_index++)
 	{
@@ -49,7 +49,7 @@ void descr_init(void)
 		file_ptr[ptr_index].status = 0;
 		file_ptr[ptr_index].mode = 0;
 	}
-
+	debug(1-FS_ESOTERIC,"fildes.descr_init(): Initializes the process-specific file system information table.\n");
 	/* Initialize the process-specific file system information table. */
 	for (pid = 0; pid < NUM_PROCS; pid++)
 	{
@@ -73,16 +73,20 @@ int descr_get(void)
 		if (OPEN_DESCR(fildes) == NULL)
 			break;
 	if (fildes == OPEN_MAX)
+	{
+		debug(1-FS_ESOTERIC,"fildes.descr_get(): Too many open files in process!\n");
 		/* Too many open files in process. */
 		return -(err_code = EMFILE);
-
+	}
 	for (ptr_index = 0; ptr_index < NUM_FILE_PTRS; ptr_index++)
 		if (file_ptr[ptr_index].count == 0)
 			break;
 	if (ptr_index == NUM_FILE_PTRS)
+	{
+		debug(1-FS_ESOTERIC,"fildes.get_descr(): too many open files in system!\n");
 		/* Too many open files in system. */
 		return -(err_code = ENFILE);
-
+	}
 	OPEN_DESCR(fildes) = &file_ptr[ptr_index];
 	return fildes;
 }
