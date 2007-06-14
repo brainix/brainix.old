@@ -26,9 +26,9 @@
 
 /*
  | Programming in assembly is like doing construction work with a toothpick for
- | 	a tool. -- source unknown
+ | 	a tool. - source unknown
  |
- | Programming in C is like picking your teeth with a jack-hammer. -- R. Shah
+ | Programming in C is like picking your teeth with a jack-hammer. - R. Shah
  */
 
 /*
