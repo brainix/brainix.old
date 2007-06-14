@@ -49,11 +49,11 @@ typedef struct proc
 } proc_t;
 
 /* Global variables: */
-proc_t proc[NUM_PROCS];              /* Process table.   */
-proc_t *boot_proc = &proc[BOOT_PID]; /* Boot process.    */
-proc_t *idle_proc = &proc[IDLE_PID]; /* Idle process.    */
-proc_t *ready_q = NULL;              /* Ready queue.     */
-proc_t *current_proc = boot_proc;    /* Current process. */
+proc_t proc[NUM_PROCS];                 /* Process table.   */
+proc_t *boot_proc = &proc[BOOT_PID];    /* Boot process.    */
+proc_t *idle_proc = &proc[IDLE_PID];    /* Idle process.    */
+proc_t *ready_q = NULL;                 /* Ready queue.     */
+proc_t *current_proc = &proc[BOOT_PID]; /* Current process. */
 
 /* Function prototypes: */
 void proc_init(void);
