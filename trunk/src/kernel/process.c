@@ -486,5 +486,6 @@ clock_t do_times(struct tms *buffer)
 \*----------------------------------------------------------------------------*/
 void proc_nap(void)
 {
-	proc_sleep(current_proc->pid);
+//	proc_sleep(current_proc->pid);
+	proc_sched();
 }
