@@ -46,11 +46,12 @@ void drvr_reg_kernel(unsigned char irq)
 
 	/* Send a register message to the kernel. */
 	msg_t *msg = msg_alloc(KERNEL_PID, REGISTER);
+	mid_t mid = msg->mid;
 	msg->args.brnx_reg.irq = irq;
 	msg_send(msg);
 
 	/* Await the kernel's reply. */
-	msg = msg_receive(KERNEL_PID);
+	msg = msg_receive(mid);
 	msg_free(msg);
 
 	/* Now the kernel will send messages to the current (device driver)
@@ -75,7 +76,7 @@ void drvr_reg_fs(bool block, unsigned char maj)
 /*----------------------------------------------------------------------------*\
  |				drvr_set_alarm()			      |
 \*----------------------------------------------------------------------------*/
-void drvr_set_alarm(clock_t ticks, unsigned char type)
+mid_t drvr_set_alarm(clock_t ticks, unsigned char type)
 {
 
 /* Set an alarm. */
@@ -85,6 +86,7 @@ void drvr_set_alarm(clock_t ticks, unsigned char type)
 	msg->args.brnx_watch.ticks = ticks;
 	msg->args.brnx_watch.type = type;
 	msg_send(msg);
+	return msg->mid;
 }
 
 /*----------------------------------------------------------------------------*\
@@ -96,16 +98,15 @@ void drvr_set_wait_alarm(clock_t ticks, unsigned char type,
 
 /* Set an alarm, then wait for it to sound. */
 
+	/* Set the alarm. */
+	mid_t mid = drvr_set_alarm(ticks, type);
 	msg_t *msg;
 	bool done;
-
-	/* Set the alarm. */
-	drvr_set_alarm(ticks, type);
 
 	/* Wait for it to sound. */
 	do
 	{
-		msg = msg_receive(TMR_PID);
+		msg = msg_receive(mid);
 		done = (*handle_alarm)(msg) == type;
 		msg_free(msg);
 	} while (!done);

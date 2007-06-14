@@ -27,7 +27,7 @@
 #ifndef _KERNEL_MESSAGE_H
 #define _KERNEL_MESSAGE_H
 
-typedef unsigned long mid_t;
+typedef long mid_t;
 
 typedef struct
 {

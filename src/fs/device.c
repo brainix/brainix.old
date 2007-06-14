@@ -99,13 +99,16 @@ void dev_deinit(void)
 	unsigned char maj;
 	unsigned char block;
 	pid_t pid;
+	msg_t *m;
+	mid_t mid;
 
 	for (maj = 0; maj < NUM_DRIVERS; maj++)
 		for (block = 0; block <= 1; block++)
 			if ((pid = driver_pid[block][maj]) != NO_PID)
 			{
-				msg_send(msg_alloc(pid, SHUTDOWN));
-				msg_free(msg_receive(pid));
+				mid = (m = msg_alloc(pid, SHUTDOWN))->mid;
+				msg_send(m);
+				msg_free(msg_receive(mid));
 			}
 }
 
@@ -151,6 +154,7 @@ int dev_open_close(dev_t dev, bool block, bool open)
 	unsigned char maj, min;
 	pid_t pid;
 	msg_t *m;
+	mid_t mid;
 	int ret_val;
 
 	/* Find the device driver's PID. */
@@ -160,12 +164,12 @@ int dev_open_close(dev_t dev, bool block, bool open)
 		return -(err_code = ENXIO);
 
 	/* Send a message to the device driver. */
-	m = msg_alloc(pid, open ? SYS_OPEN : SYS_CLOSE);
+	mid = (m = msg_alloc(pid, open ? SYS_OPEN : SYS_CLOSE))->mid;
 	m->args.open_close.min = min;
 	msg_send(m);
 
 	/* Await the device driver's reply. */
-	m = msg_receive(pid);
+	m = msg_receive(mid);
 	ret_val = m->args.open_close.ret_val;
 	msg_free(m);
 	if (ret_val < 0)
@@ -185,6 +189,7 @@ ssize_t dev_rw(dev_t dev, bool block, bool read, off_t off, size_t size,
 	unsigned char maj, min;
 	pid_t pid;
 	msg_t *m;
+	mid_t mid;
 	ssize_t ret_val;
 
 	/* Find the device driver's PID. */
@@ -194,7 +199,7 @@ ssize_t dev_rw(dev_t dev, bool block, bool read, off_t off, size_t size,
 		return -(err_code = ENXIO);
 
 	/* Send a message to the device driver. */
-	m = msg_alloc(pid, read ? SYS_READ : SYS_WRITE);
+	mid = (m = msg_alloc(pid, read ? SYS_READ : SYS_WRITE))->mid;
 	m->args.read_write.min = min;
 	m->args.read_write.off = off;
 	m->args.read_write.size = size;
@@ -202,7 +207,7 @@ ssize_t dev_rw(dev_t dev, bool block, bool read, off_t off, size_t size,
 	msg_send(m);
 
 	/* Await the device driver's reply. */
-	m = msg_receive(pid);
+	m = msg_receive(mid);
 	ret_val = m->args.read_write.ret_val;
 	msg_free(m);
 	if (ret_val < 0)
@@ -221,6 +226,7 @@ int do_fs_ioctl(int fildes, int request, int arg)
 	unsigned char maj, min;
 	pid_t pid;
 	msg_t *m;
+	mid_t mid;
 	int ret_val;
 
 	/* Find the device driver's PID. */
@@ -237,14 +243,14 @@ int do_fs_ioctl(int fildes, int request, int arg)
 		return -(err_code = ENXIO);
 
 	/* Send a message to the device driver. */
-	m = msg_alloc(pid, SYS_IOCTL);
+	mid = (m = msg_alloc(pid, SYS_IOCTL))->mid;
 	m->args.ioctl.fildes = min;
 	m->args.ioctl.request = request;
 	m->args.ioctl.arg = arg;
 	msg_send(m);
 
 	/* Await the device driver's reply. */
-	m = msg_receive(pid);
+	m = msg_receive(mid);
 	ret_val = m->args.ioctl.ret_val;
 	msg_free(m);
 	if (ret_val < 0)
