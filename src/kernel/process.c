@@ -461,7 +461,6 @@ clock_t do_times(struct tms *buffer)
  * times. */
 
 	msg_t *msg;
-	mid_t mid;
 	clock_t ret_val;
 
 	if ((unsigned long) buffer < pg_addr(USER, HEAP, BOTTOM))
@@ -472,13 +471,9 @@ clock_t do_times(struct tms *buffer)
 	buffer->tms_cutime = proc[current_proc->pid].cutime;
 	buffer->tms_cstime = proc[current_proc->pid].cstime;
 
-	mid = (msg = msg_alloc(TMR_PID, UPTIME))->mid;
-	msg_send(msg);
-
-	msg = msg_receive(mid);
+	msg_send_receive(msg = msg_alloc(TMR_PID, UPTIME));
 	ret_val = msg->args.brnx_uptime.ret_val;
 	msg_free(msg);
-
 	return ret_val;
 }
 
