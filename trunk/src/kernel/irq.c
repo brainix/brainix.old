@@ -163,9 +163,9 @@ void irq_register(msg_t *msg)
 \*----------------------------------------------------------------------------*/
 void irq_handler(unsigned char num)
 {
-	pid_t pid = irq_to_pid[num];
-	msg_t *msg = msg_alloc(pid, IRQ);
-	msg->from = HARDWARE;
-	irq_eoi(num);
+	msg_t *msg;
+
+	(msg = msg_alloc(irq_to_pid[num], IRQ))->from = HARDWARE;
 	msg_send(msg);
+	irq_eoi(num);
 }

@@ -152,7 +152,7 @@ unsigned char fdc_handle_alarm(msg_t *m)
 bool fdc_wait_irq(void)
 {
 
-/* Wait for the FDC to generate an IRQ or time out, whichever happens first.
+/* Wait for the FDC to generate an IRQ, or time out, whichever happens first.
  * Return true on IRQ; false on timeout. */
 
 	msg_t *m;
