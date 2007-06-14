@@ -127,9 +127,8 @@ bool heap_init(unsigned long target_pg_dir, bool kernel)
 	current_pg_dir = save_dir();
 	if (kernel)
 		reference_pg_dir = target_pg_dir;
-	else
-		if (target_pg_dir != current_pg_dir)
-			load_dir(target_pg_dir);
+	else if (target_pg_dir != current_pg_dir)
+		load_dir(target_pg_dir);
 
 	if ((slab = SLAB_NEW(target_pg_dir, kernel)) == NULL)
 		ret_val = false;
@@ -185,7 +184,7 @@ void *common_sbrk(bool kernel, ptrdiff_t increment)
 void split(slab_t *slab, size_t size)
 {
 
-/* Split a slab.  This is done to reduce wastage. */
+/* Split a slab into two slabs.  This is done to reduce wastage. */
 
 	slab_t *new_slab = (slab_t *) ((char *) slab + sizeof(slab_t) + size);
 	new_slab->used = false;

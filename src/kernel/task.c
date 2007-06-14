@@ -98,14 +98,14 @@ void task_init(void)
 	}
 
 	heap_init(pg_dir = save_dir(), KERNEL); /* Create a kernel heap. */
-	heap_init(pg_dir, USER);                /* Create a user heap.   */
+//	heap_init(pg_dir, USER);                /* Create a user heap.   */
 
 	/* Fill in the TSS. */
-	task[IDLE_PID].tss.cr3.reserved_0 = 0;
-	task[IDLE_PID].tss.cr3.pwt = 0;
-	task[IDLE_PID].tss.cr3.pcd = 0;
-	task[IDLE_PID].tss.cr3.reserved_1 = 0;
-	task[IDLE_PID].tss.cr3.sign_phys = pg_dir / PG_SIZE;
+	task[BOOT_PID].tss.cr3.reserved_0 = 0;
+	task[BOOT_PID].tss.cr3.pwt = 0;
+	task[BOOT_PID].tss.cr3.pcd = 0;
+	task[BOOT_PID].tss.cr3.reserved_1 = 0;
+	task[BOOT_PID].tss.cr3.sign_phys = pg_dir / PG_SIZE;
 
 	descr_tr->rpl = USER_PL;
 	descr_tr->ti = GDT;
@@ -128,10 +128,8 @@ bool task_create(pid_t pid, unsigned long entry, bool kernel)
 
 	/* Create a virtual address space, kernel stack, user heap, and user
 	 * stack. */
-	if (!pg_dir                     ||
-	    !stack_init(pg_dir, KERNEL) ||
-	    !heap_init(pg_dir, USER)    ||
-	    !stack_init(pg_dir, USER))
+	if (!pg_dir                  || !stack_init(pg_dir, KERNEL) ||
+	    !heap_init(pg_dir, USER) || !stack_init(pg_dir, USER))
 	{
 		/* The virtual address space, kernel stack, user heap, or user
 		 * stack couldn't be created. */

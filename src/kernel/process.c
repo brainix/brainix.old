@@ -49,10 +49,11 @@ typedef struct proc
 } proc_t;
 
 /* Global variables: */
-proc_t proc[NUM_PROCS]; /* Process table.   */
-proc_t *idle_proc;      /* Idle process.    */
-proc_t *ready_q;        /* Ready queue.     */
-proc_t *current_proc;   /* Current process. */
+proc_t proc[NUM_PROCS];                    /* Process table.   */
+const proc_t *boot_proc = &proc[BOOT_PID]; /* Boot process.    */
+const proc_t *idle_proc = &proc[IDLE_PID]; /* Idle process.    */
+proc_t *ready_q = NULL;                    /* Ready queue.     */
+proc_t *current_proc = boot_proc;          /* Current process. */
 
 /* Function prototypes: */
 void proc_init(void);
@@ -88,7 +89,7 @@ void task_exec(pid_t pid, unsigned long entry);
 void proc_init(void)
 {
 
-/* Initialize multi-processing. */
+/* Initialize multi-processing.  This is called from the boot process. */
 
 	pid_t pid;
 
@@ -103,26 +104,23 @@ void proc_init(void)
 		proc[pid].next = proc[pid].prev = &proc[pid];
 	}
 
-	/* Fill in the process info required by POSIX. */
-	idle_proc = &proc[IDLE_PID];
-	idle_proc->egid = 0;
-	idle_proc->euid = 0;
-	idle_proc->gid = 0;
-	idle_proc->pgrp = 0;
-	idle_proc->pid = 0;
-	idle_proc->ppid = 0;
-	idle_proc->uid = 0;
-	idle_proc->utime = 0;
-	idle_proc->stime = 0;
-	idle_proc->cutime = 0;
-	idle_proc->cstime = 0;
+	/* Fill in the boot process info required by POSIX. */
+	boot_proc->egid = 0;
+	boot_proc->euid = 0;
+	boot_proc->gid = 0;
+	boot_proc->pgrp = 0;
+	boot_proc->pid = 0;
+	boot_proc->ppid = 0;
+	boot_proc->uid = 0;
+	boot_proc->utime = 0;
+	boot_proc->stime = 0;
+	boot_proc->cutime = 0;
+	boot_proc->cstime = 0;
 
-	/* Mark the process ready and initialize the ready queue. */
-	idle_proc->state = READY;
-	idle_proc->kernel_time = 0;
-	ready_q = NULL;
-	current_proc = idle_proc;
-	sig_init(IDLE_PID);
+	/* Mark the boot process ready. */
+	boot_proc->state = READY;
+	boot_proc->kernel_time = 0;
+	sig_init(BOOT_PID);
 }
 
 /*----------------------------------------------------------------------------*\
@@ -133,7 +131,7 @@ pid_t calc_next_pid(void)
 
 /* Calculate the next PID - claim a slot in the process table. */
 
-	static pid_t pid = IDLE_PID;
+	static pid_t pid = BOOT_PID;
 	pid_t bookmark = pid;
 
 	do
@@ -191,10 +189,11 @@ pid_t proc_create(unsigned long entry, bool kernel)
 
 	intr_lock();
 
-	/* Claim a slot in the process table. */
+	/* Claim a slot in the process table and create a parallel task. */
 	if ((pid = calc_next_pid()) == -1 || !task_create(pid, entry, kernel))
 	{
-		/* There's no free slot in the process table. */
+		/* There's no free slot in the process table or a parallel
+		 * couldn't be created. */
 		intr_unlock();
 		return -1;
 	}
@@ -215,7 +214,10 @@ pid_t proc_create(unsigned long entry, bool kernel)
 
 	/* Add the process to the ready queue. */
 	proc_ptr->kernel_time = 0;
-	proc_enq(proc_ptr);
+	if (proc_ptr == idle_proc)
+		proc_ptr->state = READY;
+	else
+		proc_enq(proc_ptr);
 	sig_init(pid);
 
 	intr_unlock();
@@ -350,8 +352,7 @@ void proc_sched(void)
 		/* Oops.  The process that we've picked to run next is the one
 		 * that's running now.  Save a context switch; just return. */
 		return;
-	else
-		task_switch((current_proc = proc_ptr)->pid);
+	task_switch((current_proc = proc_ptr)->pid);
 }
 
 /*----------------------------------------------------------------------------*\
