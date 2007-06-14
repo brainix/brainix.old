@@ -124,7 +124,7 @@ void kernel(void)
 \*----------------------------------------------------------------------------*/
 void shutdown(msg_t *msg)
 {
-	msg_t *msg;
+	msg_t *m;
 	mid_t mid;
 
 	printf("\n");
@@ -136,8 +136,8 @@ void shutdown(msg_t *msg)
 	print_done();
 
 	print_init(DEINIT, "timer");
-	mid = (msg = msg_alloc(TMR_PID, SHUTDOWN))->mid;
-	msg_send(msg);
+	mid = (m = msg_alloc(TMR_PID, SHUTDOWN))->mid;
+	msg_send(m);
 	msg_free(msg_receive(mid));
 	print_done();
 
