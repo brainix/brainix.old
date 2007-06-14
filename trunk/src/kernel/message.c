@@ -63,15 +63,17 @@ void msg_init(void)
 \*----------------------------------------------------------------------------*/
 mid_t calc_next_mid(void)
 {
+
+/* Calculate the next MID. */
+
 	static mid_t mid = -1;
 	mid_t bookmark = mid;
 
 	do
-		if (++mid == bookmark)
+		if ((mid = (mid + 1) % LONG_MAX) == bookmark)
 			if (rally_exists(mid))
 				panic("calc_next_mid", "out of MIDs");
 	while (rally_exists(mid));
-
 	return mid;
 }
 
@@ -83,7 +85,8 @@ msg_t *msg_alloc(pid_t to, unsigned char op)
 	msg_t *msg;
 
 	intr_lock();
-	(msg = kmalloc(sizeof(msg_t)))->mid = calc_next_mid();
+	msg = kmalloc(sizeof(msg_t));
+	msg->mid = calc_next_mid();
 	msg->from = do_getpid();
 	msg->to = to;
 	msg->op = op;
@@ -148,7 +151,8 @@ msg_t *msg_receive(pid_t from)
 
 	while ((msg = msg_check(from)) == NULL)
 		/* Race condition! */
-		proc_sleep(to);
+//		proc_sleep(to);
+		proc_sched();
 
 	return msg;
 
@@ -191,7 +195,7 @@ void msg_send(msg_t *msg)
 		rally_grow(msg->mid, msg->from, msg->to);
 	}
 	intr_unlock();
-	proc_wakeup(msg->to);
+//	proc_wakeup(msg->to);
 }
 
 /*----------------------------------------------------------------------------*\
