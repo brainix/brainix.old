@@ -29,6 +29,7 @@
 
 /* Function prototypes: */
 void main(unsigned long magic, unsigned long multiboot_info_addr);
+void idle(void);
 void kernel(void);
 void shutdown(msg_t *msg);
 void print_init(bool init, char *s);
@@ -39,6 +40,10 @@ void print_done(void);
 \*----------------------------------------------------------------------------*/
 void main(unsigned long magic, unsigned long multiboot_info_addr)
 {
+
+/* After the machine boots (and GRUB loads Brainix), this is the first C
+ * function to run.  Tip the first domino... */
+
 	multiboot_info_t *multiboot_info = (multiboot_info_t *)
 		multiboot_info_addr;
 
@@ -49,34 +54,44 @@ void main(unsigned long magic, unsigned long multiboot_info_addr)
 	set_attr(SOLID, NORMAL_BG, NORMAL_FG);
 	printf("\n");
 
-	print_init(INIT, "hardware");
+	print_init(true, "hardware");
 	seg_init();
 	intr_init();
 	print_done();
 
-	print_init(INIT, "kernel");
+	print_init(true, "kernel");
 	paging_init(multiboot_info->mem_upper);
 	proc_init();
 	msg_init();
 	irq_init();
+	proc_create((unsigned long) idle, KERNEL);
 	proc_create((unsigned long) kernel, KERNEL);
 	print_done();
 
-	print_init(INIT, "timer");
+	print_init(true, "timer");
 	proc_create((unsigned long) timer_main, KERNEL);
 	print_done();
 
-	print_init(INIT, "file system");
+	print_init(true, "file system");
 	proc_create((unsigned long) fs_main, KERNEL);
 	print_done();
 
-	print_init(INIT, "drivers");
+	print_init(true, "drivers");
 	proc_create((unsigned long) mem_main, KERNEL);
 	proc_create((unsigned long) fdc_main, KERNEL);
 	proc_create((unsigned long) tty_main, KERNEL);
 	print_done();
 
 	printf("\n");
+	proc_sched();
+	panic("main", "unexpected flow of control");
+}
+
+/*----------------------------------------------------------------------------*\
+ |				     idle()				      |
+\*----------------------------------------------------------------------------*/
+void idle(void)
+{
 	proc_sched();
 	while (true)
 		halt();
@@ -126,18 +141,20 @@ void shutdown(msg_t *msg)
 {
 	printf("\n");
 
-	print_init(DEINIT, "user processes");
+	print_init(false, "user processes");
 	print_done();
 
-	print_init(DEINIT, "file system");
+	print_init(false, "file system");
+	msg_send(msg_alloc(FS_PID, SHUTDOWN));
+	msg_free(msg_receive(FS_PID));
 	print_done();
 
-	print_init(DEINIT, "timer");
+	print_init(false, "timer");
 	msg_send(msg_alloc(TMR_PID, SHUTDOWN));
 	msg_free(msg_receive(TMR_PID));
 	print_done();
 
-	print_init(DEINIT, "hardware");
+	print_init(false, "hardware");
 	if (msg->args.brnx_shutdown.reboot)
 		kbd_reboot();
 	print_done();

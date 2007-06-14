@@ -126,16 +126,18 @@
 #define FROWN		3 /* :-( */
 #define SHOUT		4 /* >:o */
 
+/* Process IDs: */
 #define ANYONE		-2
 #define HARDWARE	-1
-#define IDLE_PID	 0
-#define KERNEL_PID	 1
-#define TMR_PID	 	 2
-#define FS_PID		 3
-#define MEM_PID		 4
-#define FDC_PID		 5
-#define TTY_PID		 6
-#define INIT_PID	 7
+#define BOOT_PID	 0
+#define IDLE_PID	 1
+#define KERNEL_PID	 2
+#define TMR_PID	 	 3
+#define FS_PID		 4
+#define MEM_PID		 5
+#define FDC_PID		 6
+#define TTY_PID		 7
+#define INIT_PID	 8
 
 #define KERNEL		true
 #define USER		false
@@ -151,8 +153,6 @@
 #define WRITE		false
 #define BLINKING	true
 #define SOLID		false
-#define INIT		true
-#define DEINIT		false
 
 /* File system robustness values: */
 #define SLOPPY		0
