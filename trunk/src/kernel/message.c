@@ -35,8 +35,8 @@ void msg_init(void);
 mid_t calc_next_mid(void);
 msg_t *msg_alloc(pid_t to, unsigned char op);
 void msg_free(msg_t *msg);
-msg_t *msg_check(pid_t from);
-msg_t *msg_receive(pid_t from);
+msg_t *msg_check(mid_t mid);
+msg_t *msg_receive(mid_t mid);
 void msg_send(msg_t *msg);
 void msg_reply(msg_t *msg);
 void msg_empty(pid_t pid);
@@ -111,17 +111,17 @@ void msg_free(msg_t *msg)
 /*----------------------------------------------------------------------------*\
  |				  msg_check()				      |
 \*----------------------------------------------------------------------------*/
-msg_t *msg_check(pid_t from)
+msg_t *msg_check(mid_t mid)
 {
 
-/* Check for a message from the specified sender.  If one exists, remove it
- * from the mailbox and return a pointer to it.  Otherwise, return NULL. */
+/* Check for the specified message.  If it exists, remove it from the mailbox
+ * and return a pointer to it.  Otherwise, return NULL. */
 
 	pid_t to = do_getpid();
 	msg_t *msg = mbox[to];
 
 	intr_lock();
-	while (from != ANYONE && msg != NULL && msg->from != from)
+	while (mid != ANYONE && msg != NULL && msg->mid != mid)
 		if ((msg = msg->next) == mbox[to])
 			msg = NULL;
 	if (msg != NULL)
@@ -138,15 +138,15 @@ msg_t *msg_check(pid_t from)
 /*----------------------------------------------------------------------------*\
  |				 msg_receive()				      |
 \*----------------------------------------------------------------------------*/
-msg_t *msg_receive(pid_t from)
+msg_t *msg_receive(mid_t mid)
 {
 
-/* Receive a message from the specified sender. */
+/* Receive the specified message. */
 
 	msg_t *msg;
 	pid_t to = do_getpid();
 
-	while ((msg = msg_check(from)) == NULL)
+	while ((msg = msg_check(mid)) == NULL)
 		/* Race condition! */
 		proc_sleep(to);
 
