@@ -471,7 +471,8 @@ clock_t do_times(struct tms *buffer)
 	buffer->tms_cutime = proc[current_proc->pid].cutime;
 	buffer->tms_cstime = proc[current_proc->pid].cstime;
 
-	msg_send_receive(msg = msg_alloc(TMR_PID, UPTIME));
+	msg = msg_alloc(TMR_PID, UPTIME);
+	msg_send_receive(msg);
 	ret_val = msg->args.brnx_uptime.ret_val;
 	msg_free(msg);
 	return ret_val;

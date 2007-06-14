@@ -132,7 +132,8 @@ void kbd_irq(unsigned char scode)
 	/* If a Windows key is being pressed, spontaneously reboot. */
 	if (curr_scode == L_WIN || curr_scode == R_WIN || curr_scode == MENU)
 	{
-		(msg = msg_alloc(KERNEL_PID, SHUTDOWN))->from = TTY_PID;
+		msg = msg_alloc(KERNEL_PID, SHUTDOWN);
+		msg->from = TTY_PID;
 		msg->args.brnx_shutdown.reboot = true;
 		msg_send(msg);
 		return;
