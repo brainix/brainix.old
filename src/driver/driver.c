@@ -29,7 +29,7 @@
 /* Function prototypes: */
 void drvr_reg_kernel(unsigned char irq);
 void drvr_reg_fs(bool block, unsigned char maj);
-mid_t drvr_set_alarm(clock_t ticks, unsigned char type);
+void drvr_set_alarm(clock_t ticks, unsigned char type);
 void drvr_set_wait_alarm(clock_t ticks, unsigned char type,
 	unsigned char (*handle_alarm)(msg_t *msg));
 void drvr_do_nothing(void);
@@ -41,17 +41,19 @@ void drvr_main(drvr_t *drvr);
 void drvr_reg_kernel(unsigned char irq)
 {
 
-/* Register a driver with the µ-kernel.  This is only required of drivers for
+/* Register a driver with the kernel.  This is only required of drivers for
  * devices which use IRQs. */
 
-	/* Send a register message to the µ-kernel and await the µ-kernel's
-	 * reply. */
+	/* Send a register message to the kernel. */
 	msg_t *msg = msg_alloc(KERNEL_PID, REGISTER);
 	msg->args.brnx_reg.irq = irq;
-	msg_send_receive(msg);
+	msg_send(msg);
+
+	/* Await the kernel's reply. */
+	msg = msg_receive(KERNEL_PID);
 	msg_free(msg);
 
-	/* Now the µ-kernel will send messages to the current (device driver)
+	/* Now the kernel will send messages to the current (device driver)
 	 * process to report the specified IRQ. */
 }
 
@@ -73,7 +75,7 @@ void drvr_reg_fs(bool block, unsigned char maj)
 /*----------------------------------------------------------------------------*\
  |				drvr_set_alarm()			      |
 \*----------------------------------------------------------------------------*/
-mid_t drvr_set_alarm(clock_t ticks, unsigned char type)
+void drvr_set_alarm(clock_t ticks, unsigned char type)
 {
 
 /* Set an alarm. */
@@ -83,7 +85,6 @@ mid_t drvr_set_alarm(clock_t ticks, unsigned char type)
 	msg->args.brnx_watch.ticks = ticks;
 	msg->args.brnx_watch.type = type;
 	msg_send(msg);
-	return msg->mid;
 }
 
 /*----------------------------------------------------------------------------*\
@@ -95,10 +96,19 @@ void drvr_set_wait_alarm(clock_t ticks, unsigned char type,
 
 /* Set an alarm, then wait for it to sound. */
 
-	mid_t mid = drvr_set_alarm(ticks, type);
-	msg_t *msg = msg_receive(mid);
-	(*handle_alarm)(msg);
-	msg_free(msg);
+	msg_t *msg;
+	bool done;
+
+	/* Set the alarm. */
+	drvr_set_alarm(ticks, type);
+
+	/* Wait for it to sound. */
+	do
+	{
+		msg = msg_receive(TMR_PID);
+		done = (*handle_alarm)(msg) == type;
+		msg_free(msg);
+	} while (!done);
 }
 
 /*----------------------------------------------------------------------------*\

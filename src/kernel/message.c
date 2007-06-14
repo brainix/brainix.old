@@ -35,10 +35,9 @@ void msg_init(void);
 mid_t calc_next_mid(void);
 msg_t *msg_alloc(pid_t to, unsigned char op);
 void msg_free(msg_t *msg);
-msg_t *msg_check(mid_t mid);
-msg_t *msg_receive(mid_t mid);
+msg_t *msg_check(pid_t from);
+msg_t *msg_receive(pid_t from);
 void msg_send(msg_t *msg);
-msg_t *msg_send_receive(msg_t *msg);
 void msg_reply(msg_t *msg);
 void msg_empty(pid_t pid);
 
@@ -64,17 +63,15 @@ void msg_init(void)
 \*----------------------------------------------------------------------------*/
 mid_t calc_next_mid(void)
 {
-
-/* Calculate the next MID. */
-
 	static mid_t mid = -1;
 	mid_t bookmark = mid;
 
 	do
-		if ((mid = (mid + 1) % LONG_MAX) == bookmark)
+		if (++mid == bookmark)
 			if (rally_exists(mid))
 				panic("calc_next_mid", "out of MIDs");
 	while (rally_exists(mid));
+
 	return mid;
 }
 
@@ -114,25 +111,19 @@ void msg_free(msg_t *msg)
 /*----------------------------------------------------------------------------*\
  |				  msg_check()				      |
 \*----------------------------------------------------------------------------*/
-msg_t *msg_check(mid_t mid)
+msg_t *msg_check(pid_t from)
 {
 
-/* Check for the specified message.  If it exists, remove it from the mailbox
- * and return a pointer to it.  Otherwise, return NULL. */
+/* Check for a message from the specified sender.  If one exists, remove it
+ * from the mailbox and return a pointer to it.  Otherwise, return NULL. */
 
 	pid_t to = do_getpid();
 	msg_t *msg = mbox[to];
 
 	intr_lock();
-	while (msg != NULL)
-	{
-		if (mid == ANYONE || mid == HARDWARE && msg->from == HARDWARE)
-			break;
-		if (msg->mid == mid)
-			break;
+	while (from != ANYONE && msg != NULL && msg->from != from)
 		if ((msg = msg->next) == mbox[to])
 			msg = NULL;
-	}
 	if (msg != NULL)
 	{
 		if (msg == mbox[to])
@@ -147,18 +138,17 @@ msg_t *msg_check(mid_t mid)
 /*----------------------------------------------------------------------------*\
  |				 msg_receive()				      |
 \*----------------------------------------------------------------------------*/
-msg_t *msg_receive(mid_t mid)
+msg_t *msg_receive(pid_t from)
 {
 
-/* Receive the specified message. */
+/* Receive a message from the specified sender. */
 
 	msg_t *msg;
 	pid_t to = do_getpid();
 
-	while ((msg = msg_check(mid)) == NULL)
+	while ((msg = msg_check(from)) == NULL)
 		/* Race condition! */
-//		proc_sleep(to);
-		proc_sched();
+		proc_sleep(to);
 
 	return msg;
 
@@ -201,19 +191,7 @@ void msg_send(msg_t *msg)
 		rally_grow(msg->mid, msg->from, msg->to);
 	}
 	intr_unlock();
-//	proc_wakeup(msg->to);
-}
-
-/*----------------------------------------------------------------------------*\
- |			       msg_send_receive()			      |
-\*----------------------------------------------------------------------------*/
-msg_t *msg_send_receive(msg_t *msg)
-{
-
-/* Synchronously send and receive a message. */
-
-	msg_send(msg);
-	return msg_receive(msg->mid);
+	proc_wakeup(msg->to);
 }
 
 /*----------------------------------------------------------------------------*\

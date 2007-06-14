@@ -71,12 +71,14 @@ void speaker_freq(unsigned short new_freq)
 	 | able to return.
 	 */
 
-	/* Politely ask the timer to sound an alarm, and anxiously await the
-	 * alarm. */
+	/* Politely ask the timer to sound an alarm. */
 	msg = msg_alloc(TMR_PID, WATCHDOG);
 	msg->args.brnx_watch.ticks = 0;
 	msg->args.brnx_watch.type = ALARM_FREQ_SET;
-	msg_send_receive(msg);
+	msg_send(msg);
+
+	/* Anxiously await the alarm. */
+	msg = msg_receive(TMR_PID);
 	msg_free(msg);
 }
 

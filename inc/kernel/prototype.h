@@ -53,10 +53,9 @@ void do_free(void *ptr);
 /* message.c */
 msg_t *msg_alloc(pid_t to, unsigned char op);
 void msg_free(msg_t *msg);
-msg_t *msg_check(mid_t mid);
-msg_t *msg_receive(mid_t mid);
+msg_t *msg_check(pid_t from);
+msg_t *msg_receive(pid_t from);
 void msg_send(msg_t *msg);
-msg_t *msg_send_receive(msg_t *msg);
 void msg_reply(msg_t *msg);
 
 /* panic.c */

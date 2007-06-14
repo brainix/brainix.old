@@ -133,7 +133,8 @@ void shutdown(msg_t *msg)
 	print_done();
 
 	print_init(DEINIT, "timer");
-	msg_free(msg_send_receive(msg_alloc(TMR_PID, SHUTDOWN)));
+	msg_send(msg_alloc(TMR_PID, SHUTDOWN));
+	msg_free(msg_receive(TMR_PID));
 	print_done();
 
 	print_init(DEINIT, "hardware");

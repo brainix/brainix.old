@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage{code}
+
+\title{On the Implementation of the debugging for Brainix}
+\author{pqnelson}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+It seems all too evident that a system requiring programming will require debugging, especially for something as important as an operating system! So it seemed all too obvious that, by virtue of Murphy's Law (if something can go wrong, it will), we need to implement debugging features quickly. The impromptu solution was to present a debug function:
+\begin{code}{/brainix/src/drivers/video.c}
+void debug(unsigned int priority, char *message, ...);
+void dbug(char *message, ...);
+\end{code}
+Where the priority is ranked from 1 to some large number, 1 being the most important, and compared to \verb|DUM_DBUG| a constant defined in \verb|kernel.h|. If you want to turn off debugging features, set it to -1. The higher the value for \verb|priority|, the more esoteric the debugging results. Note that there is a shorter function \verb|dbug| which essentially calls \verb|debug| with a priority of \verb|1|.
+\section{FAQ}
+\subsection{What is the format for debug?}
+The standard format should be
+\begin{code}{typical debug}
+void debug(unsigned int priority-SYS_ESTERIC, "file_name.method(): your message here", ...);
+\end{code}
+The \verb|SYS_ESOTERIC| indicates the system (file system, driver, kernel, where-ever the debug is working in) debug emphasis. So if you have debug \emph{ONLY} the kernel, or \emph{ONLY} a part of the operating system, you go to its header (unless its a driver, then its defined in the driver's .c file) and you change the \verb|SYS_ESOTERIC| to 10 or something bigger. This will cause the debugger to print out only the messages from this system.
+\subsection{I'm making a new driver, and I don't know what to do about this debugger...}
+Well, suppose your driver file is \verb|X.c|. Near the top, insert the following code:
+\begin{code}{/brainix/src/drivers/X.c}
+ #define X_ESOTERIC     0
+\end{code}
+and simply put debugging information that you might find useful as
+\begin{code}{/brainix/src/drivers/X.c}
+     debug(1-X_ESOTERIC, "X.method(): debugging information...");
+\end{code}
+If you are debugging your dear code, then set \verb|X_ESOTERIC| to be some large number like 10. And you don't have to set the value to \verb|1-X_ESOTERIC| it could be any positive number minus \verb|X_ESOTERIC|.
+\end{document}
