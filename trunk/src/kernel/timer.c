@@ -343,7 +343,7 @@ void timer_main(void)
 				break;
 			case WATCHDOG:
 				timer_watch(msg);
-				/* Subtle: msg is neither sent nor freed --
+				/* Subtle: msg is neither sent nor freed -
 				 * rather, it's queued to be sent later. */
 				break;
 			case UPTIME:
