@@ -54,7 +54,7 @@ typedef struct
 	unsigned short i_links_count; /* Links count.                       */
 	unsigned long i_blocks;       /* 512-byte blocks reserved for file. */
 	unsigned long i_flags;        /* How to treat file.                 */
-	unsigned long i_osd1;         /* OS dependant value.                */
+	unsigned long i_osd1;         /* OS dependent value.                */
 	unsigned long i_block[15];    /* File data blocks.                  */
 	unsigned long i_generation;   /* File version (used by NFS).        */
 	unsigned long i_file_acl;     /* File ACL.                          */

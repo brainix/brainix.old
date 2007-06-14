@@ -29,7 +29,6 @@
 
 /* Function prototypes: */
 void main(unsigned long magic, unsigned long multiboot_info_addr);
-void idle(void);
 void kernel(void);
 void shutdown(msg_t *msg);
 void print_init(bool init, char *s);
@@ -64,7 +63,6 @@ void main(unsigned long magic, unsigned long multiboot_info_addr)
 	proc_init();
 	msg_init();
 	irq_init();
-	proc_create((unsigned long) idle, KERNEL);
 	proc_create((unsigned long) kernel, KERNEL);
 	print_done();
 
@@ -83,15 +81,6 @@ void main(unsigned long magic, unsigned long multiboot_info_addr)
 	print_done();
 
 	printf("\n");
-	proc_sched();
-	panic("main", "unexpected flow of control");
-}
-
-/*----------------------------------------------------------------------------*\
- |				     idle()				      |
-\*----------------------------------------------------------------------------*/
-void idle(void)
-{
 	proc_sched();
 	while (true)
 		halt();
@@ -145,8 +134,6 @@ void shutdown(msg_t *msg)
 	print_done();
 
 	print_init(false, "file system");
-	msg_send(msg_alloc(FS_PID, SHUTDOWN));
-	msg_free(msg_receive(FS_PID));
 	print_done();
 
 	print_init(false, "timer");
