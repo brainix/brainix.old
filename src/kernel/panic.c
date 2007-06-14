@@ -29,16 +29,11 @@
 
 /* Function prototype: */
 void panic(char *func, char *msg);
-void scream(char *func, char *msg, char *src);
 
 /*----------------------------------------------------------------------------*\
  |				    panic()				      |
 \*----------------------------------------------------------------------------*/
 void panic(char *func, char *msg)
-{
-	scream(func, msg, "unknown caller");
-}
-void scream(char *func, char *msg, char *src)
 {
 
 /* Houston, we have a problem... */
@@ -72,16 +67,6 @@ void scream(char *func, char *msg, char *src)
 	printf(":");
 	set_attr(SOLID, NORMAL_BG, NORMAL_FG);
 	printf(" %s()\n  ", func);
-
-	set_attr(SOLID, IMPORTANT_BG, IMPORTANT_FG);
-	printf("source");
-	set_attr(SOLID, NORMAL_BG, NORMAL_FG);
-	printf("  ");
-	set_attr(SOLID, UNIMPORTANT_BG, UNIMPORTANT_FG);
-	printf(":");
-	set_attr(SOLID, NORMAL_BG, NORMAL_FG);
-	printf(" %s\n", src);
-
 
 	set_attr(SOLID, IMPORTANT_BG, IMPORTANT_FG);
 	printf("message");

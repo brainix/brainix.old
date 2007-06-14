@@ -27,8 +27,6 @@
 #ifndef _FS_H
 #define _FS_H
 
-#define FS_ESOTERIC	10
-
 #include <kernel/kernel.h>
 
 #include <errno.h>

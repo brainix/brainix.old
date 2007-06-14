@@ -31,7 +31,6 @@
 \*----------------------------------------------------------------------------*/
 ssize_t rw_fildes(bool read, int fildes, void *buf, size_t nbyte)
 {
-	debug(1-FS_ESOTERIC, "read.rw_fildes(): Attempting to read/write fildes.\n");
 	file_ptr_t *open_descr = fildes_to_open_descr(fildes);
 	inode_t *inode_ptr = fildes_to_inode(fildes);
 	off_t off = open_descr == NULL ? 0 : open_descr->offset;
@@ -43,40 +42,20 @@ ssize_t rw_fildes(bool read, int fildes, void *buf, size_t nbyte)
 	super_t *super_ptr;
 
 	if (open_descr == NULL)
-	{
-		debug(2-FS_ESOTERIC, "read.rw_fildes(): open descriptor null.\n");
 		return -(err_code = EBADF);
-	}
 	if ((open_descr->mode & (O_RDWR | read ? O_RDONLY : O_WRONLY)) == 0)
-	{
-		debug(2-FS_ESOTERIC, "read.rw_fildes(): no permissions to read/write fildes.\n");
 		return -(err_code = EPERM);
-	}
 	if (inode_ptr == NULL)
-	{
-		debug(2-FS_ESOTERIC, "read.rw_fildes(): The inode pointer is null.\n");
 		return -(err_code = EBADF);
-	}
 	if (!perm(inode_ptr, read ? R_OK : W_OK, false))
-	{
-		debug(2-FS_ESOTERIC, "read.rw_fildes(): do not have permission to read/write fildes to the inode.\n");
 		return -(err_code = EPERM);
-	}
 	if (read && is_dir(inode_ptr))
-	{
-		debug(2-FS_ESOTERIC, "read.rw_fildes(): error trying to write fildes to a directory.\n");
 		return -(err_code = EISDIR);
-	}
 	if (!read && off + nbyte > inode_ptr->i_blocks * BLOCK_SIZE)
-	{
-		debug(2-FS_ESOTERIC, "read.rw_fildes(): error file too big (EFBIG?).\n");
 		return -(err_code = EFBIG);
-	}
 	if (nbyte == 0)
-	{
-		debug(2-FS_ESOTERIC, "read.rw_fildes(): nbytes to read or write is 0.\n");
 		return 0;
-	}
+
 	if (is_blk(inode_ptr) || is_chr(inode_ptr))
 	{
 		size = dev_rw(dev, is_blk(inode_ptr), read, off, nbyte, buf);
@@ -113,9 +92,7 @@ ssize_t rw_fildes(bool read, int fildes, void *buf, size_t nbyte)
 		super_ptr->s_wtime = inode_ptr->i_mtime = do_time(NULL);
 		super_ptr->dirty = true;
 	}
-	debug(1-FS_ESOTERIC, "read.rw_fildes(): completed.\n");
 	return completed;
-	return 0;
 }
 
 /*----------------------------------------------------------------------------*\

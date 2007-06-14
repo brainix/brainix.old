@@ -115,7 +115,6 @@ void irq_register(msg_t *msg);
 
 /* keyboard.c */
 void kbd_reboot(void);
-void kbd_out(unsigned char value, unsigned short port);
 
 /* malloc.c */
 bool heap_pg_fault(bool kernel, unsigned long lin);
