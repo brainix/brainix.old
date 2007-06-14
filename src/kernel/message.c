@@ -38,6 +38,7 @@ void msg_free(msg_t *msg);
 msg_t *msg_check(mid_t mid);
 msg_t *msg_receive(mid_t mid);
 void msg_send(msg_t *msg);
+msg_t *msg_send_receive(msg_t *msg);
 void msg_reply(msg_t *msg);
 void msg_empty(pid_t pid);
 
@@ -63,15 +64,17 @@ void msg_init(void)
 \*----------------------------------------------------------------------------*/
 mid_t calc_next_mid(void)
 {
+
+/* Calculate the next MID. */
+
 	static mid_t mid = -1;
 	mid_t bookmark = mid;
 
 	do
-		if (++mid == bookmark)
+		if ((mid = (mid + 1) % LONG_MAX) == bookmark)
 			if (rally_exists(mid))
 				panic("calc_next_mid", "out of MIDs");
 	while (rally_exists(mid));
-
 	return mid;
 }
 
@@ -192,6 +195,15 @@ void msg_send(msg_t *msg)
 	}
 	intr_unlock();
 	proc_wakeup(msg->to);
+}
+
+/*----------------------------------------------------------------------------*\
+ |			       msg_send_receive()			      |
+\*----------------------------------------------------------------------------*/
+msg_t *msg_send_receive(msg_t *msg)
+{
+	msg_send(msg);
+	return msg_receive(msg->mid);
 }
 
 /*----------------------------------------------------------------------------*\

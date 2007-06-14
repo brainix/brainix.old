@@ -312,16 +312,12 @@ pid_t do_fork(void)
 
 /* Perform the fork() system call.  God damn, Unix is goofy. */
 
-	msg_t *msg;
-	mid_t mid;
+	msg_t *msg = msg_alloc(KERNEL_PID, SYS_FORK);
 	pid_t ret_val;
 
-	/* Politely ask the µ-kernel to fork(). */
-	mid = (msg = msg_alloc(KERNEL_PID, SYS_FORK))->mid;
-	msg_send(msg);
-
-	/* Anxiously await the µ-kernel's reply. */
-	msg = msg_receive(mid);
+	/* Politely ask the µ-kernel to fork() and anxiously await the
+	 * µ-kernel's reply. */
+	msg_send_receive(msg);
 	ret_val = msg->args.fork.ret_val;
 
 	/* What the hell just happened? */
@@ -350,15 +346,13 @@ int do_execve(const char *path, char *const argv[], char *const envp[])
 /* Politely ask the file system to perform the execve() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_EXECVE);
-	mid_t mid = msg->mid;
-
 	msg->args.execve.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.execve.path, path);
 	leaky_copy(&msg->args.execve.argv, &argv);
 	leaky_copy(&msg->args.execve.envp, &envp);
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.execve.path);
 	leaky_free(&msg->args.execve.argv);
 	leaky_free(&msg->args.execve.envp);
@@ -461,12 +455,10 @@ unsigned do_alarm(unsigned seconds)
 /* Politely ask the timer to perform the alarm() system call. */
 
 	msg_t *msg = msg_alloc(TMR_PID, SYS_ALARM);
-	mid_t mid = msg->mid;
-
 	msg->args.alarm.seconds = seconds;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	return cleanup(msg);
 }
 
@@ -479,14 +471,12 @@ int do_access(const char *path, int amode)
 /* Politely ask the file system to perform the access() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_ACCESS);
-	mid_t mid = msg->mid;
-
 	msg->args.access.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.access.path, path);
 	msg->args.access.amode = amode;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.access.path);
 	return cleanup(msg);
 }
@@ -500,12 +490,10 @@ int do_close(int fildes)
 /* Politely ask the file system to perform the close() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_CLOSE);
-	mid_t mid = msg->mid;
-
 	msg->args.close.fildes = fildes;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	return cleanup(msg);
 }
 
@@ -518,12 +506,10 @@ int do_dup(int fildes)
 /* Politely ask the file system to perform the dup() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_DUP);
-	mid_t mid = msg->mid;
-
 	msg->args.dup.fildes = fildes;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	return cleanup(msg);
 }
 
@@ -536,13 +522,11 @@ int do_dup2(int fildes, int fildes2)
 /* Politely ask the file system to perform the dup2() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_DUP2);
-	mid_t mid = msg->mid;
-
 	msg->args.dup2.fildes = fildes;
 	msg->args.dup2.fildes2 = fildes2;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	return cleanup(msg);
 }
 
@@ -555,14 +539,12 @@ int do_fcntl(int fildes, int cmd, int arg)
 /* Politely ask the file system to perform the fcntl() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_FCNTL);
-	mid_t mid = msg->mid;
-
 	msg->args.fcntl.fildes = fildes;
 	msg->args.fcntl.cmd = cmd;
 	msg->args.fcntl.arg = arg;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	return cleanup(msg);
 }
 
@@ -575,7 +557,6 @@ int do_fstat(int fildes, struct stat *buf)
 /* Politely ask the file system to perform the fstat() system call. */
 
 	msg_t *msg;
-	mid_t mid;
 
 	if ((unsigned long) buf < pg_addr(USER, HEAP, BOTTOM))
 	{
@@ -583,12 +564,12 @@ int do_fstat(int fildes, struct stat *buf)
 		return -1;
 	}
 
-	mid = (msg = msg_alloc(FS_PID, SYS_FSTAT))->mid;
+	msg = msg_alloc(FS_PID, SYS_FSTAT);
 	msg->args.fstat.fildes = fildes;
 	msg->args.fstat.buf = kmalloc(sizeof(struct stat));
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	buf = msg->args.fstat.buf;
 	kfree(msg->args.fstat.buf);
 	return cleanup(msg);
@@ -603,14 +584,12 @@ int do_ioctl(int fildes, int request, int arg)
 /* Politely ask the file system to perform the ioctl() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_IOCTL);
-	mid_t mid = msg->mid;
-
 	msg->args.ioctl.fildes = fildes;
 	msg->args.ioctl.request = request;
 	msg->args.ioctl.arg = arg;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	return cleanup(msg);
 }
 
@@ -623,14 +602,12 @@ off_t do_lseek(int fildes, off_t offset, int whence)
 /* Politely ask the file system to perform the lseek() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_LSEEK);
-	mid_t mid = msg->mid;
-
 	msg->args.lseek.fildes = fildes;
 	msg->args.lseek.offset = offset;
 	msg->args.lseek.whence = whence;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	return cleanup(msg);
 }
 
@@ -643,15 +620,13 @@ int do_open(const char *path, int oflag, mode_t mode)
 /* Politely ask the file system to perform the open() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_OPEN);
-	mid_t mid = msg->mid;
-
 	msg->args.open.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.open.path, path);
 	msg->args.open.oflag = oflag;
 	msg->args.open.mode = mode;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.open.path);
 	return cleanup(msg);
 }
@@ -665,7 +640,6 @@ ssize_t do_read(int fildes, void *buf, size_t nbyte)
 /* Politely ask the file system to perform the read() system call. */
 
 	msg_t *msg;
-	mid_t mid;
 
 	if ((unsigned long) buf < pg_addr(USER, HEAP, BOTTOM))
 	{
@@ -673,13 +647,13 @@ ssize_t do_read(int fildes, void *buf, size_t nbyte)
 		return -1;
 	}
 
-	mid = (msg = msg_alloc(FS_PID, SYS_READ))->mid;
+	msg = msg_alloc(FS_PID, SYS_READ);
 	msg->args.read.fildes = fildes;
 	msg->args.read.buf = kmalloc(nbyte);
 	msg->args.read.nbyte = nbyte;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	memcpy(buf, msg->args.read.buf, nbyte);
 	kfree(msg->args.read.buf);
 	return cleanup(msg);
@@ -694,7 +668,6 @@ int do_stat(const char *path, struct stat *buf)
 /* Politely ask the file system to perform the stat() system call. */
 
 	msg_t *msg;
-	mid_t mid;
 
 	if ((unsigned long) buf < pg_addr(USER, HEAP, BOTTOM))
 	{
@@ -702,13 +675,13 @@ int do_stat(const char *path, struct stat *buf)
 		return -1;
 	}
 
-	mid = (msg = msg_alloc(FS_PID, SYS_STAT))->mid;
+	msg = msg_alloc(FS_PID, SYS_STAT);
 	msg->args.stat.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.stat.path, path);
 	msg->args.stat.buf = kmalloc(sizeof(struct stat));
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.stat.path);
 	buf = msg->args.stat.buf;
 	kfree(msg->args.stat.buf);
@@ -724,7 +697,6 @@ ssize_t do_write(int fildes, const void *buf, size_t nbyte)
 /* Politely ask the file system to perform the write() system call. */
 
 	msg_t *msg;
-	mid_t mid;
 
 	if ((unsigned long) buf < pg_addr(USER, HEAP, BOTTOM))
 	{
@@ -732,14 +704,14 @@ ssize_t do_write(int fildes, const void *buf, size_t nbyte)
 		return -1;
 	}
 
-	mid = (msg = msg_alloc(FS_PID, SYS_WRITE))->mid;
+	msg = msg_alloc(FS_PID, SYS_WRITE);
 	msg->args.write.fildes = fildes;
 	msg->args.write.buf = kmalloc(nbyte);
 	memcpy(msg->args.write.buf, buf, nbyte);
 	msg->args.write.nbyte = nbyte;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.write.buf);
 	return cleanup(msg);
 }
@@ -753,13 +725,11 @@ int do_chdir(const char *path)
 /* Politely ask the file system to perform the chdir() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_CHDIR);
-	mid_t mid = msg->mid;
-
 	msg->args.chdir.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.chdir.path, path);
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.chdir.path);
 	return cleanup(msg);
 }
@@ -773,13 +743,11 @@ int do_chroot(const char *path)
 /* Politely ask the file system to perform the chroot() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_CHROOT);
-	mid_t mid = msg->mid;
-
 	msg->args.chroot.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.chroot.path, path);
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.chroot.path);
 	return cleanup(msg);
 }
@@ -793,15 +761,13 @@ int do_link(const char *path1, const char *path2)
 /* Politely ask the file system to perform the link() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_LINK);
-	mid_t mid = msg->mid;
-
 	msg->args.link.path1 = kmalloc(PATH_MAX);
 	strcpy(msg->args.link.path1, path1);
 	msg->args.link.path2 = kmalloc(PATH_MAX);
 	strcpy(msg->args.link.path2, path2);
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.link.path1);
 	kfree(msg->args.link.path2);
 	return cleanup(msg);
@@ -815,8 +781,7 @@ void do_sync(void)
 
 /* Politely ask the file system to perform the sync() system call. */
 
-	msg_t *msg = msg_alloc(FS_PID, SYS_SYNC);
-	msg_send(msg);
+	msg_send(msg_alloc(FS_PID, SYS_SYNC));
 
 	/* Subtle: sync() doesn't return a value.  So it's kind of ridiculous to
 	 * wait for a reply just to free the message's memory.  So the message's
@@ -832,13 +797,11 @@ int do_unlink(const char *path)
 /* Politely ask the file system to perform the unlink() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_UNLINK);
-	mid_t mid = msg->mid;
-
 	msg->args.unlink.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.unlink.path, path);
-	msg_send(msg);
 
-	msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.unlink.path);
 	return cleanup(msg);
 }
@@ -852,14 +815,12 @@ int do_chmod(const char *path, mode_t mode)
 /* Politely ask the file system to perform the chmod() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_CHMOD);
-	mid_t mid = msg->mid;
-
 	msg->args.chmod.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.chmod.path, path);
 	msg->args.chmod.mode = mode;
-	msg_send(msg);
 
-	msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.chmod.path);
 	return cleanup(msg);
 }
@@ -873,15 +834,13 @@ int do_chown(const char *path, uid_t owner, gid_t group)
 /* Politely ask the file system to perform the chown() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_CHOWN);
-	mid_t mid = msg->mid;
-
 	msg->args.chown.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.chown.path, path);
 	msg->args.chown.owner = owner;
 	msg->args.chown.group = group;
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.chown.path);
 	return cleanup(msg);
 }
@@ -895,12 +854,10 @@ mode_t do_umask(mode_t cmask)
 /* Politely ask the file system to perform the umask() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_UMASK);
-	mid_t mid = msg->mid;
-
 	msg->args.umask.cmask = cmask;
-	msg_send(msg);
 
-	msg_receive(mid);
+	msg_send_receive(msg);
+
 	return cleanup(msg);
 }
 
@@ -913,7 +870,6 @@ time_t do_time(time_t *tloc)
 /* Politely ask the timer to perform the time() system call. */
 
 	msg_t *msg;
-	mid_t mid;
 
 	if (tloc != NULL && (unsigned long) tloc < pg_addr(USER, HEAP, BOTTOM))
 	{
@@ -921,14 +877,11 @@ time_t do_time(time_t *tloc)
 		return -1;
 	}
 
-	mid = (msg = msg_alloc(TMR_PID, SYS_TIME))->mid;
-	if (tloc == NULL)
-		msg->args.time.tloc = NULL;
-	else
-		msg->args.time.tloc = kmalloc(sizeof(time_t));
-	msg_send(msg);
+	msg = msg_alloc(TMR_PID, SYS_TIME);
+	msg->args.time.tloc = tloc == NULL ? NULL : kmalloc(sizeof(size_t));
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	if (tloc != NULL)
 	{
 		*tloc = *msg->args.time.tloc;
@@ -946,8 +899,6 @@ int do_utime(const char *path, const struct utimbuf *times)
 /* Politely ask the file system to perform the utime() system call. */
 
 	msg_t *msg = msg_alloc(FS_PID, SYS_UTIME);
-	mid_t mid = msg->mid;
-
 	msg->args.utime.path = kmalloc(PATH_MAX);
 	strcpy(msg->args.utime.path, path);
 	if (times == NULL)
@@ -958,9 +909,9 @@ int do_utime(const char *path, const struct utimbuf *times)
 		msg->args.utime.times->actime = times->actime;
 		msg->args.utime.times->modtime = times->modtime;
 	}
-	msg_send(msg);
 
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
+
 	kfree(msg->args.utime.path);
 	kfree(msg->args.utime.times);
 	return cleanup(msg);
