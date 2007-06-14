@@ -157,7 +157,8 @@ msg_t *msg_receive(mid_t mid)
 
 	while ((msg = msg_check(mid)) == NULL)
 		/* Race condition! */
-		proc_sleep(to);
+//		proc_sleep(to);
+		proc_sched();
 
 	return msg;
 
@@ -200,7 +201,7 @@ void msg_send(msg_t *msg)
 		rally_grow(msg->mid, msg->from, msg->to);
 	}
 	intr_unlock();
-	proc_wakeup(msg->to);
+//	proc_wakeup(msg->to);
 }
 
 /*----------------------------------------------------------------------------*\
