@@ -29,7 +29,7 @@
 /* Function prototypes: */
 void drvr_reg_kernel(unsigned char irq);
 void drvr_reg_fs(bool block, unsigned char maj);
-void drvr_set_alarm(clock_t ticks, unsigned char type);
+mid_t drvr_set_alarm(clock_t ticks, unsigned char type);
 void drvr_set_wait_alarm(clock_t ticks, unsigned char type,
 	unsigned char (*handle_alarm)(msg_t *msg));
 void drvr_do_nothing(void);
