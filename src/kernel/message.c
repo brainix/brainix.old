@@ -124,9 +124,15 @@ msg_t *msg_check(mid_t mid)
 	msg_t *msg = mbox[to];
 
 	intr_lock();
-	while (mid != ANYONE && msg != NULL && msg->mid != mid)
+	while (msg != NULL)
+	{
+		if (mid == ANYONE || mid == HARDWARE && msg->from == HARDWARE)
+			break;
+		if (msg->mid == mid)
+			break;
 		if ((msg = msg->next) == mbox[to])
 			msg = NULL;
+	}
 	if (msg != NULL)
 	{
 		if (msg == mbox[to])
@@ -202,6 +208,9 @@ void msg_send(msg_t *msg)
 \*----------------------------------------------------------------------------*/
 msg_t *msg_send_receive(msg_t *msg)
 {
+
+/* Synchronously send and receive a message. */
+
 	msg_send(msg);
 	return msg_receive(msg->mid);
 }
