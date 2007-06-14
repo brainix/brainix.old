@@ -98,14 +98,14 @@ void task_init(void)
 	}
 
 	heap_init(pg_dir = save_dir(), KERNEL); /* Create a kernel heap. */
-//	heap_init(pg_dir, USER);                /* Create a user heap.   */
+	heap_init(pg_dir, USER);                /* Create a user heap.   */
 
 	/* Fill in the TSS. */
-	task[BOOT_PID].tss.cr3.reserved_0 = 0;
-	task[BOOT_PID].tss.cr3.pwt = 0;
-	task[BOOT_PID].tss.cr3.pcd = 0;
-	task[BOOT_PID].tss.cr3.reserved_1 = 0;
-	task[BOOT_PID].tss.cr3.sign_phys = pg_dir / PG_SIZE;
+	task[IDLE_PID].tss.cr3.reserved_0 = 0;
+	task[IDLE_PID].tss.cr3.pwt = 0;
+	task[IDLE_PID].tss.cr3.pcd = 0;
+	task[IDLE_PID].tss.cr3.reserved_1 = 0;
+	task[IDLE_PID].tss.cr3.sign_phys = pg_dir / PG_SIZE;
 
 	descr_tr->rpl = USER_PL;
 	descr_tr->ti = GDT;
