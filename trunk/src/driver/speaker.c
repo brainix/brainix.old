@@ -53,7 +53,6 @@ void speaker_freq(unsigned short new_freq)
 /* Set the frequency for the PC speaker. */
 
 	msg_t *msg;
-	mid_t mid;
 
 	if (old_freq == new_freq)
 		return;
@@ -72,14 +71,12 @@ void speaker_freq(unsigned short new_freq)
 	 | able to return.
 	 */
 
-	/* Politely ask the timer to sound an alarm. */
-	mid = (msg = msg_alloc(TMR_PID, WATCHDOG))->mid;
+	/* Politely ask the timer to sound an alarm, and anxiously await the
+	 * alarm. */
+	msg = msg_alloc(TMR_PID, WATCHDOG);
 	msg->args.brnx_watch.ticks = 0;
 	msg->args.brnx_watch.type = ALARM_FREQ_SET;
-	msg_send(msg);
-
-	/* Anxiously await the alarm. */
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
 	msg_free(msg);
 }
 

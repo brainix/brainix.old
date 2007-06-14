@@ -41,20 +41,17 @@ void drvr_main(drvr_t *drvr);
 void drvr_reg_kernel(unsigned char irq)
 {
 
-/* Register a driver with the kernel.  This is only required of drivers for
+/* Register a driver with the µ-kernel.  This is only required of drivers for
  * devices which use IRQs. */
 
-	/* Send a register message to the kernel. */
+	/* Send a register message to the µ-kernel and await the µ-kernel's
+	 * reply. */
 	msg_t *msg = msg_alloc(KERNEL_PID, REGISTER);
-	mid_t mid = msg->mid;
 	msg->args.brnx_reg.irq = irq;
-	msg_send(msg);
-
-	/* Await the kernel's reply. */
-	msg = msg_receive(mid);
+	msg_send_receive(msg);
 	msg_free(msg);
 
-	/* Now the kernel will send messages to the current (device driver)
+	/* Now the µ-kernel will send messages to the current (device driver)
 	 * process to report the specified IRQ. */
 }
 
@@ -98,18 +95,10 @@ void drvr_set_wait_alarm(clock_t ticks, unsigned char type,
 
 /* Set an alarm, then wait for it to sound. */
 
-	/* Set the alarm. */
 	mid_t mid = drvr_set_alarm(ticks, type);
-	msg_t *msg;
-	bool done;
-
-	/* Wait for it to sound. */
-	do
-	{
-		msg = msg_receive(mid);
-		done = (*handle_alarm)(msg) == type;
-		msg_free(msg);
-	} while (!done);
+	msg_t *msg = msg_receive(mid);
+	(*handle_alarm)(msg);
+	msg_free(msg);
 }
 
 /*----------------------------------------------------------------------------*\
