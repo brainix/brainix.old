@@ -31,34 +31,17 @@
 \*----------------------------------------------------------------------------*/
 int do_fs_open(const char *path, int oflag, mode_t mode)
 {
- 
-	debug(1-FS_ESOTERIC,"FileSystem.Open(): Attempting to open %s\n",path);
- 
 	int fildes = 0;
 	inode_t *inode_ptr = NULL;
 	dev_t dev;
 	bool block;
 
 	if (!err_code)
-	{
 		fildes = descr_get();
- 
-	debug(1-FS_ESOTERIC,"FileSystem.Open(): ERROR WITH OPENING THE DEVICE! %d\n",fildes);
- 
-	}
 	if (!err_code)
-	{
 		inode_ptr = path_to_inode(path);
- 
-	debug(1-FS_ESOTERIC,"FileSystem.Open(): No Error opening the device \n");
- 
-
-	}
 	if (err_code)
 	{
- 
-	debug(1-FS_ESOTERIC,"FileSystem.Open(): Cheap ass solution in place. \n");
- 
 		descr_put(fildes);
 		inode_put(inode_ptr);
 		return -err_code;

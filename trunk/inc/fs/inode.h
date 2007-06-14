@@ -60,7 +60,7 @@ typedef struct
 	unsigned long i_file_acl;     /* File ACL.                          */
 	unsigned long i_dir_acl;      /* Directory ACL.                     */
 	unsigned long i_faddr;        /* Fragment address.                  */
-	unsigned long i_osd2[3];      /* OS dependant structure.            */
+	unsigned long i_osd2[3];      /* OS dependent structure.            */
 
 	/* The following fields do not reside on the device: */
 	dev_t dev;                    /* Device the inode is on.            */

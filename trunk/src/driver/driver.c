@@ -25,7 +25,6 @@
  */
 
 #include <driver/driver.h>
-#include <lib/string.h>
 
 /* Function prototypes: */
 void drvr_reg_kernel(unsigned char irq);
@@ -64,24 +63,13 @@ void drvr_reg_kernel(unsigned char irq)
 void drvr_reg_fs(bool block, unsigned char maj)
 {
 
-// Register a driver with the file system. *
+/* Register a driver with the file system. */
 
-	// Send a register message to the file system. *
+	/* Send a register message to the file system. */
 	msg_t *msg = msg_alloc(FS_PID, REGISTER);
 	msg->args.brnx_reg.block = block;
 	msg->args.brnx_reg.maj = maj;
 	msg_send(msg);
-
-	/* Await the file system's reply. */
-/*	msg = msg_receive(FS_PID);
-	if((msg->op)==SYS_OPEN) {
-//		(*drvr->open)();
-//		msg_reply(*drvr->msg);
-		scream("drvr_reg_fs", "message never delivered", "driver");
-	} else {
-		msg_free(msg);
-	}
-*/
 }
 
 /*----------------------------------------------------------------------------*\
@@ -135,7 +123,7 @@ void drvr_do_nothing(void)
 
 /*----------------------------------------------------------------------------*\
  |				  drvr_main()				      |
-\*-------------------------------------msg_free(*drvr->msg);---------------------------------------*/
+\*----------------------------------------------------------------------------*/
 void drvr_main(drvr_t *drvr)
 {
 	/* Initialize the driver. */
@@ -150,7 +138,7 @@ void drvr_main(drvr_t *drvr)
 		{
 			case IRQ:
 				(*drvr->irq)();
-//				msg_free(*drvr->msg);
+				msg_free(*drvr->msg);
 				break;
 			case WATCHDOG:
 				(*drvr->alarm)();
@@ -159,34 +147,26 @@ void drvr_main(drvr_t *drvr)
 			case SYS_OPEN:
 				(*drvr->open)();
 				msg_reply(*drvr->msg);
-	//			msg_free(*drvr->msg);
 				break;
 			case SYS_CLOSE:
 				(*drvr->close)();
 				msg_reply(*drvr->msg);
-//				msg_free(*drvr->msg);
 				break;
 			case SYS_READ:
 				(*drvr->read)();
 				msg_reply(*drvr->msg);
-		//		msg_free(*drvr->msg);
 				break;
 			case SYS_WRITE:
 				(*drvr->write)();
 				msg_reply(*drvr->msg);
-//				msg_free(*drvr->msg);
 				break;
 			case SYS_IOCTL:
 				(*drvr->ioctl)();
 				msg_reply(*drvr->msg);
-//				msg_free(*drvr->msg);
-				break;
-			case REGISTER:
 				break;
 			default:
-				scream("drvr_main", "unexpected message", "driver");
+				panic("drvr_main", "unexpected message");
 		}
-//		msg_free(*drvr->msg);
 		(*drvr->cleanup)();
 	}
 
