@@ -1,0 +1,19 @@
+#summary Status and Future of the File System.
+
+OK, so Raj and I have figured out that the file system works fine, it's the fact that the idle process really sucks is the problem. That's where the page faults came in.
+
+The file system appears to be in ok shape...not great, but not terrible either.
+
+Now, as for the future of the file system, we still don't know. Raj suggested that we use an APACHE like fork() system where every message received would result in a fork of the file system that did an operation then died.
+
+I think that is a good idea, and probably it would work. Perhaps we should try even based programming, and create an event() type handling?
+
+This thought of event oriented programming for the file system occurred to me as I was reminiscing about my days learning Java from Dr. Neat. All those irritating actionEvents in Java.awt, good times...
+
+At any rate, I think that event based programming is the way to approach the problem. I am not sure how to approach programming event based file system "sub-programs" but perhaps it could be done. It's something to think about.
+
+We do need to implement some sort of "child process" to actually carry out the work of the file system, so we can have a truly unix-like file system. That is the important thing. 
+
+The details of how to do this exactly is still up in the air...particularly because the fork() method is part of the file system, and the only way that appears to be feasible is using the create_process() method which would make the system bloat.
+
+Time to put on our thinking caps... 
