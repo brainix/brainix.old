@@ -349,7 +349,7 @@ To inspect the inner workings of the \verb|super_init()| method we need to first
 81      bool dirty;                        /* Superblock changed since read. */
 82 } super_t;
 \end{code}
-This is the super block, and - as previously iterated a number of times - this is from the ext2 file system. The superblock should have the magic number \verb|s_magic| which tells us this is indeed the ext2 file system. Line 61 tells us the revision level which allows the mounting code to determine whether or not this file system supports features available to particular revisions. When a new file is created, the values of the \verb|s_free_inodes_count| field in the Ext2 superblock and of the \verb|bg_free_inodes_count| field in the proper group descriptor must be decremented. If the kernel appends some data to an existing file so that the number of data blocks allocated for it increases, the values of the \verb|s_free_blocks_count| field in the Ext2 superblock and of the \verb|bg_free_blocks_count| field in the group descriptor must be modified. Even just rewriting a portion of an existing file involves an update of the \verb|s_wtime| field of the Ext2 superblock. 
+This is the super block, and - as previously iterated a number of times - this is from the ext2 file system. The superblock should have the magic number \verb|s_magic| which tells us this is indeed the ext2 file system. Line 61 tells us the revision level which allows the mounting code to determine whether or not this file system supports features available to particular revisions. When a new file is created, the values of the \verb|s_free_inodes_count| field in the Ext2 superblock and of the \verb|bg_free_inodes_count| field in the proper group descriptor must be decremented. If the kernel appends some data to an existing file so that the number of data blocks allocated for it increases, the values of the \verb|s_free_blocks_count| field in the Ext2 superblock and of the \verb|bg_free_blocks_count| field in the group descriptor must be modified. Even just rewriting a portion of an existing file involves an update of the \verb|s_wtime| field of the Ext2 superblock. For a more in-depth analysis of the ext2 file system's \verb|super_block| data structure which was forked for the Brainix file system, see Chapter 18~\cite{linuxbook} or \cite{3}~\cite{7}~\cite{8}.
 
 \begin{code}{/brainix/src/fs/super.c}
 32 void super_init(void)
@@ -377,6 +377,19 @@ More specifically, in more detail, line 42 sets each super block's device to \ve
 
 \subsection{dev\_init()}
 
+\subsubsection{The pid\_t data structure}
+
+We should first inspect the vital data structure relevant to discussion here: \verb|pid_t| which is defined in /brainix/inc/lib/unistd.h:
+\begin{code}{/brainix/inc/lib/unistd.h}
+112 #ifndef _PID_T
+113 #define _PID_T
+114 typedef long pid_t;
+115 #endif
+\end{code}
+That's pretty much the only new data structure (or type, rather) that's relevant for discussion here.
+
+\subsubsection{Back to the dev\_init() method}
+
 The next function called in the \verb|init()| section of the file system server is the \verb|dev_init()|. This is defined in the \verb|/brainix/src/fs/device.c| file:
 \begin{code}{/brainix/src/fs/device.c}
 55 void dev_init(void)
@@ -391,9 +404,40 @@ The next function called in the \verb|init()| section of the file system server 
 64           driver_pid[CHAR][maj] = NO_PID;
 65 }
 \end{code}
-This is the \verb|dev_init()| code, that basically initializes the device driver part of the PID\footnote{``PID'' stands for ``Process identification''.} table. At first looking at the for-loop, one says ``This won't work!'' But upon further inspection, the line 63 doesn't have a semicolon, so the compiler continues to the next line (line 64). It sets the \verb|driver_pid[BLOCK][maj]| to be \verb|NO_PID|. It does this for every major device (more precisely, for the number of drivers \verb|NUM_DRIVERS|). 
+This is the \verb|dev_init()| code, that basically initializes the device driver part of the PID\footnote{``PID'' stands for ``Process identification''.} table. At first looking at the for-loop, one says ``This won't work!'' But upon further inspection, the line 63 doesn't have a semicolon, so the compiler continues to the next line (line 64). It sets the \verb|driver_pid[BLOCK][maj]| to be \verb|NO_PID|. It does this for every major device (more precisely, for the number of drivers \verb|NUM_DRIVERS|). Note that the first index of the matrix that represents the device driver PID table is capable of having values 0 and 1, represented by \verb|BLOCK| and \verb|CHAR| respectively. 
 
 \subsection{descr\_init()}
+
+For this method, there are global variables defined in the headers:
+\begin{code}{/brainix/inc/fs/fildes.h}
+54 /* Global variables: */
+55 file_ptr_t file_ptr[NUM_FILE_PTRS]; /* File pointer table.                 */
+56 fs_proc_t fs_proc[NUM_PROCS];       /* Process-specific information table. */
+\end{code}
+This allows us to introduce the data structures \verb|fs_proc_t| and \verb|file_ptr_t|.
+\begin{code}{/brainix/inc/fs/fildes.h}
+35 /* A file pointer is an intermediary between a file descriptor and an inode: */
+36 typedef struct
+37 {
+38      inode_t *inode_ptr;  /* Inode pointer.        */
+39      unsigned char count; /* Number of references. */
+40      off_t offset;        /* File position.        */
+41      int status;          /* File status.          */
+42      mode_t mode;         /* File mode.            */
+43 } file_ptr_t;
+\end{code}
+This is self explanatory thanks to the comments. The \verb|file_ptr_t| is an intermediary between a file descriptor and an i-node. It consists of the inode it intermediates for (line 38), the number of references made to the inode in the file descriptor (line 39), the file position's offset (line 40), the status of the file (41), and the mode of the file (42). THe other important data structure is:
+\begin{code}{/brainix/inc/fs/fildes.h}
+45 /* Process-specific file system information: */
+46 typedef struct
+47 {
+48      inode_t *root_dir;                /* Root directory.            */
+49      inode_t *work_dir;                /* Current working directory. */
+50      mode_t cmask;                     /* File mode creation mask.   */
+51      file_ptr_t *open_descr[OPEN_MAX]; /* File descriptor table.     */
+52 } fs_proc_t;
+\end{code}
+Which gives us information about the file system which is process-specific, as the comment suggests. More to the point, the root directory inode, the current directory inode, the ``file mode creation mask'' which is little more than telling the file what you \textbf{DON'T} want (``Setting a mask is the opposite of setting the permissions themselves; when you set a mask, you are telling the computer the permissions you do not want, rather than the permissions you do''~\cite{9}), and more importantly the file descriptor table.
 
 This is the last step in the file system initialization. It essentially initializes a few other tables that we are going to use.
 \begin{code}{/brainix/src/fs/fildes.c}
@@ -428,6 +472,81 @@ This is the last step in the file system initialization. It essentially initiali
 60      }
 61 }
 \end{code}
+There is nothing new here, only two for-loops rather than one to initialize two (rather than one) tables. But where are these tables defined? They seem to fall from thin air into our laps!
+
+
+ 
+
+\section{File System Operations}
+
+This section, unlike the previous, is in a seemingly random order. It does not logically follow the structure of the code as it would appear to a new comer to the Brainix kernel. Instead, it inspects the more important operations first, discussing them at length. We shall begin with the most recently inspected method: \verb|REGISTER|.
+
+\subsection{REGISTER}
+
+This method was long thought to be a problem child, until some clever debugging proved it to be little more than a nuissance. It is a function in the \verb|device.c| file:
+\begin{code}{/brainix/src/fs/device.c}
+70 void fs_register(bool block, unsigned char maj, pid_t pid)
+71 {
+72 
+73 /* Register a device driver with the file system - map a device's major number
+74  * to its driver's PID.  If the driver for the device containing the root file
+75  * system is being registered, mount the root file system and initialize the
+76  * root and current working directories. */
+77
+78      dev_t dev;
+79 
+80      /* Register the device driver with the file system. */
+81      driver_pid[block][maj] = pid;
+82 
+83      if (block && maj == ROOT_MAJ)
+84      {
+85           /* The driver for the device containing the root file system is
+86            * being registered. */
+87           mount_root();
+88           dev = maj_min_to_dev(ROOT_MAJ, ROOT_MIN);
+89           fs_proc[FS_PID].root_dir = inode_get(dev, EXT2_ROOT_INO);
+90           fs_proc[FS_PID].work_dir = inode_get(dev, EXT2_ROOT_INO);
+91      }
+92 }
+\end{code}
+This register method is rather straightforward: it adds the device driver to the device driver PID table, then it checks to see if this is a root device we are mounting. If it is, then it calls some additional functions to mount the root file system on the device (line 87), it creates the \verb|dev_t| from the major and minor numbers of the device, assigns the inodes to the root directory and working directory. We shall investigate each of these components of the function in turn.
+
+First, the \verb|mount_root()| method which unsurprisingly mounts the root file system.
+\begin{code}{/brainix/src/fs/mount.c}
+130 void mount_root(void)
+131 {
+132 
+133 /* Mount the root file system. */
+134 
+135      super_t *super_ptr;
+136 
+137      /* Open the device. */
+138      dev_open_close(ROOT_DEV, BLOCK, OPEN);
+139      if (err_code)
+140           /* The device could not be opened. */
+141           panic("mount_root", strerror(err_code));
+142 
+143      /* Read the superblock. */
+144      super_ptr = super_read(ROOT_DEV);
+145      if (err_code)
+146           /* The superblock could not be read. */
+147           panic("mount_root", strerror(err_code));
+148 
+149      /* Perform the mount.  Fill in the superblock's fields. */
+150      super_ptr->s_mtime = do_time(NULL);
+151      super_ptr->s_mnt_count++;
+152      super_ptr->s_state = EXT2_ERROR_FS;
+153      memcpy(super_ptr->s_last_mounted, "/\0", 2);
+154      super_ptr->dev = ROOT_DEV;
+155      super_ptr->block_size = 1024 << super_ptr->s_log_block_size;
+156      super_ptr->frag_size = super_ptr->s_log_frag_size >= 0 ?
+157           1024 << super_ptr->s_log_frag_size :
+158           1024 >> -super_ptr->s_log_frag_size;
+159      super_ptr->mount_point_inode_ptr = NULL;
+160      super_ptr->root_dir_inode_ptr = inode_get(ROOT_DEV, EXT2_ROOT_INO);
+161      super_ptr->dirty = true;
+162 }
+\end{code}
 
 
 \begin{thebibliography}{10}
@@ -441,6 +560,9 @@ This is the last step in the file system initialization. It essentially initiali
 \bibitem{4} Chapter 9 of \textit{The Linux Kernel} Available \url{http://www.tldp.org/LDP/tlk/fs/filesystem.html}
 \bibitem{5} Inode Definition by the Linux Information Project \url{http://www.bellevuelinux.org/inode.html}
 \bibitem{6} Understanding the Filesystem Inodes \url{http://www.onlamp.com/pub/a/bsd/2001/03/07/FreeBSD_Basics.html}
+\bibitem{7} David A Rusling, The Second Extended File system (EXT2) \url{http://www.science.unitn.it/~fiorella/guidelinux/tlk/node97.html}
+\bibitem{8} Understanding the Linux Kernel Second Edition Excerpt \url{www.oreilly.com/catalog/linuxkernel2/chapter/ch17.pdf}
+\bibitem{9} ``Setting your file creation mask'' \url{http://osr507doc.sco.com/en/OSTut/Setting_your_file_creation_mask.html}
 \end{thebibliography}
 
 

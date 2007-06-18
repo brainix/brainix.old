@@ -88,7 +88,6 @@ void fs_register(bool block, unsigned char maj, pid_t pid)
 		dev = maj_min_to_dev(ROOT_MAJ, ROOT_MIN);
 		fs_proc[FS_PID].root_dir = inode_get(dev, EXT2_ROOT_INO);
 		fs_proc[FS_PID].work_dir = inode_get(dev, EXT2_ROOT_INO);
-		panic("device.fs_register()", "registration success!");
 	}
 }
 
