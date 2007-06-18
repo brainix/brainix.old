@@ -48,6 +48,7 @@ FS = bin/fs/block.o		\
 	bin/fs/misc.o		\
 	bin/fs/mount.o		\
 	bin/fs/open.o		\
+	bin/fs/op_handler.o	\
 	bin/fs/path.o		\
 	bin/fs/perm.o		\
 	bin/fs/proc.o		\
