@@ -1,0 +1,28 @@
+The problem as far as I can tell lies with the inode_rw() method (if not, then the inode_get() method).
+
+I have still to check the methods called by the inode_rw() method:
+1. group_find()
+2. block_get()
+3. memcpy()
+4. block_put()
+
+I'm checkin the group_find() method and now the methods I need to check are:
+1. block_get()
+2. block_put()
+3. super_get()
+
+Now I am checking block_get() and I have to now check the following methods:
+1. recently_used()
+2. block_rw()
+
+<Should I be concerned that block_get() has not one but two infinite for loops in the block cache? No...>
+
+Block_rw() makes a call to dev_rw(), since block_rw() is used as read it makes a call only to there.
+
+Dev_rw() makes a call to dev_to_maj_min() which I all ready checked to work well. It also sends a message to the device driver to read(), which is assumed to be kosher. I'm no device driver writer god-dammit!
+
+Now I shall go investigate recently_used(), and then I shall consider block_get() to be kosher. But recently_used() appears to be, for the most part, not too bad...this is maddening! Just a worrysome voice tells me to keep an eye on recently_used() as it may not work as intended.
+
+Now where am I? Block_put()? OK whatever. But block_put() does nothing, the ROBUST global variable is set to SLOPPY, which makes block_put() *DO NOTHING!* This appears to be the biggest problem, the alternative is memcpy(). I'll pursue block_put() some more...but apparently it shouldn't matter...
+
+File system keeps a block cache. When-ever you change anything, it changes the file system's block cache. Block_put() writes these changes to the disk, that's the whole point of block_put().
