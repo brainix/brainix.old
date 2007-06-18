@@ -14,7 +14,7 @@
 
 Note that this is released under the GNU Free Documentation License version 1.2. See the file fdl.tex for details of the license. This, like the rest of the Brainix Project, is a work in progress.
 \section{Introduction: How Servers Work (A Quick Gloss over it)}
-The structure for the file system is simple, it is structured like all servers for the microkernel:
+The structure for the file system is simple, it is structured like all servers for the micro-kernel:
 \begin{code}{typical\_server.pseudo\_c}
  /* main.c */
 int main(void) {
@@ -47,19 +47,19 @@ int main(void) {
      return 0;
 }
 \end{code}
-With most servers, this is the entirety of the \verb|main.c| file. The actual implementation of the methods (i.e. ``the dirty work is carried out through'') auxilliary files.
+With most servers, this is the entirety of the \verb|main.c| file. The actual implementation of the methods (i.e. ``the dirty work is carried out through'') auxiliary files.
 
 The ``op'' field of the message refers to the operation; which is a sort of parallel to the monolithic kernel system call. The system call is merely handled in user space.
 
 \section{How File Systems Traditionally Work}
 
-There are probably a number of introductory texts and tutorials on unix-like file systems. I will mention a few worthy of note~\cite{skelix}~\cite{minixbook}~\cite{bsdbook}~\cite{linuxbook}. I will \textbf{attempt} to briefly explain how the Unix file system works, and explain its implementation in operating systems such as Linux and maybe FreeBSD.
+There are probably a number of introductory texts and tutorials on Unix-like file systems. I will mention a few worthy of note~\cite{skelix}~\cite{minixbook}~\cite{bsdbook}~\cite{linuxbook}. I will \textbf{attempt} to briefly explain how the Unix file system works, and explain its implementation in operating systems such as Linux and maybe FreeBSD.
 
 File systems deal with long term information storage. There are three essential requirements for long-term information storage that Tanenbaum and Woodhull recognize~\cite{minixbook}:
 \begin{enumerate}
  \item It must be possible to store a very large amount of information.
  \item The information must survive the termination of the process using it.
- \item Multiple processemust be able to access the information concurrently.
+ \item Multiple processes must be able to access the information concurrently.
 \end{enumerate}
 With the exception of the GNU-Hurd solution to these problems, the answer is usually to store information on hard disks in units called \textbf{files}. The management of these units is done by a program called the \textbf{file system.} (What's so interesting and exciting about Unix and Unix-like operating systems is that it's object oriented: everything ``is-a'' file!)
 
@@ -85,11 +85,11 @@ The file in Unix\footnote{Out of sheer laziness, ``Unix'' should be read as ``Un
 \end{code}
 Note that the different types of inodes there are is defined in lines 06 and 07. The permissions and type of the inode is on line 10. The actual addresses to the blocks that hold the data for the file are stored in the array on line 12. At first you look and think ``Huh, only 8 blocks per file? That's only, what, 32768 bytes?!'' Since it is incredibly unlikely that all the information you'd ever need could be held in 32 kilobytes, the last two addresses refers to \textit{indirect} addresses. That is the seventh address refers to a sector that contains (512 bytes per sector)(1 address per 4 bytes) = 128 addresses. The seventh entry is called a \textbf{indirect block} (although because Skelix is so small, it's an indirect sector). The last entry refers to an indirect block, for this reason it is called a \textbf{double indirect block}. The indirect block holds 128 addresses, each address refers to a 512 byte sector (in other operating systems they refer to blocks), so each indirect block refers to $128\times 512 = 65536$ bytes or 64 kilobytes. The last double indirect block contains 128 single indirect blocks, or $128\times 64 = 8192$ kilobytes or 8 Megabytes.
 
-In bigger operating systems, there are triple indirect blocks, which if we implemented it in skelix we would get $128\times 8192 = 1048576$ kilobytes or 1024 megabytes or 1 gigabyte. ``Surely there must be quadrouple indirect blocks, as I have a file that's several gigabytes on my computer!'' Well, the way it is implemented on Linux is that rather than refer to sectors, there are groups of sectors called \textbf{block groups}. Instead of accessing \textit{only} 512 byte atoms, we are accessing \textbf{4 kilobyte atoms!} Indeed, if I am not mistaken, the Minix 3 file system refers to blocks instead of sectors too.
+In bigger operating systems, there are triple indirect blocks, which if we implemented it in skelix we would get $128\times 8192 = 1048576$ kilobytes or 1024 megabytes or 1 gigabyte. ``Surely there must be quadruple indirect blocks, as I have a file that's several gigabytes on my computer!'' Well, the way it is implemented on Linux is that rather than refer to sectors, there are groups of sectors called \textbf{block groups}. Instead of accessing \textit{only} 512 byte atoms, we are accessing \textbf{4 kilobyte atoms!} Indeed, if I am not mistaken, the Minix 3 file system refers to blocks instead of sectors too.
 
 \subsection{The Directory}
 
-So what about the directory? Well, in unix file systems, the general idea is to have a file that contains \textbf{directory entries}. Directory entries basically hold at least two things: 
+So what about the directory? Well, in Unix file systems, the general idea is to have a file that contains \textbf{directory entries}. Directory entries basically hold at least two things: 
 the file name, 
 and the inode number of the entry. 
 There are other things that are desirable like the name length of the entry, the type of file the entry is, or the offset to be added to the starting address of the directory entry to get the starting address of the next directory entry (the ``rectangular length''). Consider the implementation in Skelix:
@@ -115,7 +115,7 @@ The directory entry is, like the skelix inode, extremely simplistic. It consists
  7 & \textrm{dev} 
 \end{tabular}
 
-One wants to run a program, so one looks up the program \verb|/bin/pwd|. The lookup process then goes to the directory and looks up \verb|/bin/|, it sees the inode number is 4, so the look up process goes to inode 4. It finds:
+One wants to run a program, so one looks up the program \verb|/bin/pwd|. The look-up process then goes to the directory and looks up \verb|/bin/|, it sees the inode number is 4, so the look up process goes to inode 4. It finds:
 
 \begin{tabular}{l} \\
 (\textrm{ I-Node 4 is for /bin/}) \\
@@ -144,10 +144,10 @@ Every directory has two directory entries when they are made: 1) \verb|.| which 
 \section{The File System Details}
 
 \begin{quote}
-``The rabbit-hole went straight on like a tunnel for some time, and then dipped suddenly down, so suddenly that Alice had not a moment tothink about stopping herself before she found herself falling down a very deep well.''\footnote{\textit{Alice's Adventures in Wonderland} by Lewis Carroll, chapter 1 ``Down the Rabbit-Hole''}
+``The rabbit-hole went straight on like a tunnel for some time, and then dipped suddenly down, so suddenly that Alice had not a moment to think about stopping herself before she found herself falling down a very deep well.''\footnote{\textit{Alice's Adventures in Wonderland} by Lewis Carroll, chapter 1 ``Down the Rabbit-Hole''}
 \end{quote}
 
-So if you actually go and look at the file system directory, there are a number of ops that are implemented. Some of them are obvious, like \verb|read()|, \verb|write()|, etc. Others are not really intuitively clear why they're there, like \verb|execve()|. The reason for this is because Brainix attempts to be POSIX-Compliant, and POSIX really wasn't made with Microkernels in mind. So we're stuck having an odd design like this; but the advantage is that we can eventually use a package manager like Portage\footnote{For those that do not know, Portage is the package manager for the Gentoo distribution of Linux. As far as I know it has been ported to FreeBSD, OpenBSD, NetBSD, Darwin, and other operating systems because Portage is distributed via its source code. It works by downloading and compiling source code automagically and optimizing it as much as possible with the GCC.}. The advantages really outweigh the cost of odd design.
+So if you actually go and look at the file system directory, there are a number of ops that are implemented. Some of them are obvious, like \verb|read()|, \verb|write()|, etc. Others are not really intuitively clear why they're there, like \verb|execve()|. The reason for this is because Brainix attempts to be POSIX-Compliant, and POSIX really wasn't made with Microkernels in mind. So we're stuck having an odd design like this; but the advantage is that we can eventually use a package manager like Portage\footnote{For those that do not know, Portage is the package manager for the Gentoo distribution of Linux. As far as I know it has been ported to FreeBSD, Open-BSD, Net-BSD, Darwin, and other operating systems because Portage is distributed via its source code. It works by downloading and compiling source code auto-magically and optimizing it as much as possible with the GCC.}. The advantages really outweigh the cost of odd design.
 
 So this section will inspect the various operations, and follow the code ``down the rabbit hole''. Yes we shall inspect the nitty-gritty details and analyze as much as possible. That is my duty as the file system hacker to explain as much as possible, using code snippets where appropriate. So we begin with the initialization of the file system.
 
@@ -166,7 +166,7 @@ Looking in the file \verb|/brainix/src/fs/main.c| one finds:
 \end{code}
 This is the initialization code that we are interested in. Let's analyze it line by line. First there is a call to the function \verb|block_init();|. So let us inspect this function's code. 
 \subsection{block\_init()}
-There is the matter of the data structure that is involved here extensively that we ought to investigate first: \verb|block_t|.
+There is the matter of the data structure that is involved here extensively that we ought to investigate first: \verb|block_t|.\marginpar[block\_t]{}
 \begin{code}{/brainix/inc/fs/block.h}
 43 /* A cached block is a copy in RAM of a block on a device: */
 44 typedef struct block
@@ -183,7 +183,7 @@ There is the matter of the data structure that is involved here extensively that
 55      struct block *next;    /* Next block in the list.            */
 56 } block_t;
 \end{code}
-This is all rather straight forward. The \verb|dev_t| field tells us what device we are dealing with, rather what device the file system is dealing with. To be more precise about what exactly \verb|dev_t| is we look to the code:
+This is all rather straight forward. The \verb|dev_t| field tells us what device we are dealing with, rather what device the file system is dealing with. To be more precise about what exactly \verb|dev_t| is we look to the code:\marginpar[dev\_t]{}
 \begin{code}{/brainix/inc/lib/sys/type.h}
 48 /* Used for device IDs: */
 49 #ifndef _DEV_T
@@ -191,7 +191,7 @@ This is all rather straight forward. The \verb|dev_t| field tells us what device
 51 typedef unsigned long dev_t;
 52 #endif
 \end{code}
-which is pretty self-explanatory that \verb|dev_t| is little more than an unsigned long. The \verb|blkcnt_t blk| field gives more precision with what we are dealing with, which is a rather odd field because I don't know what the \verb|blkcnt_t| type is off hand so I doubt that you would either. Let us shift our attention to this type!
+which is pretty self-explanatory that \verb|dev_t| is little more than an unsigned long. The \verb|blkcnt_t blk| field gives more precision with what we are dealing with, which is a rather odd field because I don't know what the \verb|blkcnt_t| type is off hand so I doubt that you would either. Let us shift our attention to this type!\marginpar[blkcnt\_t]{}
 \begin{code}{/brainix/inc/lib/sys/type.h}
 30 /* Used for file block counts: */
 31 #ifndef _BLKCNT_T
@@ -201,7 +201,7 @@ which is pretty self-explanatory that \verb|dev_t| is little more than an unsign
 \end{code}
 So this is a rather straight forward type that needs no explanation it seems. We can continue our analysis of the \verb|block_t| struct. The \verb|unsigned char count;| is little more than a simple counter it seems, and the \verb|bool dirty;| tells us whether the block has changed since last read or not. The last two entries tells us this \verb|block_t| data structure is a doubly linked list. This is common, the use of doubly linked lists that is, because it is common to lose things at such a low level.
 
-Now we may proceed to analyze the \verb|block_init()| function defined in the \verb|block.c| file:
+Now we may proceed to analyze the \verb|block_init()| function defined in the \verb|block.c| file: \marginpar{block\_init()}
 \begin{code}{/brainix/src/fs/block.c}
 32 void block_init(void)
 33 {
@@ -237,7 +237,7 @@ What's the significance of line 55? Well, I don't know. It does not seem to rele
 
 \subsection{inode\_init()}
 
-Just as we had the \verb|block_init()| we have a \verb|inode_init()|. If you are new to this whole unix-like file system idea, it is highly recommended that you read~\cite{1}~\cite{2}~\cite{3}~\cite{4}~\cite{5}~\cite{6}. Perhaps in a future version of this documentation it will be explained in further detail. The original motivation I suspect (yes, this is a baseless conjecture I made up from my own observations that is probably not true at all) was to have something similar to a hybrid of Linux and Minix 3, and this is somewhat reflected by the choice of attempting to support the ext2 file system (the file system from the earlier Linux distributions). The inode data structure is identical to its description in the third edition of \textit{Understanding the Linux Kernel}. However I am making this an independent, stand-alone type of reference...so that means I am going to inspect the data structure, line by line.
+Just as we had the \verb|block_init()| we have a \verb|inode_init()|. If you are new to this whole Unix-like file system idea, it is highly recommended that you read~\cite{1}~\cite{2}~\cite{3}~\cite{4}~\cite{5}~\cite{6}. Perhaps in a future version of this documentation it will be explained in further detail. The original motivation I suspect (yes, this is a baseless conjecture I made up from my own observations that is probably not true at all) was to have something similar to a hybrid of Linux and Minix 3, and this is somewhat reflected by the choice of attempting to support the ext2 file system (the file system from the earlier Linux distributions). The inode data structure is identical to its description in the third edition of \textit{Understanding the Linux Kernel}. However I am making this an independent, stand-alone type of reference...so that means I am going to inspect the data structure, line by line.\marginpar[inode\_t]{}
 \begin{code}{/brainix/inc/fs/inode.h}
 42 /* An inode represents an object in the file system: */
 43 typedef struct
@@ -270,9 +270,9 @@ Just as we had the \verb|block_init()| we have a \verb|inode_init()|. If you are
 70      bool dirty;                   /* Inode changed since read.          */
 71 } inode_t;
 \end{code}
-A lot of this code is seemingly unused. All that really matters is that the \verb|inode_t| data type is a wrapper for the addresses (line 58), with some constraints for permissions and so forth (lines 46 to 57), and some device specific fields (lines 66 to 70). This data structure is nearly identical to the ext2 file system's \verb|inode| struct. As stated previously, the motivation was to incorporate the ext2 file system into Brainix. This proved too difficult since the ext2 file system is intimately related to the linux virtual file system. It seems that the most appropriate description for the Brainix file system is a fork of the ext2 one. 
+A lot of this code is seemingly unused. All that really matters is that the \verb|inode_t| data type is a wrapper for the addresses (line 58), with some constraints for permissions and so forth (lines 46 to 57), and some device specific fields (lines 66 to 70). This data structure is nearly identical to the ext2 file system's \verb|inode| struct. As stated previously, the motivation was to incorporate the ext2 file system into Brainix. This proved too difficult since the ext2 file system is intimately related to the Linux virtual file system. It seems that the most appropriate description for the Brainix file system is a fork of the ext2 one. 
 
-Now on to the \verb|inode_init()| code itself:
+Now on to the \verb|inode_init()| code itself:\marginpar{inode\_init()}
 \begin{code}{/brainix/src/fs/inode.c}
 32 void inode_init(void)
 33 {
@@ -298,7 +298,7 @@ Now that the inode table has been initialized, we now look to the initialization
 
 \subsection{super\_init()}
 
-To inspect the inner workings of the \verb|super_init()| method we need to first investigate the \verb|super| struct representing the super block.
+To inspect the inner workings of the \verb|super_init()| method we need to first investigate the \verb|super| struct representing the super block.\marginpar[super]{}
 \begin{code}{/brainix/inc/fs/super.h}
 35 /* The superblock describes the configuration of the file system: */
 36 typedef struct
@@ -350,7 +350,7 @@ To inspect the inner workings of the \verb|super_init()| method we need to first
 82 } super_t;
 \end{code}
 This is the super block, and - as previously iterated a number of times - this is from the ext2 file system. The superblock should have the magic number \verb|s_magic| which tells us this is indeed the ext2 file system. Line 61 tells us the revision level which allows the mounting code to determine whether or not this file system supports features available to particular revisions. When a new file is created, the values of the \verb|s_free_inodes_count| field in the Ext2 superblock and of the \verb|bg_free_inodes_count| field in the proper group descriptor must be decremented. If the kernel appends some data to an existing file so that the number of data blocks allocated for it increases, the values of the \verb|s_free_blocks_count| field in the Ext2 superblock and of the \verb|bg_free_blocks_count| field in the group descriptor must be modified. Even just rewriting a portion of an existing file involves an update of the \verb|s_wtime| field of the Ext2 superblock. For a more in-depth analysis of the ext2 file system's \verb|super_block| data structure which was forked for the Brainix file system, see Chapter 18~\cite{linuxbook} or \cite{3}~\cite{7}~\cite{8}.
-
+\marginpar{super\_init()}
 \begin{code}{/brainix/src/fs/super.c}
 32 void super_init(void)
 33{
@@ -379,7 +379,7 @@ More specifically, in more detail, line 42 sets each super block's device to \ve
 
 \subsubsection{The pid\_t data structure}
 
-We should first inspect the vital data structure relevant to discussion here: \verb|pid_t| which is defined in /brainix/inc/lib/unistd.h:
+We should first inspect the vital data structure relevant to discussion here: \verb|pid_t| which is defined in /brainix/inc/lib/unistd.h:\marginpar[pid\_t]{}
 \begin{code}{/brainix/inc/lib/unistd.h}
 112 #ifndef _PID_T
 113 #define _PID_T
@@ -390,7 +390,7 @@ That's pretty much the only new data structure (or type, rather) that's relevant
 
 \subsubsection{Back to the dev\_init() method}
 
-The next function called in the \verb|init()| section of the file system server is the \verb|dev_init()|. This is defined in the \verb|/brainix/src/fs/device.c| file:
+The next function called in the \verb|init()| section of the file system server is the \verb|dev_init()|. This is defined in the \verb|/brainix/src/fs/device.c| file:\marginpar{dev\_init()}
 \begin{code}{/brainix/src/fs/device.c}
 55 void dev_init(void)
 56 {
@@ -414,7 +414,7 @@ For this method, there are global variables defined in the headers:
 55 file_ptr_t file_ptr[NUM_FILE_PTRS]; /* File pointer table.                 */
 56 fs_proc_t fs_proc[NUM_PROCS];       /* Process-specific information table. */
 \end{code}
-This allows us to introduce the data structures \verb|fs_proc_t| and \verb|file_ptr_t|.
+This allows us to introduce the data structures \verb|fs_proc_t| and \verb|file_ptr_t|. \marginpar[file\_ptr\_t]{}
 \begin{code}{/brainix/inc/fs/fildes.h}
 35 /* A file pointer is an intermediary between a file descriptor and an inode: */
 36 typedef struct
@@ -426,7 +426,7 @@ This allows us to introduce the data structures \verb|fs_proc_t| and \verb|file_
 42      mode_t mode;         /* File mode.            */
 43 } file_ptr_t;
 \end{code}
-This is self explanatory thanks to the comments. The \verb|file_ptr_t| is an intermediary between a file descriptor and an i-node. It consists of the inode it intermediates for (line 38), the number of references made to the inode in the file descriptor (line 39), the file position's offset (line 40), the status of the file (41), and the mode of the file (42). THe other important data structure is:
+This is self explanatory thanks to the comments. The \verb|file_ptr_t| is an intermediary between a file descriptor and an i-node. It consists of the inode it intermediates for (line 38), the number of references made to the inode in the file descriptor (line 39), the file position's offset (line 40), the status of the file (41), and the mode of the file (42). The other important data structure is:\marginpar[fs\_proc\_t]{}
 \begin{code}{/brainix/inc/fs/fildes.h}
 45 /* Process-specific file system information: */
 46 typedef struct
@@ -439,7 +439,7 @@ This is self explanatory thanks to the comments. The \verb|file_ptr_t| is an int
 \end{code}
 Which gives us information about the file system which is process-specific, as the comment suggests. More to the point, the root directory inode, the current directory inode, the ``file mode creation mask'' which is little more than telling the file what you \textbf{DON'T} want (``Setting a mask is the opposite of setting the permissions themselves; when you set a mask, you are telling the computer the permissions you do not want, rather than the permissions you do''~\cite{9}), and more importantly the file descriptor table.
 
-This is the last step in the file system initialization. It essentially initializes a few other tables that we are going to use.
+This is the last step in the file system initialization. It essentially initializes a few other tables that we are going to use.\marginpar{descr\_init()}
 \begin{code}{/brainix/src/fs/fildes.c}
 32 void descr_init(void)
 33 {
@@ -483,7 +483,7 @@ This section, unlike the previous, is in a seemingly random order. It does not l
 
 \subsection{REGISTER}
 
-This method was long thought to be a problem child, until some clever debugging proved it to be little more than a nuissance. It is a function in the \verb|device.c| file:
+This method was long thought to be a problem child, until some clever debugging proved it to be little more than a nuisance. It is a function in the \verb|device.c| file: \marginpar{fs\_register()}
 \begin{code}{/brainix/src/fs/device.c}
 70 void fs_register(bool block, unsigned char maj, pid_t pid)
 71 {
@@ -511,7 +511,7 @@ This method was long thought to be a problem child, until some clever debugging 
 \end{code}
 This register method is rather straightforward: it adds the device driver to the device driver PID table, then it checks to see if this is a root device we are mounting. If it is, then it calls some additional functions to mount the root file system on the device (line 87), it creates the \verb|dev_t| from the major and minor numbers of the device, assigns the inodes to the root directory and working directory. We shall investigate each of these components of the function in turn.
 
-First, the \verb|mount_root()| method which unsurprisingly mounts the root file system.
+First, the \verb|mount_root()| method which unsurprisingly mounts the root file system.\marginpar{mount\_root()}
 \begin{code}{/brainix/src/fs/mount.c}
 130 void mount_root(void)
 131 {
@@ -525,29 +525,589 @@ First, the \verb|mount_root()| method which unsurprisingly mounts the root file 
 139      if (err_code)
 140           /* The device could not be opened. */
 141           panic("mount_root", strerror(err_code));
-142 
+\end{code}
+So let us explore this far and say to ourselves ``Aha! So, it calls this function `\verb|dev_open_close()|', let's see what that does exactly!'' We look for this method and find it: \marginpar{dev\_open\_close()}
+\begin{code}{/brainix/src/fs/device.c}
+146 int dev_open_close(dev_t dev, bool block, bool open)
+147 {
+148 
+149 /* If open is true, open a device.  Otherwise, close a device. */
+150 
+151      unsigned char maj, min;
+152      pid_t pid;
+153      msg_t *m;
+154      int ret_val;
+\end{code}
+So far several variables are initialized as dummy variables, that is ``local variables'' which are not used permanently. They are used only temporarily, like a counter.
+
+\begin{code}{/brainix/src/fs/device.c}
+156      /* Find the device driver's PID. */
+157      dev_to_maj_min(dev, &maj, &min);
+158      pid = driver_pid[block][maj];
+159      if (pid == NO_PID)
+160           return -(err_code = ENXIO);
+\end{code} 
+We have all ready seen the driver PID table before, but line 157 is completely foreign. We have yet to see exactly what \verb|dev_to_maj_min| does. We can easily locate it however:\marginpar{dev\_to\_maj\_min()}
+\begin{code}{/brainix/src/fs/device.c}
+32 void dev_to_maj_min(dev_t dev, unsigned char *maj, unsigned char *min)
+33 {
+34 
+35 /* Extract the minor number and the minor number from a device number. */
+36 
+37      *maj = (dev & 0xFF00) >> 8;
+38      *min = (dev & 0x00FF) >> 0;
+39 }
+\end{code}
+Which is pretty self explanatory code. Line 37 uses bitwise operators to set the Major number to be a modification of the last 8 bits of the \verb|dev|, and line 38 uses bitwise operators to set the Minor number to be a modification of the first 8 bits of the \verb|dev| variable. This code is solid and has been tested, it probably shouldn't need to be changed. At any rate, back to the \verb|dev_open_close()| method:
+\begin{code}{/brainix/src/fs/device.c}
+162      /* Send a message to the device driver. */
+163      m = msg_alloc(pid, open ? SYS_OPEN : SYS_CLOSE);
+164      m->args.open_close.min = min;
+165      msg_send(m);
+\end{code}
+The code explains itself quite readily. Line 163 allocates a message, line 164 sets the minor number, and line 165 sends the message to the device.
+\begin{code}{/brainix/src/fs/device.c}
+167      /* Await the device driver's reply. */
+168      m = msg_receive(pid);
+169      ret_val = m->args.open_close.ret_val;
+170      msg_free(m);
+171      if (ret_val < 0)
+172           err_code = -ret_val;
+173      return ret_val;
+174 }
+\end{code}
+This code is also self-explanatory. Line 168 waits for the message from the driver, presumably in reply to the message sent from line 165 though this may or may not be the case; line 169 analyzes the message's return value. Now that the return value has been extracted, we can delete the message to free up space (line 170) assuming this wasn't a different message sent by the device driver asking to do some other method, the code - as you can tell - does not check. It does return the return value from the message however (line 173) and catches any possible errors (lines 171-2).
+
+We can assume that the device driver coder knows what he's doing, so we won't investigate the interactions of this message with regards to the device driver. The interested reader can look up the appropriate code in the driver documentation (or supposing that it has yet to be written, which implies the Brainix operating system is still early in development, look at the /brainix/src/driver/floppy.c).
+
+We continue our investigation of the \verb|mount_root()| method, after finding out quite a bit about the \verb|dev_open_close()| method.
+\begin{code}{/brainix/src/fs/mount.c}
 143      /* Read the superblock. */
 144      super_ptr = super_read(ROOT_DEV);
 145      if (err_code)
 146           /* The superblock could not be read. */
 147           panic("mount_root", strerror(err_code));
-148 
+\end{code}
+The \verb|mount_root()| reads in the super block from the root directory on the device (line 144). If it could not have been read in, there is a kernel panic (line 147).
+
+We shall now shift our focus onto the \verb|super_read()| method:\marginpar{super\_read()}
+\begin{code}{/brainix/src/fs/super.c}
+75 super_t *super_read(dev_t dev)
+76 {
+77 
+78 /* Read a superblock from its block into the superblock table, and return a
+79  * pointer to it. */
+80 
+81      super_t *super_ptr;
+82      block_t *block_ptr;
+\end{code}
+Again, as is the style of Brainix, the dummy variables are defined first (lines 81-2) and a brief comment description of the method is given (lines 78-9).
+
+\begin{code}{/brainix/src/fs/super.c}
+84      /* Find a free slot in the table. */
+85      if ((super_ptr = super_get(NO_DEV)) == NULL)
+86           /* There are no free slots in the table --- too many mounted
+87            * file systems. */
+88           return NULL;
+\end{code}
+This segment of code from the \verb|super_read()| calls the \verb|super_get()| method. Indeed it is a bit convoluted, but it's the easiest way to program it. Let us now analyze the \verb|super_get()| method:\marginpar{super\_get()}
+\begin{code}{/brainix/src/fs/super.c}
+54 super_t *super_get(dev_t dev)
+55 {
+56 
+57 /* Search the superblock table for a superblock.  If it is found, return a
+58  * pointer to it.  Otherwise, return NULL. */
+59 
+60      super_t *super_ptr;
+61 
+62      /* Search the table for the superblock. */
+63      for (super_ptr = &super[0]; super_ptr < &super[NUM_SUPERS]; super_ptr++)
+64           if (super_ptr->dev == dev)
+65                /* Found the superblock.  Return a pointer to it. */
+66                return super_ptr;
+67 
+68      /* The superblock is not in the table. */
+69      return NULL;
+70 }
+\end{code}
+Line 60 initializes the dummy variable, lines 63-66 is a simple, linear for-loop search through the superblock table that is looking for a superblock on the device \verb|dev|. If it is found (line 64), then it returns a pointer to that super block struct (line 66). Supposing that the for loop has run out of places to look on the table, it returns \verb|NULL| indicating that the superblock is not in the table.
+
+Returning our focus to the \verb|super_read()| method:
+\begin{code}{/brainix/src/fs/super.c} 
+90      /* Copy the superblock from its block into the free slot. */
+91      block_ptr = block_get(dev, SUPER_BLOCK);
+92      memcpy(super_ptr, block_ptr->data, offsetof(super_t, dev));
+\end{code}
+Lines 91 and 92 introduce two new functions that we will need to investigate: \verb|block_get()| and \verb|memcpy()|. Essentially, line 91 looks on the device \verb|dev| for the block \verb|SUPER_BLOCK|. Get some caffeine in your system, because the \verb|block_get()| method requires more focus and attention:\marginpar{block\_get()}
+\begin{code}{/brainix/src/fs/block.c}
+165 block_t *block_get(dev_t dev, blkcnt_t blk)
+166 {
+167
+168 /* Search the cache for a block.  If it is found, return a pointer to it.
+169  * Otherwise, evict a free block, cache the block, and return a pointer to
+170  * it. */
+171 
+172      block_t *block_ptr;
+173  
+174      /* Search the cache for the block. */
+175      for (block_ptr = lru->prev; ; )
+176           if (block_ptr->dev == dev && block_ptr->blk == blk)
+177           {
+178                /* Found the block.  Increment the number of times it is
+179                 * used, mark it recently used, and return a pointer to
+180                 * it. */
+181                block_ptr->count++;
+182                recently_used(block_ptr, MOST);
+183                return block_ptr;
+184           }
+185           else if ((block_ptr = block_ptr->prev) == lru->prev)
+186                /* Oops - we've searched the entire cache already. */
+187                break;
+\end{code}
+The file system keeps a block cache. Whenever you change anything, it changes the file system's block cache. \verb|Block_put()| writes these changes to the disk, that's the whole point of \verb|block_put()|. Right now, however, we are interested in looking through this cache for a specific block. It may be a little inelegant by most standards, but we are absolved by virtue of this being an operating system (``breaks'' do not exist in the Queen's C!). 
+
+The cache is searched through until either the specific block in question is found (lines 176-183) or we've run out of cache (we're baroque, that is out of Monet, by line 187). If we do run out of cache, that means the requested block is not cached. Which means there is more to this method than meets the eye:
+\begin{code}{/brainix/src/fs/block.c}
+189      /* The requested block is not cached.  Search the cache for the least
+190       * recently used free block. */
+191      for (block_ptr = lru; ; )
+192           if (block_ptr->count == 0)
+193           {
+194                /* Found the least recently used free block.  Evict it.
+195                 * Cache the requested block, mark it recently used, and
+196                 * return a pointer to it. */
+197                block_rw(block_ptr, WRITE);
+198                block_ptr->dev = dev;
+199                block_ptr->blk = blk;
+200                block_ptr->count = 1;
+201                block_ptr->dirty = true;
+202                block_rw(block_ptr, READ);
+203                recently_used(block_ptr, MOST);
+204                return block_ptr;
+205           }
+206           else if ((block_ptr = block_ptr->next) == lru)
+207                /* Oops - we've searched the entire cache already. */
+208                break;
+\end{code}
+What happens is that the cache is searched through again (this may be a source of inefficiency to search the cache twice, just an aside) for a block that has a \verb|count| of 0. Upon finding it we write the \verb|block_ptr| to that block location (line 197), and set some new values for our \verb|block_ptr| (lines 198 to 201). We indicate that we have changed the block since it has last been read (that is what the dirty flag indicates...and how long it's been since the block had a bath). This seems intuitively circular to change this only to have it completely ignored by line 202 when \verb|block_rw()| essentially sets the fields of \verb|block_ptr| to whatever the \verb|block_ptr| is. Just as before, there is a method to break out of the for-loop using pragmatic C coding.
+
+Let us now shift our attention to the method \verb|block_rw()|:\marginpar{block\_rw()}
+\begin{code}{/brainix/src/fs/block.c}
+86 void block_rw(block_t *block_ptr, bool read)
+87 {
+88 
+89 /* If read is true, read a block from its device into the cache.  Otherwise,
+90  * write a block from the cache to its device. */
+91 
+92      dev_t dev = block_ptr->dev;
+93      off_t off = block_ptr->blk * BLOCK_SIZE;
+94      void *buf = block_ptr->data;
+95      super_t *super_ptr;
+\end{code}
+Lines 92-95 are the dummy variables that are used throughout the method, as is usual in the Brainix coding style. Note the comment that tells us what exactly this method does.
+
+\begin{code}{/brainix/src/fs/block.c}
+97      if (!block_ptr->dirty)
+98           /* The cached block is already synchronized with the block on
+99            * its device.  No reason to read or write anything. */
+99           return;
+\end{code}
+If the block pointer is dirty, that means that it has changed since last inspected, then \verb|block_ptr->dirty=TRUE|. We are hoping that the \verb|block_ptr| is dirty, that's the entire point of this method. If it's not dirty, we leave the method right here and now.
+\begin{code}{/brainix/src/fs/block.c}
+101      /* Read the block from its device into the cache, or write the block
+102       * from the cache to its device. */
+103      dev_rw(dev, BLOCK, read, off, BLOCK_SIZE, buf);
+\end{code}
+Unfortunately, we have not yet had the good fortune to investigate the \verb|dev_rw()| method, so let us do so now! \marginpar{dev\_rw()}
+\begin{code}{/brainix/src/fs/device.c}
+179 ssize_t dev_rw(dev_t dev, bool block, bool read, off_t off, size_t size,
+180      void *buf)
+181 {
+182 
+183 /* If read is true, read from a device.  Otherwise, write to a device. */
+184 
+185      unsigned char maj, min;
+186      pid_t pid;
+187      msg_t *m;
+188      ssize_t ret_val;
+189 
+190      /* Find the device driver's PID. */
+191      dev_to_maj_min(dev, &maj, &min);
+192      pid = driver_pid[block][maj];
+193      if (pid == NO_PID)
+194           return -(err_code = ENXIO);
+\end{code}
+Lines 185-188 initialize the dummy variables that hold the values for this method. The really interesting part begins at line 190, wherein the device driver's PID is found. If the PID is \verb|NO_PID|, then an error is returned (line 194).
+
+\begin{code}{/brainix/src/fs/device.c}
+196      /* Send a message to the device driver. */
+197      m = msg_alloc(pid, read ? SYS_READ : SYS_WRITE);
+198      m->args.read_write.min = min;
+199      m->args.read_write.off = off;
+200      m->args.read_write.size = size;
+201      m->args.read_write.buf = buf;
+202      msg_send(m);
+\end{code}
+We hope that the driver can read or write for us, so assuming the driver coder did his or her homework, then we have no worries. We simply allocate a message (line 197), give the message the minor number of the device (198), the offset to read/write (199), the size of the buffer (200), and the buffer to read to or write from (201). The message is then sent.
+
+\begin{code}{/brainix/src/fs/device.c} 
+204      /* Await the device driver's reply. */
+205      m = msg_receive(pid);
+206      ret_val = m->args.read_write.ret_val;
+207      msg_free(m);
+208      if (ret_val < 0)
+209           err_code = -ret_val;
+210      return ret_val;
+211 }
+\end{code}
+We wait for a reply. We assume, and I can't stress this enough, assume that the message from the process with PID \verb|pid| is in response to the message sent. The return value is extracted from the reply (line 206), and we free up the message (207). We check to see if there is an error, and then we return the \verb|ret_val|. It's pretty simple.
+
+Back to our discussion on \verb|block_rw()|, recall the code we left off at was:
+\begin{code}{/brainix/src/fs/block.c}
+101      /* Read the block from its device into the cache, or write the block
+102       * from the cache to its device. */
+103      dev_rw(dev, BLOCK, read, off, BLOCK_SIZE, buf);
+\end{code}
+So now we know what exactly the \verb|dev_rw()| method is, we can understand that line 103 is really asking to read the device \verb|dev|, this is indeed a \verb|BLOCK| device that we are reading from rather than a character device, we are indeed \verb|read|-ing from it with an offset of \verb|off|, we are reading exactly 1 \verb|BLOCK_SIZE| into the buffer \verb|buf| by the method we just inspected above.
+
+\begin{code}{/brainix/src/fs/block.c} 
+105      /* The cached block is now synchronized with the block on its device. */
+106      block_ptr->dirty = false;
+107      if (!read)
+108      {
+109           super_ptr = super_get(block_ptr->dev);
+110           super_ptr->s_wtime = do_time(NULL);
+111           super_ptr->dirty = true;
+112      }
+113 }
+\end{code}
+We have no updated the inspection with the \verb|block_ptr| so we may set its \verb|dirty| flag to be \verb|false| (clean as a whistle). 
+
+Now, we go on to investigate if we are writing to the file (that is checking that the boolean \verb|read| is false, if it is that means we are of course writing to the block, and we simply follow out lines 109 to 111; however, we are not really interested in that at the moment so we will not really inspect those lines of code here).
+
+Back on track to our analysis of \verb|block_get()|:
+\begin{code}{/brainix/src/fs/block.c}
+210      /* There are no free blocks in the cache.  Vomit. */
+211      panic("block_get", "no free blocks");
+212      return NULL;
+213 }
+\end{code}
+Which are the final lines of \verb|block_get()|. It basically calls a kernel panic (line 211) and returns \verb|NULL|, there's nothing elegant needing explanation here.
+
+Back to the \verb|super_read()| method:
+\begin{code}{/brainix/src/fs/super.c}
+93      block_put(block_ptr, IMPORTANT);
+94 
+95      return super_ptr;
+96 }
+\end{code}
+We have not seen \verb|block_put()| although we have seen \verb|block_get()|. There is a difference between the two, and now we shall investigate \verb|block_put()|:\marginpar{block\_put()}
+\begin{code}{/brainix/src/fs/block.c}
+218 void block_put(block_t *block_ptr, bool important)
+219 {
+220 
+221 /* Decrement the number of times a block is used.  If no one is using it, write
+222  * it to its device (if necessary). */
+223 
+224      if (block_ptr == NULL || --block_ptr->count > 0)
+225           return;
+\end{code}
+If the \verb|block_ptr| is null, or if the \verb|block_ptr|'s \verb|count| is greater than 1, then we exit this method. I think this code needs to be modified, as I think line 224 is supposed to be \verb|--block_ptr->count < 0)|. This code works however, so I wouldn't touch it just yet (although don't feel discouraged or intimidated when meddling with code!).
+\begin{code}{/brainix/src/fs/block.c}
+226      switch (ROBUST)
+227      {
+228           case PARANOID:
+229                block_rw(block_ptr, WRITE);
+230                return;
+231           case SANE:
+232                if (important)
+233                     block_rw(block_ptr, WRITE);
+234                return;
+235           case SLOPPY:
+236                return;
+237      }
+238 }
+\end{code}
+Basically, this tells us \textit{when} \verb|block_rw()| should be called. As previously mentioned, the file system has its own block cache, and this method (\verb|block_put()|) essentially writes the changes in this cache. How often it happens depend on the \verb|ROBUST|-ness of the configuration of the Brainix kernel. Basically, \verb|SLOPPY| optimizes performance, \verb|PARANOID| always writes blocks when the cache changes slightly, and \verb|SANE| is a center between the two where the cache is written if and only if it is \verb|IMPORTANT|.
+
+Back to the \verb|mount_root()| method which invoked this long aside:
+\begin{code}{/brainix/src/fs/mount.c}
 149      /* Perform the mount.  Fill in the superblock's fields. */
 150      super_ptr->s_mtime = do_time(NULL);
 151      super_ptr->s_mnt_count++;
 152      super_ptr->s_state = EXT2_ERROR_FS;
+\end{code}
+Now that we are mounting the root file system, we have to fill in the super block's fields. We start by setting the time of last mount to be \verb|do_time(NULL)| which is, as far as we know so far, an unknown function. We continue our pattern of looking functions up and find \verb|do_time()|. However, it is a messy system call rather than some ordinary function, so we will not exactly look at the code line by line. It simply gets the number of seconds since January 1, 1970. That is the mount time for the super block (line 150).
+
+Recall that \verb|s_mnt_count| is the number of Mounts since last \verb|fsck|. Line 151 simply tells the super block that it is getting mounted one more time.
+
+Note that in the Brainix /brainix/inc/fs/super.h header, we define:
+\begin{code}{/brainix/inc/fs/super.h}
+89 #define EXT2_ERROR_FS		2 /* Mounted or uncleanly unmounted. */
+\end{code}
+so really line 152 of the \verb|mount_root()| method is telling the super block that it's mounted, and nothing more.
+
+\begin{code}{/brainix/src/fs/mount.c}
 153      memcpy(super_ptr->s_last_mounted, "/\0", 2);
+\end{code}
+We do not know the \verb|memcpy()| method, so allow us to look it up as usual: \marginpar{memcpy()}
+\begin{code}{/brainix/src/lib/string.c}
+75 void *memcpy(void *s1, const void *s2, size_t n)
+76 {
+77
+78 /* Copy bytes in memory. */
+79 
+80      char *p1 = s1;
+81      const char *p2 = s2;
+82 
+83      for (; n; n--, p1++, p2++)
+84           *p1 = *p2;
+85      return s1;
+86 }
+\end{code}
+This function is pretty straightforward. There is a pair of dummy variables declared (lines 80-81), and then the addresses are switched in a for-loop (lines 83-84). The buffer \verb|void *s1| is returned after the copying (rather, switching of addresses) has occurred.
+
+Back to the line we left off at in the \verb|mount_root()| method:
+\begin{code}{/brainix/src/fs/mount.c}
+153      memcpy(super_ptr->s_last_mounted, "/\0", 2);
+\end{code}
+This basically tells us that we copy to the \verb|s_last_mounted| component of the super block the null character \verb|\0|, we only copy 2 bytes.
+
+\begin{code}{/brainix/src/fs/mount.c}
 154      super_ptr->dev = ROOT_DEV;
 155      super_ptr->block_size = 1024 << super_ptr->s_log_block_size;
 156      super_ptr->frag_size = super_ptr->s_log_frag_size >= 0 ?
 157           1024 << super_ptr->s_log_frag_size :
 158           1024 >> -super_ptr->s_log_frag_size;
 159      super_ptr->mount_point_inode_ptr = NULL;
+\end{code}
+We set the \verb|dev| device for the super block to be the \verb|ROOT_DEV| device. The block size is set to be $2^{10}$ shifted to the right by \verb|s_log_block_size|, and the fragment is variable depending on whether \verb|s_log_frag_size| is less than zero or not. If it is not less than zero, then you shift $2^{10}$ to the left by \verb|s_log_frag_size|, otherwise you shift to the right by negative one times \verb|s_log_frag_size|.
+
+\begin{code}{/brainix/src/fs/mount.c}
 160      super_ptr->root_dir_inode_ptr = inode_get(ROOT_DEV, EXT2_ROOT_INO);
 161      super_ptr->dirty = true;
 162 }
 \end{code}
+Well, we have yet to cover what exactly the \verb|inode_get()| method is, but we know line 161 is telling us that the super block has changed since we last inspected it, which makes sense since we just obtained it and set its values. Let us now have a more intelligible investigation of the \verb|inode_get()| method (besides simply guessing ``Well, it has the words `get inode' so I'm guessing it gets an inode...''): \marginpar{inode\_get()}
+\begin{code}{/brainix/src/fs/inode.c}
+095 inode_t *inode_get(dev_t dev, ino_t ino)
+096 {
+097 
+098 /* Search the inode table for an inode.  If it is found, return a pointer to it.
+099  * Otherwise, read the inode into the table, and return a pointer to it. */
+100
+101      inode_t *inode_ptr;
+102 
+103      /* Search the table for the inode. */
+104      for (inode_ptr = &inode[0]; inode_ptr < &inode[NUM_INODES]; inode_ptr++)
+105           if (inode_ptr->dev == dev && inode_ptr->ino == ino)
+106           {
+107                /* Found the inode.  Increment the number of times it is
+108                 * used, and return a pointer to it. */
+109                inode_ptr->count++;
+110                return inode_ptr;
+111           }
+\end{code}
+The inode table which was initialized previously in section (4.2), we now search the very same table for an inode with the device field equal to \verb|dev| and inode number equal to \verb|ino|. If it is found, the field indicating how many times its been used \verb|count| is incremented (line 109), and the inode pointer to it is returned.
 
+Then there is the case where the inode is not in the table:
+\begin{code}{/brainix/src/fs/inode.c}
+113      /* The inode is not in the table.  Find a free slot. */
+114      for (inode_ptr = &inode[0]; inode_ptr < &inode[NUM_INODES]; inode_ptr++)
+115           if (inode_ptr->count == 0)
+116           {
+117                /* Found a free slot.  Read the inode into it, and
+118                 * return a pointer into it. */
+119                inode_ptr->dev = dev;
+120                inode_ptr->ino = ino;
+121                inode_ptr->count = 1;
+122                inode_ptr->mounted = false;
+123                inode_ptr->dirty = true;
+124                inode_rw(inode_ptr, READ);
+125                return inode_ptr;
+126           }
+\end{code}
+We look for the first inode that has absolutely no references whatsoever (line 115). If a free slot is found, then we simply write the inode into the slot, and return a pointer to it.
+
+However, we also have not seen the method \verb|inode_rw()| before either (line 124). We shall investigate that method now: \marginpar{inode\_rw()}
+\begin{code}{/brainix/src/fs/inode.c}
+53 void inode_rw(inode_t *inode_ptr, bool read)
+54 {
+55
+56 /* If read is true, read an inode from its block into the inode table.
+57  * Otherwise, write an inode from the table to its block. */
+58 
+59      blkcnt_t blk;
+60      size_t offset;
+61      block_t *block_ptr;
+62      super_t *super_ptr = super_get(inode_ptr->dev);
+63 
+64      if (!inode_ptr->dirty)
+65           /* The inode in the table is already synchronized with the inode
+66            * on its block.  No reason to read or write anything. */
+67           return;
+\end{code}
+The basic approach is the same as always, check to see if the inode is not dirty (if it isn't, there's no point in writing what's all ready there).
+
+\begin{code}{/brainix/src/fs/inode.c}
+69      /* Get the block on which the inode resides. */
+70      group_find(inode_ptr, &blk, &offset);
+71      block_ptr = block_get(inode_ptr->dev, blk);
+\end{code}
+The \verb|group_find()| method is completely foreign to us! So, you know the drill, let's look its data structure up first:
+\begin{code}{/brainix/inc/fs/group.h}
+34 typedef struct
+35 {
+36      unsigned long bg_block_bitmap;       /* First block of block bitmap. */
+37      unsigned long bg_inode_bitmap;       /* First block of inode bitmap. */
+38      unsigned long bg_inode_table;        /* First block of inode table.  */
+39      unsigned short bg_free_blocks_count; /* Number of free blocks.       */
+40      unsigned short bg_free_inodes_count; /* Number of free inodes.       */
+41      unsigned short bg_used_dirs_count;   /* Number of directories.       */
+42      unsigned short bg_pad;               /* Padding.                     */
+43      unsigned long bg_reserved[3];        /* Reserved.                    */
+44 } group_t;
+\end{code}
+I reiterate a main point: this is exactly identical to the ext2 block group data structure. I won't really go in depth into any analysis of it, but merely presented it to point out what it is and where you can find it.
+
+Meanwhile, the \verb|group_find()| method we still need to analyze: \marginpar{group\_find()}
+\begin{code}{/brainix/src/fs/group.c}
+32 void group_find(inode_t *inode_ptr, blkcnt_t *blk_ptr, size_t *offset_ptr)
+33 {
+34 
+35 /* Find where an inode resides on its device - its block number and offset
+36  * within that block. */
+37 
+38      super_t *super_ptr;
+39      unsigned long group;
+40      unsigned long index;
+41      block_t *block_ptr;
+42      group_t *group_ptr;
+43      unsigned long inodes_per_block;
+44 
+45      /* From the superblock, calculate the inode's block group and index
+46       * within that block group. */
+47      super_ptr = super_get(inode_ptr->dev);
+48      group = (inode_ptr->ino - 1) / super_ptr->s_inodes_per_group;
+49      index = (inode_ptr->ino - 1) \% super_ptr->s_inodes_per_group;
+\end{code}
+Again, the brainix style has the dummy variables defined first (lines 38-43). We then find the superblock in order to calculate out the inode's block group and index therein. The super block extraction occurs on line 47, recall from Code fragment 29 the \verb|super_get()| method.
+
+Lines 48-49 uses bitwise operator black magic to actually come up with the group and index therein, but it is valid black magic.
+
+Continuing our analysis of \verb|group_find()|:
+\begin{code}{/brainix/src/fs/group.c}
+51      /* From the group descriptor, find the first block of the inode
+52       * table. */
+53      block_ptr = block_get(inode_ptr->dev, GROUP_BLOCK);
+54      group_ptr = (group_t *) block_ptr->data;
+55      *blk_ptr = group_ptr[group].bg_inode_table;
+56      block_put(block_ptr, IMPORTANT);
+\end{code}
+We see that line 53 uses \verb|block_get()| which was explored in code fragment 31, it gets the block with the inode's \verb|dev| component, and the \verb|GROUP_BLOCK blkcnt_t|. If you remember we explored briefly the \verb|blkcnt_t| data structure back in code fragment 7...it's basically a (signed) long.
+
+Line 54 casts the data of the \verb|block_ptr| as a \verb|group_t|, which is used later on...the next line as a matter of fact, to find out what the \verb|*blk_ptr| is (or more precisely, assign an address to the \verb|*blk_ptr|).
+
+Then, regardless of the \verb|ROBUST|-ness of the operating system (except for \verb|SLOPPY| of course), line 56 writes the block cache to the disk.
+\begin{code}{/brainix/src/fs/group.c}
+58      /* Finally, calculate the block on which an inode resides (it may or may
+59       * not be the first block of the inode table) and its offset within that
+60       * block. */
+61      inodes_per_block = super_ptr->block_size / super_ptr->s_inode_size;
+62      *blk_ptr += index / inodes_per_block;
+63      *offset_ptr = (index \% inodes_per_block) * super_ptr->s_inode_size;
+64 }
+\end{code}
+The last thing that occurs is the calculation of the block which an inode resides, and its offset therein. This occurs using the same old bitwise black magic that was seen previously.
+
+Back to the \verb|inode_rw()| method that we left off at:
+\begin{code}{/brainix/src/fs/inode.c}
+69      /* Get the block on which the inode resides. */
+70      group_find(inode_ptr, &blk, &offset);
+71      block_ptr = block_get(inode_ptr->dev, blk);
+\end{code}
+We assign addresses to \verb|blk| and \verb|offset| by use of \verb|group_find()| on line 70. We then invoke \verb|block_get()| (recall from code fragment 31 what exactly \verb|block_get()| is) to assign an address to \verb|block_ptr|.
+
+\begin{code}{/brainix/src/fs/inode.c} 
+73      if (read)
+74           /* Read the inode from its block into the table. */
+75           memcpy(inode_ptr, &block_ptr->data[offset],
+76                super_ptr->s_inode_size);
+\end{code}
+This basically reads the inode from the block into the table, by means of copying the address using \verb|memcpy()|.
+
+\begin{code}{/brainix/src/fs/inode.c} 
+77      else
+78      {
+79           /* Write the inode from the table to its block, and mark the
+80            * block dirty. */
+81           memcpy(&block_ptr->data[offset], inode_ptr,
+82                super_ptr->s_inode_size);
+83           block_ptr->dirty = true;
+84      }
+\end{code}
+This is the alternative case where we are writing to the block from the inode table, and mark the block as dirty. Note which fields of \verb|memcpy()| have changed compared to lines 75-76.
+
+Regardless of which path was taken, we conclude:
+\begin{code}{/brainix/src/fs/inode.c}  
+86      /* Put the block on which the inode resides, and mark the inode in the
+87       * table as no longer dirty. */
+88      block_put(block_ptr, IMPORTANT);
+89      inode_ptr->dirty = false;
+90 } 
+\end{code}
+By putting the block wherein the inode resides, and mark the inode in the inode table as clean as a whistle. Recall, again, code fragment 31 for \verb|block_put()|.
+
+We continue on with our analysis of \verb|inode_get()|:
+\begin{code}{/brainix/src/fs/inode.c} 
+128      /* There are no free slots in the table.  Vomit. */
+129      panic("inode_get", "no free inodes");
+130      return NULL;
+131 }
+\end{code}
+Basically, the file system cries if there are no free slots. It calls a kernel panic, and returns empty handed. Such is life I guess.
+
+We have concluded our investigation of the nitty-gritty details of \verb|mount_root()| but we left off at line 88 of \verb|fs_register()| in fragment 19. We shall return to it here:
+\begin{code}{/brainix/src/fs/device.c}
+83      if (block && maj == ROOT_MAJ)
+84      {
+85           /* The driver for the device containing the root file system is
+86            * being registered. */
+87           mount_root();
+88           dev = maj_min_to_dev(ROOT_MAJ, ROOT_MIN);
+89           fs_proc[FS_PID].root_dir = inode_get(dev, EXT2_ROOT_INO);
+90           fs_proc[FS_PID].work_dir = inode_get(dev, EXT2_ROOT_INO);
+91      }
+92 }
+\end{code}
+Line 87 we just investigated thoroughly, so let us investigate starting with line 88. The \verb|dev| device is assigned based on the device Major and Minor numbers. We have seen \verb|dev_to_maj_min()| but we have not seen \verb|maj_min_to_dev()|, let us try investigating it here:
+\begin{code}{/brainix/src/fs/device.c}
+44 dev_t maj_min_to_dev(unsigned char maj, unsigned char min)
+45 {
+46 
+47 /* Build the device number from a major number and a minor number. */
+48 
+49      return ((maj & 0xFF) << 8) | ((min & 0xFF) << 0);
+50 }
+\end{code}
+This is basically bitwise black magic that undoes the \verb|dev_to_maj_min()|. Note that if we were to look at the \verb|dev| variable as bits (that is, a string of 1s and 0s) and compare it to the \verb|maj| and \verb|min| as bits, we should in theory see that about half way through the \verb|dev| one half looks similar to the \verb|maj| and the other half resembles \verb|min|. That is no coincidence, that is how the \verb|dev| is assigned a value.
+
+Back to the \verb|fs_register()| code:
+\begin{code}{/brainix/src/fs/device.c}
+83      if (block && maj == ROOT_MAJ)
+84      {
+85           /* The driver for the device containing the root file system is
+86            * being registered. */
+87           mount_root();
+88           dev = maj_min_to_dev(ROOT_MAJ, ROOT_MIN);
+89           fs_proc[FS_PID].root_dir = inode_get(dev, EXT2_ROOT_INO);
+90           fs_proc[FS_PID].work_dir = inode_get(dev, EXT2_ROOT_INO);
+91      }
+92 }
+\end{code}
+So line 88 basically constructs a device number out of the \verb|ROOT_MAJ| and \verb|ROOT_MIN| numbers. Lines 89-90 assign the \verb|fs_proc| entries of \verb|FS_PID| (the file system process ID) to have a root directory (line 89). Recall \verb|inode_get()| from code fragment 52 takes in as arguments the device number \verb|dev| and the inode to search the inode table for (\verb|EXT2_ROOT_INO| in our case).
+
+Upon completion of those functions, the \verb|fs_register()| method is complete.
 
 \begin{thebibliography}{10}
 \bibitem{skelix} The Skelix Operating System Introduction to writing (an operating system including) a file system from scratch \url{http://en.skelix.org/skelixos/tutorial07.php}
