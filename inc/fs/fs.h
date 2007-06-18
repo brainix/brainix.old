@@ -47,6 +47,7 @@
 #include <fs/misc.h>
 #include <fs/mount.h>
 #include <fs/open.h>
+#include <fs/op_handler.h>
 #include <fs/path.h>
 #include <fs/perm.h>
 #include <fs/proc.h>
