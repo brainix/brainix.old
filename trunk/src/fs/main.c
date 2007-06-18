@@ -50,10 +50,10 @@ void fs_main(void)
 		/* Do the requested work. */
 		op_handler_t *fs_handler = 
 		{
-			&msg,
+			msg,
 			fs_run 
 		};
-//		(*fs_handler->fs_run)(&msg);
+
 		op_main(fs_handler);
 	}
 
