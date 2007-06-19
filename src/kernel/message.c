@@ -180,7 +180,10 @@ void msg_send(msg_t *msg)
 
 	intr_lock();
 	if (proc_info(msg->to, STATE) == NONEXIST)
+	{
 		msg_free(msg);
+		panic("msg_send", "unknown recipient");
+	}
 	else
 	{
 		if (mbox[msg->to] == NULL)
