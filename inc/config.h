@@ -77,14 +77,14 @@
 /* The following preprocessor directives are used to ensure that the user has
  * chosen sane values for the preceeding settings. */
 
-#if (NUM_PROCS < 8)
+#if NUM_PROCS < 8
 #error "In <config.h>, NUM_PROCS must be greater than or equal to 8!"
 #endif
 
-#if (ROOT_MAJ != 2 || ROOT_MIN != 0)
+#if ROOT_MAJ != 2 || ROOT_MIN != 0
 #error "In <config.h>, ROOT_MAJ must equal 2 and ROOT_MIN must equal 0!"
 #endif
 
-#if (ROBUST < SLOPPY || ROBUST > PARANOID)
+#if ROBUST != SLOPPY && ROBUST != SANE && ROBUST != PARANOID
 #error "In <config.h>, ROBUST must equal SLOPPY, SANE, or PARANOID!"
 #endif
