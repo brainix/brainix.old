@@ -149,10 +149,11 @@ msg_t *msg_receive(pid_t from)
 	msg_t *msg;
 	pid_t to = do_getpid();
 
-	while ((msg = msg_check(from)) == NULL)
+	while ((msg = msg_check(from)) == NULL) {
 		/* Race condition! */
 //		proc_sleep(to);
 		proc_sched();
+	}
 
 	return msg;
 
@@ -195,7 +196,7 @@ void msg_send(msg_t *msg)
 		rally_grow(msg->mid, msg->from, msg->to);
 	}
 	intr_unlock();
-//	proc_wakeup(msg->to);
+	proc_wakeup(msg->to);
 }
 
 /*----------------------------------------------------------------------------*\
