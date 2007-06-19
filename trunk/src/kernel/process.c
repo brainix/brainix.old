@@ -332,10 +332,11 @@ void proc_sched(void)
 
 	proc_t *proc_ptr;
 
+
 	if (ready_q == NULL)
 		/* There are no processes in the ready queue.  Pick the idle
 		 * loop. */
-		proc_ptr = idle_proc;
+		proc_ptr = idle_proc->next;
 	else if (current_proc == idle_proc || current_proc->state == BLOCKED)
 		/* We're currently running the idle loop but another process has
 		 * become ready, or the current process has put itself to sleep
@@ -346,7 +347,6 @@ void proc_sched(void)
 		/* The current process' timeslice has expired.  Pick the next
 		 * process in the ready queue. */
 		proc_ptr = ready_q = ready_q->next;
-
 	if (proc_ptr == current_proc)
 		/* Oops.  The process that we've picked to run next is the one
 		 * that's running now.  Save a context switch; just return. */

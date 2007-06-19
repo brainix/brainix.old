@@ -105,9 +105,9 @@ void intr_lock(void)
 /* Disable interrupts and increment the lock count.  The order is important to
  * prevent lock count from getting b0rk3d.  This is obvious, but I learned it
  * the hard way. */
-
-	disable_intrs();
 	lock_count++;
+	disable_intrs();
+	
 }
 
 /*----------------------------------------------------------------------------*\

@@ -83,7 +83,9 @@ void main(unsigned long magic, unsigned long multiboot_info_addr)
 	printf("\n");
 	proc_sched();
 	while (true)
-		halt();
+		proc_sched();
+
+//		halt();
 }
 
 /*----------------------------------------------------------------------------*\
