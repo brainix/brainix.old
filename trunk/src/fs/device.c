@@ -89,6 +89,7 @@ void fs_register(bool block, unsigned char maj, pid_t pid)
 		fs_proc[FS_PID].root_dir = inode_get(dev, EXT2_ROOT_INO);
 		fs_proc[FS_PID].work_dir = inode_get(dev, EXT2_ROOT_INO);
 	}
+
 }
 
 /*----------------------------------------------------------------------------*\
