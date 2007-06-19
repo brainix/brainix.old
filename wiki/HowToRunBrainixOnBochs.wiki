@@ -1,0 +1,7 @@
+#summary Tutorial Update...
+
+This is a brief note to the people who are wondering "How the devil do I run this damn thing?!" 
+
+I added a tutorial and some scripts, the tutorial on how to run the O.S. is aptly named "man.pdf" (or if you are hard core and prefer the TeX file, it's "man.tex").
+
+Just letting y'all know...
