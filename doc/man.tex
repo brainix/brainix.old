@@ -1,56 +1,63 @@
-\documentclass{article}
-\usepackage{code}
-\title{How to run Brainix on Unix-like Operating Systems and Bochs}
-\author{pqnelson}
-\date{\today}
+\documentclass{book}
+\pagestyle{plain}
+\usepackage{amsmath,amssymb,amsfonts}	% Typical maths resource packages
+\usepackage{graphics}			% Packages to allow inclusion of graphics
+\usepackage{color}			% For creating coloured text and background
+\usepackage{hyperref}			% For creating hyperlinks in cross references
+\usepackage{code}			% For the code examples
+%\pagenumbering{arabic}
+
+\hypersetup{colorlinks, 
+           citecolor=black,
+           filecolor=black,
+           linkcolor=black,
+           urlcolor=black,
+           bookmarksopen=true}
+
+\title{The Brainix Manual}
+
+\author{The Brainix Team  \\
+{\small\em Copyleft \copyright \ Draft date \today }}
+
+\date{ }
 \begin{document}
- \maketitle
+%\frontmatter 
 
-OK, you have downloaded your copy of brainix by first installing subversion (you need to install subversion!), then type in:
 
-\verb|$ svn checkout http://brainix.googlecode.com/svn/trunk/ brainix|
+\maketitle
+%\addcontentsline{toc}{chapter}{Contents}
+%\pagenumbering{roman}
+\tableofcontents
 
-It should start downloading. You wait until its downloading is complete. I assume that the working directory is \verb|/home/your_user_name_here/|. You type into the command line:
+%\mainmatter
+%\part*{Boring Copyright Legalese}
+%\include{fdl}
+\part{Introductory matters}
+\include{todo}
+\part{Understanding the Brainix Operating System}
+\include{fs}
+\part{Tutorials on Using the Brainix Operating System}
+\include{run}
+\include{hack}
+\include{debug}
 
-\verb|$ mkdir mnt|
 
-Then go into the Brainix directory. Create several scripts:
-\begin{code}{brainix/compile.sh}
-#!/usr/bin/bash
+%\backmatter 
+\addcontentsline{toc}{chapter}{Bibliography}
+\begin{thebibliography}{10}
+\bibitem{skelix} The Skelix Operating System Introduction to writing (an operating system including) a file system from scratch \url{http://en.skelix.org/skelixos/tutorial07.php}
+\bibitem{minixbook} Andrew Tanenbaum and Albert Woodhull, \textit{Operating Systems: Design and Implementation} Third Edition, Upper Saddle River, New Jersey: Pearson Prentice Hall (2006).
+\bibitem{linuxbook} Daniel P. Bovet and Marco Cesati, \textit{Understanding the Linux Kernel} Sebastopol: O'Reilly Media Inc. (2006).
+\bibitem{bsdbook} Marshall Kirk McKusick and George V. Neville-Neil \textit{The Design and Implementation of the FreeBSD Operating System: FreeBSD Version 5.2} Upper Saddle River: Pearson Education, Inc. (2005).
+\bibitem{1} Dr. Matloff's ``File Systems in Unix'' \url{http://heather.cs.ucdavis.edu/~matloff/UnixAndC/Unix/FileSyst.html} 
+\bibitem{2} Unix File System \url{http://unixhelp.ed.ac.uk/concepts/fsystem.html}
+\bibitem{3} The Linux File System Explained, by Mayank Sarup \url{http://www.freeos.com/articles/3102/}
+\bibitem{4} Chapter 9 of \textit{The Linux Kernel} Available \url{http://www.tldp.org/LDP/tlk/fs/filesystem.html}
+\bibitem{5} Inode Definition by the Linux Information Project \url{http://www.bellevuelinux.org/inode.html}
+\bibitem{6} Understanding the Filesystem Inodes \url{http://www.onlamp.com/pub/a/bsd/2001/03/07/FreeBSD_Basics.html}
+\bibitem{7} David A Rusling, The Second Extended File system (EXT2) \url{http://www.science.unitn.it/~fiorella/guidelinux/tlk/node97.html}
+\bibitem{8} Understanding the Linux Kernel Second Edition Excerpt \url{www.oreilly.com/catalog/linuxkernel2/chapter/ch17.pdf}
+\bibitem{9} ``Setting your file creation mask'' \url{http://osr507doc.sco.com/en/OSTut/Setting_your_file_creation_mask.html}
 
-make clean
-make
-\end{code}
-The \verb|compile.sh| script.
-\begin{code}{brainix/update\_bootdisk.sh}
-#!/usr/bin/bash
-
-sudo mount -o loop Bootdisk.img ../mnt/
-sudo cp ./bin/Brainix ../mnt
-sudo rm ../mnt/Brainix.gz
-sudo gzip ../mnt/Brainix
-sudo umount ../mnt/
-\end{code}
-This is the \verb|update_bootdisk| script that updates the boot disk with the Brainix binary image (the Brainix binary image is made after compilation and put in /brainix/bin). Now, to make a bochs \verb|bochsrc| file. I have included a \verb|dot-bochsrc| file in this documentation (its external to this file), I use it to run Brainix in bochs.
-
-Now to put it all together:
-\begin{code}{brainix/run.sh}
-#!/usr/bin/bash
-
-sh compile.sh
-sudo sh update-bootdisk.sh
-bochs -f dot-bochsrc
-\end{code}
-This is the script you invoke in order to compile and run the compiled image in bochs.
-
-I have included sample scripts \textbf{THAT YOU NEED TO MOVE TO THE BRAINIX FOLDER}, i.e. type into the command line:
-\\
-\verb|$ mv compile.sh ../|
-\\
-\verb|$ mv update-bootdisk.sh ../|
-\\
-\verb|$ mv dot-bochsrc ../|
-\\
-\verb|$ mv run.sh ../|
-
+\end{thebibliography}
 \end{document}

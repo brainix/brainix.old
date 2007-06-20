@@ -26,6 +26,8 @@
 
 #include <driver/driver.h>
 
+#define DUM_DBUG	-1
+
 /* Registers: */
 #define CRTC_INDEX_PORT	0x3D4 /* Index register. */
 #define CRTC_DATA_PORT	0x3D5 /* Data register.  */
@@ -54,6 +56,7 @@ void clear(void);
 void itoa(char *s, int base, int n);
 int putchar(int c);
 int printf(char *format, ...);
+void debug(int priority, char *message, void *buf);
 
 /*----------------------------------------------------------------------------*\
  |				   set_attr()				      |
@@ -258,4 +261,9 @@ int printf(char *format, ...)
 		}
 	}
 	return n;
+}
+void debug(int priority, char *message, void *buf)
+{
+	if(priority < DUM_DBUG && DUM_DBUG != -1)
+		printf(message, buf);
 }

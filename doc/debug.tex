@@ -1,12 +1,12 @@
-\documentclass{article}
-\usepackage{code}
+%\documentclass{article}
+%\usepackage{code}
 
-\title{On the Implementation of the debugging for Brainix}
-\author{pqnelson}
-\date{\today}
+\chapter{On the Implementation of the debugging for Brainix}
+%\author{pqnelson}
+%\date{\today}
 
-\begin{document}
-\maketitle
+%\begin{document}
+%\maketitle
 
 It seems all too evident that a system requiring programming will require debugging, especially for something as important as an operating system! So it seemed all too obvious that, by virtue of Murphy's Law (if something can go wrong, it will), we need to implement debugging features quickly. The impromptu solution was to present a debug function:
 \begin{code}{/brainix/src/drivers/video.c}
@@ -31,4 +31,4 @@ and simply put debugging information that you might find useful as
      debug(1-X_ESOTERIC, "X.method(): debugging information...");
 \end{code}
 If you are debugging your dear code, then set \verb|X_ESOTERIC| to be some large number like 10. And you don't have to set the value to \verb|1-X_ESOTERIC| it could be any positive number minus \verb|X_ESOTERIC|.
-\end{document}
+%\end{document}
