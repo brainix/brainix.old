@@ -18,7 +18,7 @@ Things that we would like to have done in the shorter run (say, a month if not s
 
 Perhaps we should start worrying about efficiency and more complicated matters...perhaps it might be pushing to ask us to try to do things like:
   * ~~Make the message struct fit within a register to minimize overhead? (Even if it would change nothing, it would help my OCD ;))~~
-  * Somehow make the context switching have as minimal overhead as possible. This is perhaps one of the more paramount things to do as it seriously constrains us later on.
+  * Somehow make the context switching have as minimal overhead as possible. This is perhaps one of the more paramount things to do as it seriously constrains us later on. Perhaps have a sort of pseudo-context switching?
   * Get virtual memory down.
   * Hack the file system so it can be more easily readable and up-to-par with the ext2 file system (do we still want it to be *identical* to the ext2 file system or does it matter?).
   * Get a virtual file system down, and start being able to support other file systems.
