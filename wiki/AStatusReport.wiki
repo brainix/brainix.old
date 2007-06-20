@@ -35,3 +35,9 @@ Perhaps we should outline some broad goals for the operating system as well? Lik
   * Support X11 and desktop environments?
   * Support for BASH?
 Things of this grand nature.
+
+= A Reference To Device Driver Wrappers... =
+
+I found this thesis to be fascinating and applicable to Brainix. The basic gist is that if you have device drivers run in the user space, you can use a wrapper around any driver (well, Linux drivers, but in theory it shouldn't be hard to generalize it to any driver). Here's the URL for the thesis:
+
+http://www.cs.utah.edu/flux/papers/vanmaren-thesis-base.html
