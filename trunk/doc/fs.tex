@@ -1,11 +1,7 @@
-\documentclass{article}
-\usepackage{code,url}
-
-\title{On the Brainix File System\footnote{This is specifically for revision 68, and the revision number will change as the file system changes}}
-\author{pqnelson - official File System Hacker}
-\date{\today}
-\begin{document}
- \maketitle
+\chapter{On the Brainix File System}
+%\author{pqnelson - official File System Hacker}
+%\date{\today}
+% \maketitle
 \begin{quote}
  `` `Where shall I begin, please your Majesty?' 
 
@@ -1108,22 +1104,3 @@ Back to the \verb|fs_register()| code:
 So line 88 basically constructs a device number out of the \verb|ROOT_MAJ| and \verb|ROOT_MIN| numbers. Lines 89-90 assign the \verb|fs_proc| entries of \verb|FS_PID| (the file system process ID) to have a root directory (line 89). Recall \verb|inode_get()| from code fragment 52 takes in as arguments the device number \verb|dev| and the inode to search the inode table for (\verb|EXT2_ROOT_INO| in our case).
 
 Upon completion of those functions, the \verb|fs_register()| method is complete.
-
-\begin{thebibliography}{10}
-\bibitem{skelix} The Skelix Operating System Introduction to writing (an operating system including) a file system from scratch \url{http://en.skelix.org/skelixos/tutorial07.php}
-\bibitem{minixbook} Andrew Tanenbaum and Albert Woodhull, \textit{Operating Systems: Design and Implementation} Third Edition, Upper Saddle River, New Jersey: Pearson Prentice Hall (2006).
-\bibitem{linuxbook} Daniel P. Bovet and Marco Cesati, \textit{Understanding the Linux Kernel} Sebastopol: O'Reilly Media Inc. (2006).
-\bibitem{bsdbook} Marshall Kirk McKusick and George V. Neville-Neil \textit{The Design and Implementation of the FreeBSD Operating System: FreeBSD Version 5.2} Upper Saddle River: Pearson Education, Inc. (2005).
-\bibitem{1} Dr. Matloff's ``File Systems in Unix'' \url{http://heather.cs.ucdavis.edu/~matloff/UnixAndC/Unix/FileSyst.html} 
-\bibitem{2} Unix File System \url{http://unixhelp.ed.ac.uk/concepts/fsystem.html}
-\bibitem{3} The Linux File System Explained, by Mayank Sarup \url{http://www.freeos.com/articles/3102/}
-\bibitem{4} Chapter 9 of \textit{The Linux Kernel} Available \url{http://www.tldp.org/LDP/tlk/fs/filesystem.html}
-\bibitem{5} Inode Definition by the Linux Information Project \url{http://www.bellevuelinux.org/inode.html}
-\bibitem{6} Understanding the Filesystem Inodes \url{http://www.onlamp.com/pub/a/bsd/2001/03/07/FreeBSD_Basics.html}
-\bibitem{7} David A Rusling, The Second Extended File system (EXT2) \url{http://www.science.unitn.it/~fiorella/guidelinux/tlk/node97.html}
-\bibitem{8} Understanding the Linux Kernel Second Edition Excerpt \url{www.oreilly.com/catalog/linuxkernel2/chapter/ch17.pdf}
-\bibitem{9} ``Setting your file creation mask'' \url{http://osr507doc.sco.com/en/OSTut/Setting_your_file_creation_mask.html}
-\end{thebibliography}
-
-
-\end{document}
