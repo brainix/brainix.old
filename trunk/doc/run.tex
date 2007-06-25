@@ -1,0 +1,52 @@
+\chapter{How to run Brainix on Unix-like Operating Systems and Bochs}
+%\author{pqnelson}
+%\date{\today}
+% \maketitle
+
+OK, you have downloaded your copy of brainix by first installing subversion (you need to install subversion!), then type in:
+
+\verb|$ svn checkout http://brainix.googlecode.com/svn/trunk/ brainix|
+
+It should start downloading. You wait until its downloading is complete. I assume that the working directory is \verb|/home/your_user_name_here/|. You type into the command line:
+
+\verb|$ mkdir mnt|
+
+Then go into the Brainix directory. Create several scripts:
+\begin{code}{brainix/compile.sh}
+#!/usr/bin/bash
+
+make clean
+make
+\end{code}
+The \verb|compile.sh| script.
+\begin{code}{brainix/update\_bootdisk.sh}
+#!/usr/bin/bash
+
+sudo mount -o loop Bootdisk.img ../mnt/
+sudo cp ./bin/Brainix ../mnt
+sudo rm ../mnt/Brainix.gz
+sudo gzip ../mnt/Brainix
+sudo umount ../mnt/
+\end{code}
+This is the \verb|update_bootdisk| script that updates the boot disk with the Brainix binary image (the Brainix binary image is made after compilation and put in /brainix/bin). Now, to make a bochs \verb|bochsrc| file. I have included a \verb|dot-bochsrc| file in this documentation (its external to this file), I use it to run Brainix in bochs.
+
+Now to put it all together:
+\begin{code}{brainix/run.sh}
+#!/usr/bin/bash
+
+sh compile.sh
+sudo sh update-bootdisk.sh
+bochs -f dot-bochsrc
+\end{code}
+This is the script you invoke in order to compile and run the compiled image in bochs.
+
+I have included sample scripts \textbf{THAT YOU NEED TO MOVE TO THE BRAINIX FOLDER}, i.e. type into the command line:
+\\
+\verb|$ mv compile.sh ../|
+\\
+\verb|$ mv update-bootdisk.sh ../|
+\\
+\verb|$ mv dot-bochsrc ../|
+\\
+\verb|$ mv run.sh ../|
+
