@@ -1,0 +1,28 @@
+#summary A Brief Note of mistakes with *Nix and Plans to "Solve" them?
+
+= Introduction =
+
+OK, it has been [http://www.faqs.org/docs/artu/ch20s03.html noted] that there are some short comings with the Unix design. Perhaps we should try and plan how to avoid them rather than have an "Oh well, what the hell"-attitude?
+
+= Exceptions =
+
+OK, C does not support exceptions...naturally. Perhaps we should use [http://www.digitalmars.com/d/index.html The D Programming Language]? It is ABI compatible with (and is as capable of being as low level as) C, and it is as comfortable as Java.
+
+Note that if we are going to use D, we either will have to use structs (note that structs can support internal functions, e.g. consider the following code segment:
+
+\begin{code}
+struct toy {
+     int a;
+     void set(int b) { a = b; }
+}
+\end{code}
+
+This compiles perfectly fine in D. Classes are a bit heavier in D, whereas structs are simply a POD (Plain Old Data) type; if we were to use classes, we may have to hack the GNU D compiler a bit). 
+
+= Device Files =
+
+This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
+
+Perhaps a more object oriented approach would solve this problem?
+
+Just some things to think about...
