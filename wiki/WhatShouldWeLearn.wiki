@@ -26,4 +26,4 @@ This seems to be an increasingly obvious problem with the Unix approach...e.g. t
 
 Perhaps a more object oriented approach would solve this problem?
 
-Just some things to think about...
+I agree about the /dev problem, but I would say it is more of a generalization of syscall problem.  As you noted, network devices almost completely rely on ioctl for their configuration.  Maybe a broader syscall array, with POSIX backwards compatibility would be a reasonable solution.  I'm not sure what you mean about an object oriented approach.  Could you be more specific?
