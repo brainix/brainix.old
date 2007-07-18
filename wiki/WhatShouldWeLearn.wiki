@@ -19,6 +19,7 @@ struct toy {
 
 This compiles perfectly fine in D. Classes are a bit heavier in D, whereas structs are simply a POD (Plain Old Data) type; if we were to use classes, we may have to hack the GNU D compiler a bit). 
 
+C does have longjmp(3), which could be used in a MACRO to emulate the behavior of exceptions.  Are exceptions really that big of a deal?
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
