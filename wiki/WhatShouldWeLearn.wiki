@@ -10,20 +10,31 @@ OK, C does not support exceptions...naturally. Perhaps we should use [http://www
 
 Note that if we are going to use D, we either will have to use structs (note that structs can support internal functions, e.g. consider the following code segment:
 
-\begin{code}
+{{{
 struct toy {
      int a;
-     void set(int b) { a = b; }
+     void set(int b) 
+     { 
+          a = b; 
+     }
+     /* Also acceptable as:
+     void set(int b) { a=b; }
+      */
 }
-\end{code}
+}}}
 
 This compiles perfectly fine in D. Classes are a bit heavier in D, whereas structs are simply a POD (Plain Old Data) type; if we were to use classes, we may have to hack the GNU D compiler a bit). 
 
-C does have longjmp(3), which could be used in a MACRO to emulate the behavior of exceptions.  Are exceptions really that big of a deal?
+- C does have longjmp(3), which could be used in a MACRO to emulate the behavior of exceptions.  Are exceptions really that big of a deal? (james.d.taylor)
+
+- Exceptions *won't* "make or break" the operating system, (actually *aspect* oriented programming would probably make life infinitely easier because there may be a number of exceptions that need to be caught, see the [http://en.wikipedia.org/wiki/Aspect_oriented_programming wikipedia page] on aspect oriented programming for an example of this using Java)...it would be a nice feature to have though, just something different ;) The advantages of using exceptions are covered pretty well by Raymond in the linked book I think. (pqnelson)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
 
 Perhaps a more object oriented approach would solve this problem?
 
-I agree about the /dev problem, but I would say it is more of a generalization of syscall problem.  As you noted, network devices almost completely rely on ioctl for their configuration.  Maybe a broader syscall array, with POSIX backwards compatibility would be a reasonable solution.  I'm not sure what you mean about an object oriented approach.  Could you be more specific?
+- I agree about the /dev problem, but I would say it is more of a generalization of syscall problem.  As you noted, network devices almost completely rely on ioctl for their configuration.  Maybe a broader syscall array, with POSIX backwards compatibility would be a reasonable solution.  I'm not sure what you mean about an object oriented approach.  Could you be more specific? (james.d.taylor)
+
+- Well, by an "object oriented" solution what I really meant (in a rather ambiguous way) was that it would be more of a "Plan 9"-esque solution involving the network as-a folder (or a file) and various protocols as files. Perhaps a slightly more radical approach is necessary? I have only started thinking about this as I just recently stumbled upon Raymond's book that presents a few open problems with the Unix approach. Perhaps rethinking the operating system within the context of the internet using the UNIX-philosophy should be done (though this would be a really sloppy approach to a solution). (pqnelson)
