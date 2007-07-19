@@ -69,6 +69,8 @@ Which can come in handy with, say, the virtual file system. (pqnelson)
 
 - Actually I was just discussing it with Brainix, and we kind of came across an idea: why not have modules as instantiated classes (i.e. objects)? Loading a module = instantiating a new object, unloading a module = using the object's deconstructor. It has a certain appeal to it, no? (pqnelson)
 
+- Sounds natural, and can be done with a minimal C++.  Honestly, it should be up to the main contributers to the kernel, and I'm not one of them yet.  I need to look into both 'D' and Plan9 more seriously. (james.d.taylor)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
@@ -92,3 +94,5 @@ Perhaps a more object oriented approach would solve this problem?
 - Documentaton?  no. This is just what I want from a UNIX-like system. (james.d.taylor)
 
 - Really there are no references on this at all? No technical papers, passages from manuals, rantings from insane professors...nihil? I feel sort of robbed :'( But I agree, that is something that ought to be demanded from a UNIX-like system. (pqnelson)
+
+- Actually, I meant _I_ havn't wrote anything about it other than my notes of things TODO.  I'm sure this idea has been proposed many times before and is rather well documented.  Doesn't the hurd have this capability?  I'm going out of town today through sunday, so I won't have internet access.  (james.d.taylor)
