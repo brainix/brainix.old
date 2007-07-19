@@ -29,6 +29,8 @@ This compiles perfectly fine in D. Classes are a bit heavier in D, whereas struc
 
 - Exceptions *won't* "make or break" the operating system, (actually *aspect* oriented programming would probably make life infinitely easier because there may be a number of exceptions that need to be caught, see the [http://en.wikipedia.org/wiki/Aspect_oriented_programming wikipedia page] on aspect oriented programming for an example of this using Java)...it would be a nice feature to have though, just something different ;) The advantages of using exceptions are covered pretty well by Raymond in the linked book I think. (pqnelson)
 
+- Out of curiosity, what's wrong with using a minimal subset of the C++ standard? (james.d.taylor)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
