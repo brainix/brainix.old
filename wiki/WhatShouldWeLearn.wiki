@@ -67,6 +67,8 @@ Which can come in handy with, say, the virtual file system. (pqnelson)
 
 - From my understanding, the structure of the kernel is going to become a modular "hybrid" kernel...so I don't see the advantage of using Erlang (admittedly I don't really like Erlang). Note that from my understanding Erlang would be incredibly useful if we were to keep programming this beast as a microkernel. I'm merely suggesting this since D *is* C with classes _done right_...and I was trained as an Object Oriented Purist which may have some small influence on my decision making ;) Bear in mind that D is ABI compatible with C, so if you don't like having a purely D (and some assembly) coded kernel, one could have alternatively D and C (and assembly) code in there. (pqnelson)
 
+- Actually I was just discussing it with Brainix, and we kind of came across an idea: why not have modules as instantiated classes (i.e. objects)? Loading a module = instantiating a new object, unloading a module = using the object's deconstructor. It has a certain appeal to it, no? (pqnelson)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
