@@ -63,6 +63,8 @@ Which can come in handy with, say, the virtual file system. (pqnelson)
 
 - D is a new language, so I'd be surprised if you heard of it at all. The `toString()` method is just an example method, you could implement it to be anything you'd like really. One of the more interesting aspects of D is that garbage collection is optional (kind of like in C#)...so garbage collection wouldn't really be implemented ;) There are crazier ideas out there though. The appeal to D is that there are no prototypes or any other inane nonsense that C++ has when it comes to classes...D is a lot more like Java done right. There are pointers/references, optional memory management, etc. Unfortunately there is no good introductory tutorials to D but it's not a hard language to learn, a number of great references are on the [http://en.wikipedia.org/wiki/D_programming_language Wikipedia page] for it. In my opinion, D is a lot cleaner than C++ (making it more enjoyable to hack), allows for better in-code documentation, and is far easier to program in. Opinions may vary ;) (pqnelson)
 
+- I've perused 'D' occasionally for a few years now.  I still think Brainix should remain either 'C' based or _minimal_ C++.  If we are going to rewrite Brainix, why not do it in 'erlang'?  Like I said.. insane.  It's already written in C, and there are a _lot_ more things to worry about than switching languages. (james.d.taylor)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
@@ -82,3 +84,6 @@ Perhaps a more object oriented approach would solve this problem?
 - woops, I misread your comment.  Less syscalls is better, IMO.  If we can define a VFS syscall infrastructure then the I/O namespace can take over. (james.d.taylor)
 
 - Do you have any documentation for this? Because it seems like a great idea that's really following the Unix Philosophy well, but for some reason there are times that I understand it and times that I don't. I can't quite put my finger on the namespace concept, I think that also derives from Plan 9? I recollect vaguely reading something about that in the wikipedia page for Plan 9. (pqnelson)
+
+- Documentaton?  no. This is just what I want from a UNIX-like system. (james.d.taylor)
+
