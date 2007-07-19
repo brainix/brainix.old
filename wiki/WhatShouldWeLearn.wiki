@@ -76,7 +76,4 @@ Perhaps a more object oriented approach would solve this problem?
 - I like the idea of replacing the streams with files...something that appeals to my puritanical side ;P (I've actually wondered about this recently - streams are procedural programming abstractions, what would the corresponding object oriented abstraction be? Then it seems logical that for (Unix-like) operating systems they would be files!) I personally think that there is no system calls problem (why not add a few more specific to the network?)...but that's my lazy solution. (pqnelson)
 
 - It's not lazy, it's elegant.  Providing an independent namespace/filesystem to replace the over-burdened syscall array is beautiful to me.  It provides for infinite kernel/user-space interaction.  The ring-0 daemons could also use this to export their services.  Move the philosophy to the user-level and you could mount e.g., apache somewhere on the filesystem and have it export its services.  Pipes are just a subset of block devices.   I have a few apps that could use this.  e.g., 'cat' could export a specific mime-type depending on the filetype.  The odd thing is that Microsoft is already doing this with their new shell! Ahh.. pipe dreams. ;) (james.d.taylor)
-
-
-
-
+-- woops, I misread your comment.  Less syscalls is better, IMO.  If we can define a VFS syscall infrastructure then the I/O namespace can take over.
