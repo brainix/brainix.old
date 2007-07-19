@@ -59,6 +59,8 @@ class Inode
 }}}
 Which can come in handy with, say, the virtual file system. (pqnelson)
 
+- Sorry I'm not proficient in 'D'.  I'm pretty sure toString() on that Inode is supposed to return the name of the file, I don't see where that is defined.  I don't see how this can't be implemented in C++ just as elegantly.  Not to mention the insane (sorry) idea of using garbage collection in a kernel. (james.d.taylor)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
@@ -72,3 +74,9 @@ Perhaps a more object oriented approach would solve this problem?
 - Keeping the "everything-is-a-file" notion is something I believe in very strongly.  I've had an idea brewing for a "standard I/O namespace".  ie. Instead of just stdin/stdout/stderr, programs could export a namespace that could be accessed as files, and even mounted somewhere on the filesystem.  Imagine a user-space network daemon that could be mounted somewhere in /dev that exports whatever functionality it provides to the kernel.  Though, this could all be implemented in user-space with something like FUSE and a compliant shell, and still doesn't solve the syscall problem...  I'll have to read up on Plan9. (james.d.taylor)
 
 - I like the idea of replacing the streams with files...something that appeals to my puritanical side ;P (I've actually wondered about this recently - streams are procedural programming abstractions, what would the corresponding object oriented abstraction be? Then it seems logical that for (Unix-like) operating systems they would be files!) I personally think that there is no system calls problem (why not add a few more specific to the network?)...but that's my lazy solution. (pqnelson)
+
+- It's not lazy, it's elegant.  Providing an independent namespace/filesystem to replace the over-burdened syscall array is beautiful to me.  It provides for infinite kernel/user-space interaction.  The ring-0 daemons could also use this to export their services.  Move the philosophy to the user-level and you could mount e.g., apache somewhere on the filesystem and have it export its services.  Pipes are just a subset of block devices.   I have a few apps that could use this.  e.g., 'cat' could export a specific mime-type depending on the filetype.  The odd thing is that Microsoft is already doing this with their new shell! Ahh.. pipe dreams. ;) (james.d.taylor)
+
+
+
+
