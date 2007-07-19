@@ -40,12 +40,12 @@ class Inode
      
      public this()
      {
-          /* Constructor not shown */
+          // Constructor not shown 
      }
 /*
-     public ~this() //The deconstructor which is not necessary as there is a garbage collector
+     public ~this() // The deconstructor which is not necessary as there is a garbage collector
      {
-          /* Deconstructor not shown */
+          // Deconstructor not shown 
      }
 */
      
