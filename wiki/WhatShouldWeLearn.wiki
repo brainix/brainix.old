@@ -65,6 +65,8 @@ Which can come in handy with, say, the virtual file system. (pqnelson)
 
 - I've perused 'D' occasionally for a few years now.  I still think Brainix should remain either 'C' based or _minimal_ C++.  If we are going to rewrite Brainix, why not do it in 'erlang'?  Like I said.. insane.  It's already written in C, and there are a _lot_ more things to worry about than switching languages. (james.d.taylor)
 
+- From my understanding, the structure of the kernel is going to become a modular "hybrid" kernel...so I don't see the advantage of using Erlang (admittedly I don't really like Erlang). Note that from my understanding Erlang would be incredibly useful if we were to keep programming this beast as a microkernel. I'm merely suggesting this since D *is* C with classes _done right_...and I was trained as an Object Oriented Purist which may have some small influence on my decision making ;) Bear in mind that D is ABI compatible with C, so if you don't like having a purely D (and some assembly) coded kernel, one could have alternatively D and C (and assembly) code in there. (pqnelson)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
@@ -87,3 +89,4 @@ Perhaps a more object oriented approach would solve this problem?
 
 - Documentaton?  no. This is just what I want from a UNIX-like system. (james.d.taylor)
 
+- Really there are no references on this at all? No technical papers, passages from manuals, rantings from insane professors...nihil? I feel sort of robbed :'( But I agree, that is something that ought to be demanded from a UNIX-like system. (pqnelson)
