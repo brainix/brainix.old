@@ -91,8 +91,14 @@ Perhaps a more object oriented approach would solve this problem?
 
 - Do you have any documentation for this? Because it seems like a great idea that's really following the Unix Philosophy well, but for some reason there are times that I understand it and times that I don't. I can't quite put my finger on the namespace concept, I think that also derives from Plan 9? I recollect vaguely reading something about that in the wikipedia page for Plan 9. (pqnelson)
 
-- Documentaton?  no. This is just what I want from a UNIX-like system. (james.d.taylor)
+- Documentation?  no. This is just what I want from a UNIX-like system. (james.d.taylor)
 
 - Really there are no references on this at all? No technical papers, passages from manuals, rantings from insane professors...nihil? I feel sort of robbed :'( But I agree, that is something that ought to be demanded from a UNIX-like system. (pqnelson)
 
-- Actually, I meant _I_ havn't wrote anything about it other than my notes of things TODO.  I'm sure this idea has been proposed many times before and is rather well documented.  Doesn't the hurd have this capability?  I'm going out of town today through sunday, so I won't have internet access.  (james.d.taylor)
+- Actually, I meant _I_ haven't written anything about it other than my notes of things TODO.  I'm sure this idea has been proposed many times before and is rather well documented.  Doesn't the hurd have this capability?  I'm going out of town today through sunday, so I won't have internet access.  (james.d.taylor)
+
+- Just fixed a few typos and grammatical errors; I honestly do not quite understand the "translator" concept of the HURD, or anything else they're doing. Then again I'm not looking at it that much, nor am I trying that hard ;) If you could provide anything on it, I'd be ecstatic :) (pqnelson)
+
+= A Shell? =
+
+OK, so one of the short term goals is to have a shell up and running. Perhaps we could try the Debian Almquist Shell ([http://gondor.apana.org.au/~herbert/dash/ dash])? Just a random thought that I thought might be of some relevance.
