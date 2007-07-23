@@ -113,6 +113,8 @@ Perhaps we should have a different approach? There are some devices, e.g., that 
 
 OK, so one of the short term goals is to have a shell up and running. Perhaps we could try the Debian Almquist Shell ([http://gondor.apana.org.au/~herbert/dash/ dash])? Just a random thought that I thought might be of some relevance.
 
+I just found [http://linuxgazette.net/111/ramankutty.html this article] in the Linux Gazette about writing a shell, it's tangentially relevant but I found it fascinating.
+
 = HAL =
 
 Has there been discussion about a Brainix hardware abstraction layer yet?  I believe I talked, minimally, with Raj about creating a HAL and seperating x86 from a xen [http://www.cl.cam.ac.uk/research/srg/netos/xen/] wrapper. (jdt)
