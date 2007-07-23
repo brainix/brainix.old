@@ -107,6 +107,8 @@ Perhaps a more object oriented approach would solve this problem?
 
 This is probably completely naive, but, why do we have a difference between character devices and block devices?  Couldn't a character device be a block device who's position is always at the begining of the data, and it's length be whatever the kernel happens to have buffered at the moment.  I understand certain char devices have needs like terminal devices and serial ports.  But, afaik, these are all handled the same way as special block device options... through ioctl().  I'm thinking with "stdio namespaces" we could replace pipes with subsets of two namespaces.  eg. /stdin /stdout /stderr, but if pipes aren't limited to character devices, the two piped programs could act as though they have a common namespace of files to communicate with each other. (jdt)
 
+Perhaps we should have a different approach? There are some devices, e.g., that perfectly fit the "block" or "character" device characterizations. On the other hand, there are some which can't fit in at all. Perhaps we ought to treat all devices are an "extension" of an "abstract device"-esque class? Your approach may be better though, I should probably think about this for a while. (pqnelson)
+
 = A Shell? =
 
 OK, so one of the short term goals is to have a shell up and running. Perhaps we could try the Debian Almquist Shell ([http://gondor.apana.org.au/~herbert/dash/ dash])? Just a random thought that I thought might be of some relevance.
@@ -115,5 +117,4 @@ OK, so one of the short term goals is to have a shell up and running. Perhaps we
 
 Has there been discussion about a Brainix hardware abstraction layer yet?  I believe I talked, minimally, with Raj about creating a HAL and seperating x86 from a xen [http://www.cl.cam.ac.uk/research/srg/netos/xen/] wrapper. (jdt)
 
-
-
+As far as I know, there hasn't been much discussion on the matter. Perhaps Raj has a few reservations, prejudices, or bigoted opinions on the matter, but no one has really brought up the matter. (pqnelson)
