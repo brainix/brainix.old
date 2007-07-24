@@ -73,6 +73,8 @@ Which can come in handy with, say, the virtual file system. (pqnelson)
 
 - ooh. a D frontend to gcc. :)  Looks neat (jdt).
 
+- I emailed the hacker in charge of the D front end for the GCC about (permanently) disabling garbage collection during compilation, and he said that I'd have to manually edit the implementation of the garbage collector in the source code to do this. Still, I think that we should use the D programming language since it would give us something different, it would be object oriented, and it's fun to program in. (pqnelson)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
@@ -116,6 +118,8 @@ OK, so one of the short term goals is to have a shell up and running. Perhaps we
 I just found [http://linuxgazette.net/111/ramankutty.html this article] in the Linux Gazette about writing a shell, it's tangentially relevant but I found it fascinating.
 
 It appears he's just restating one of W. Richard Stevens' examples in APUE.  The problem I see is that there is a lot more to a shell than just fork/execve eg., programming constructs like 'if', 'for x in list; do', etc.  Dash would require a libc, but there is the minimal [http://en.wikipedia.org/wiki/Klibc klibc].  I downloaded the source for klibc, and to my surprise, dash is bundled with it.. (jdt)
+
+- Isn't there some uC library that the GNU movement pieced together? Perhaps we could port it to Brainix? But a C Library would have to be written eventually... (pqnelson)
 
 = HAL =
 
