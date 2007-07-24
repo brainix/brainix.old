@@ -75,7 +75,9 @@ Which can come in handy with, say, the virtual file system. (pqnelson)
 
 - I emailed the hacker in charge of the D front end for the GCC about (permanently) disabling garbage collection during compilation, and he said that I'd have to manually edit the implementation of the garbage collector in the source code to do this. Still, I think that we should use the D programming language since it would give us something different, it would be object oriented, and it's fun to program in. (pqnelson)
 
-- Odd.. there is a 'd' USE flag for gcc in gentoo, but it doesn't do anything.
+- Odd.. there is a 'd' USE flag for gcc in gentoo, but it doesn't do anything. (jdt)
+
+- That's ok, even if it did work, we'll have to manually disable the garbage collector code in the GNU D front end if we decide to use D. (pqnelson)
 
 = Device Files =
 
@@ -107,7 +109,7 @@ Perhaps a more object oriented approach would solve this problem?
 
 - Indeed, I was referring to translators in the HURD.  Honestly, it's been so long that I've forgotten the details. hehe.  From: [http://www.gnu.org/software/hurd/whatis/translator.html], I've gathered that their notion of a translator is a like a wrapper around a filesystem which can proxy the I/O through a userspace daemon.  This allows a user's specific daemon to "translate" how a file is accessed.  I'm not sure how I came up with the similarities to a "stdio namespace". (jdt)
 
-- I just had a thought: you open and close a network connection, you receive data and "read" it, you send data ("write" it)...perhaps we could represent a network connection as a file after all?
+- I just had a thought: you open and close a network connection, you receive data and "read" it, you send data ("write" it)...perhaps we could represent a network connection as a file after all? (pqnelson)
 
 = Devices: Char vs. Block =
 
