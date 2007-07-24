@@ -75,7 +75,7 @@ Which can come in handy with, say, the virtual file system. (pqnelson)
 
 - I emailed the hacker in charge of the D front end for the GCC about (permanently) disabling garbage collection during compilation, and he said that I'd have to manually edit the implementation of the garbage collector in the source code to do this. Still, I think that we should use the D programming language since it would give us something different, it would be object oriented, and it's fun to program in. (pqnelson)
 
-- Just upgraded to GCC-4.2.0, and the D frontend is gone... so, back to 4.1.2 I go.
+- Odd.. there is a 'd' USE flag for gcc in gentoo, but it doesn't do anything.
 
 = Device Files =
 
