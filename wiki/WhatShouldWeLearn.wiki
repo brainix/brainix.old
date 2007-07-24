@@ -111,6 +111,19 @@ Perhaps a more object oriented approach would solve this problem?
 
 - I just had a thought: you open and close a network connection, you receive data and "read" it, you send data ("write" it)...perhaps we could represent a network connection as a file after all? (pqnelson)
 
+- True.. BSD sockets end up mapping to file descriptors anyway.  Each network device can have multiple addresses though, and sockets are represented by 4 unique things: local/remote IP address and local/remote port.  I'm not sure how you would abstract this to a namespace.
+{{{
+cat /dev/eth0/0.0.0.0/80 # would block/listen on port 80
+echo "HEAD / HTTP/1.0\n\n" > /dev/eth0/127.0.0.1/80
+# sends request to localhost:80
+
+# I'd like to see something like:
+$ cd /dev/net/default && web-browser
+# the CWD would let the web-browser do:
+  FILE *fp = fopen("google.com/http", "rw");
+}}}
+Clearly needs more thought.. My "ultimate" goal is to one day be able to mount my IRC client somewhere on my filesystem. :) (jdt)
+
 = Devices: Char vs. Block =
 
 This is probably completely naive, but, why do we have a difference between character devices and block devices?  Couldn't a character device be a block device who's position is always at the begining of the data, and it's length be whatever the kernel happens to have buffered at the moment.  I understand certain char devices have needs like terminal devices and serial ports.  But, afaik, these are all handled the same way as special block device options... through ioctl().  I'm thinking with "stdio namespaces" we could replace pipes with subsets of two namespaces.  eg. /stdin /stdout /stderr, but if pipes aren't limited to character devices, the two piped programs could act as though they have a common namespace of files to communicate with each other. (jdt)
@@ -134,3 +147,5 @@ It appears he's just restating one of W. Richard Stevens' examples in APUE.  The
 Has there been discussion about a Brainix hardware abstraction layer yet?  I believe I talked, minimally, with Raj about creating a HAL and seperating x86 from a xen [http://www.cl.cam.ac.uk/research/srg/netos/xen/] wrapper. (jdt)
 
 As far as I know, there hasn't been much discussion on the matter. Perhaps Raj has a few reservations, prejudices, or bigoted opinions on the matter, but no one has really brought up the matter. (pqnelson)
+
+
