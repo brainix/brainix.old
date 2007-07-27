@@ -112,6 +112,17 @@ But that's my prejudiced bigotry towards favoring object orientedness. You may d
 
 - Actually, I've been looking at the documentation for [http://www.on-time.com/ddj0011.htm exception handling in Embedded Systems programming] which appears to be a more luring approach for one approach. I'm still undecided, it would be nice to hack the D front end (or write our own front end -- an impossibly task :P) such that we have what we want. Of course, we only "need" assembly...everything else is just a luxury. (pqnelson)
 
+- Just a small bibiliography for anyone reading this that wants to have a more thorough reading of exceptions in C:
+[http://www.swig.org/Doc1.1/HTML/Exceptions.html Exception Handling]
+[http://www.halfbakery.com/idea/C_20exception_20handling_20macros C Exception Handling Macros]
+[http://ldeniau.web.cern.ch/ldeniau/html/exception/exception.html Exceptions in C]
+[http://sourceforge.net/projects/cexcept/ CExcept exception handling in C]
+([http://www.nicemice.net/cexcept/ More about CException])
+[http://www.planatechsolutions.com/xllplus-online/start_seh2.htm C Structured Exception Handling]
+[http://www.geocities.com/ravikiran_uvs/articles/exception_handling.html Exception Handling in C]
+[http://www.nada.kth.se/cvap/abstracts/cvap127.html Exception Handling in ANSI C]
+
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
