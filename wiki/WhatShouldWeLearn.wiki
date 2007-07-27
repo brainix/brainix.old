@@ -79,6 +79,37 @@ Which can come in handy with, say, the virtual file system. (pqnelson)
 
 - That's ok, even if it did work, we'll have to manually disable the garbage collector code in the GNU D front end if we decide to use D. (pqnelson)
 
+- I have been thinking about using C++ instead of D, and I don't really mind using C++ `struct`s provided that the code style convention is that it's like a Java class _sans_ constructor, e.g.:
+{{{
+#include <iostream>
+using namespace std;
+
+struct test
+{
+	int hello;
+
+	int toString() {
+		return hello; 
+	}
+	void goToHell() {
+		~hello;
+	}
+	bool someOtherFunction() {
+		return ((5)==(hello));
+	}
+};
+
+int main(void)
+{
+	test foo;
+	foo.hello=5;
+	cout<<foo.toString()<<endl;
+	cout<<foo.someOtherFunction()<<endl;
+	return 0;
+}
+}}}
+But that's my prejudiced bigotry towards favoring object orientedness. You may disagree with me, and I shall consider you wrong :P A thought does arise about the `try { ... } catch(...) {...}` blocks, which perhaps we could possibly, conceivably, hopefully, perhaps maybe use? (pqnelson)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
@@ -124,6 +155,8 @@ $ cd /dev/net/default && web-browser
 }}}
 Clearly needs more thought.. My "ultimate" goal is to one day be able to mount my IRC client somewhere on my filesystem. :) (jdt)
 
+- Perhaps have each device as a folder, and each address as a file therein? (pqnelson)
+
 = Devices: Char vs. Block =
 
 This is probably completely naive, but, why do we have a difference between character devices and block devices?  Couldn't a character device be a block device who's position is always at the begining of the data, and it's length be whatever the kernel happens to have buffered at the moment.  I understand certain char devices have needs like terminal devices and serial ports.  But, afaik, these are all handled the same way as special block device options... through ioctl().  I'm thinking with "stdio namespaces" we could replace pipes with subsets of two namespaces.  eg. /stdin /stdout /stderr, but if pipes aren't limited to character devices, the two piped programs could act as though they have a common namespace of files to communicate with each other. (jdt)
@@ -151,3 +184,5 @@ As far as I know, there hasn't been much discussion on the matter. Perhaps Raj h
 = Extended Attributes =
 
 - The link at the top of this page repeatedly mentions MAC-like name/pair file attributes as being a good thing.  It also mentions the downsides with the 'cat' example not copying the file attributes portion.  What if we had attributes, but made them explicit members of the filesystem's namespace.  Every file would also be a directory with "sub-files" as the parent file's name-value pairs.  As the document states, this would alleviate /device configuration by avoiding ioctl() hacks.  NTFS has something like this called [http://www.securityfocus.com/infocus/1822 Alternate Data Streams], but hides it from the user and doesn't follow standard namespace conventions. (jdt)
+
+- This is a good idea and I think it should be implemented; but because I'm an old fuddy duddy, when you say "namespace" I assume you mean a userspace daemon that manipulates the file system...? (pqnelson)
