@@ -148,4 +148,7 @@ Has there been discussion about a Brainix hardware abstraction layer yet?  I bel
 
 As far as I know, there hasn't been much discussion on the matter. Perhaps Raj has a few reservations, prejudices, or bigoted opinions on the matter, but no one has really brought up the matter. (pqnelson)
 
+= Extended Attributes =
+
+- The link at the top of this page repeatedly mentions MAC-like name/pair file attributes as being a good thing.  It also mentions the downsides with the 'cat' example not copying the file attributes portion.  What if we had attributes, but made them explicit members of the filesystem's namespace.  Every file would also be a directory with "sub-files" as the parent file's name-value pairs.  As the document states, this would alleviate /device configuration by avoiding ioctl() hacks.  NTFS has something like this called [http://www.securityfocus.com/infocus/1822 Alternate Data Streams], but hides it from the user and doesn't follow standard namespace conventions.
 
