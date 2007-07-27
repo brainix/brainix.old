@@ -110,6 +110,8 @@ int main(void)
 }}}
 But that's my prejudiced bigotry towards favoring object orientedness. You may disagree with me, and I shall consider you wrong :P A thought does arise about the `try { ... } catch(...) {...}` blocks, which perhaps we could possibly, conceivably, hopefully, perhaps maybe use? (pqnelson)
 
+- Actually, I've been looking at the documentation for [http://www.on-time.com/ddj0011.htm exception handling in Embedded Systems programming] which appears to be a more luring approach for one approach. I'm still undecided, it would be nice to hack the D front end (or write our own front end -- an impossibly task :P) such that we have what we want. Of course, we only "need" assembly...everything else is just a luxury. (pqnelson)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
