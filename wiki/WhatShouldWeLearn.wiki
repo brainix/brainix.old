@@ -122,6 +122,25 @@ But that's my prejudiced bigotry towards favoring object orientedness. You may d
 [http://www.geocities.com/ravikiran_uvs/articles/exception_handling.html Exception Handling in C]
 [http://www.nada.kth.se/cvap/abstracts/cvap127.html Exception Handling in ANSI C]
 
+- Actually,the elegant version of C exception handling for C99 (it compiles with the GCC):
+{{{
+#ifndef EXCEPTION_H
+#define EXCEPTION_H
+
+#include <setjmp.h>
+
+extern jmp_buf exception_buffer;
+extern int exception_status;
+
+#define try		if ((exception_status = setjmp(exception_buffer)) == 0)
+#define catch(val)	else if (exception_status == val)
+#define throw(val)	longjmp(exception_buffer,val)
+#define finally		else
+
+#endif /* def EXCEPTION_H */
+}}}
+Just thought I'd throw that out there if anyone cares :) (pqnelson)
+
 
 = Device Files =
 
@@ -201,3 +220,5 @@ As far as I know, there hasn't been much discussion on the matter. Perhaps Raj h
 - This is a good idea and I think it should be implementeedd; but because I'm an old fuddy duddy, when you say "namespace" I assume you mean a userspace daemon that manipulates the file system...? (pqnelson)
 
 - I was thinking ring-0 daemons could do the same thing via the VFS.  eg. If there is a device that wants to export certain variable parameters, they could simply define these name/pair attributes of its existing filename in its mounted namespace.  The user-space could then modify the attributes via the VFS directly via /dev rather than mess with something like /proc. (jdt)
+
+- Ah, ok, that clears up a lot, thanks :) (pqnelson)
