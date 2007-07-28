@@ -141,6 +141,7 @@ extern int exception_status;
 }}}
 Just thought I'd throw that out there if anyone cares :) (pqnelson)
 
+- Not so sure about "elegant".  It reminds me of the [http://minnie.tuhs.org/UnixTree/V7/usr/src/cmd/sh/mac.h.html Bourne shell macros], which allowed for code like [http://minnie.tuhs.org/UnixTree/V7/usr/src/cmd/sh/main.c.html this]! :) (jdt)
 
 = Device Files =
 
