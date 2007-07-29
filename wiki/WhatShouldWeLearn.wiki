@@ -223,6 +223,8 @@ Clearly needs more thought.. My "ultimate" goal is to one day be able to mount m
 
 - [http://www.ibm.com/developerworks/linux/library/l-linux-networking-stack/ Here] is an interesting introduction to the Linux Network Stack internals, along with a good bibliography on the subject. (pqnelson)
 
+- Also, [http://gicl.cs.drexel.edu/people/sevy/network/Linux_network_stack_walkthrough.html Linux Network Stack Walkthrough], and I did a similar "walk-through" a few years ago to try to figure out the stack and netfilter internals. I've uploaded it: [http://jdtaylor.org/netfilter.txt] (jdt)
+
 = Devices: Char vs. Block =
 
 This is probably completely naive, but, why do we have a difference between character devices and block devices?  Couldn't a character device be a block device who's position is always at the begining of the data, and it's length be whatever the kernel happens to have buffered at the moment.  I understand certain char devices have needs like terminal devices and serial ports.  But, afaik, these are all handled the same way as special block device options... through ioctl().  I'm thinking with "stdio namespaces" we could replace pipes with subsets of two namespaces.  eg. /stdin /stdout /stderr, but if pipes aren't limited to character devices, the two piped programs could act as though they have a common namespace of files to communicate with each other. (jdt)
