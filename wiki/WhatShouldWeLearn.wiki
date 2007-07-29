@@ -143,6 +143,8 @@ Just thought I'd throw that out there if anyone cares :) (pqnelson)
 
 - Not so sure about "elegant".  It reminds me of the [http://minnie.tuhs.org/UnixTree/V7/usr/src/cmd/sh/mac.h.html Bourne shell macros], which allowed for code like [http://minnie.tuhs.org/UnixTree/V7/usr/src/cmd/sh/main.c.html this]! :) (jdt)
 
+- "Elegant" as in "I'm too lazy to try to do any better than this which works" ;P (pqnelson)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
@@ -193,6 +195,8 @@ Clearly needs more thought.. My "ultimate" goal is to one day be able to mount m
 - Ahhh! You said "folder"! :P  Yes, but then you would need to have a way of representing ports of a socket too, because there can be multiple ports per address.  Not to mention a connected socket would have 2 addresses and 2 ports. :/ (jdt)
 
 - Maybe the name/value pair attribute solution below could be used here to store this extra information? (jdt)
+
+- [http://www.ibm.com/developerworks/linux/library/l-linux-networking-stack/ Here] is an interesting introduction to the Linux Network Stack internals, along with a good bibliography on the subject. (pqnelson)
 
 = Devices: Char vs. Block =
 
