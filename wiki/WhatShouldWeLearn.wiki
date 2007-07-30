@@ -278,3 +278,6 @@ A bibliography for the ZFS:
 [http://www.kippdata.de/pdf/Solaris_10_ZFS.pdf Solaris™ ZFS File Storage Solution]
 
 [http://www.techworld.com/storage/features/index.cfm?featureid=2744 ZFS - the future of file systems?]
+
+- Absolutely.. I've been looking at ZFS and its source.  Truly the best, hrm.. It kinda goes beyond a filesystem, and implements a lot of things that are available in the Linux Volume Manager + Software raid.  The Problem: Brainix is currently under the GPLv2, which is incompatible with Sun's [http://www.sun.com/cddl/ CDDL], unfortunately.  This is why Linux doesn't have native ZFS, but relies on a userspace FUSE version. Truly a shame, but I've heard rumors of Sun releasing parts into GPLv3.  ReiserFSv4, XFS, Extv3 are all good solutions with layered raid and volume management.  I'm looking for a really solid VFS that incorporates many of the things that are considered in this document.  Which filesystem to include is a sidenote.
+
