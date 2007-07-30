@@ -172,6 +172,8 @@ Would also need to somehow test in "try" whether there is a stack overflow... (j
 
 - Well, I think that'll do for now JDT. That'll do...only if because I'm extraordinarily lazy :P (pqnelson)
 
+- 32 stack frames.. the only time I can see that happening is in either extreme recursion, or the more probable infinite function dependence.  Though.. I don't see over 32 nested exceptions anytime soon..  (I'm lazy too) (jdt)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
