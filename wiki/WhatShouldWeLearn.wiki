@@ -231,6 +231,8 @@ Clearly needs more thought.. My "ultimate" goal is to one day be able to mount m
 
 - "As much as I like Linux, its source organization ... is beyond ghastly." Truer words have never been spoken ;) I actually agree, _a priori_, with what you say. I openly admit that networking is *not* my _forte_. That does not change the fact that it still needs to be addressed with the Unix philosophy adequately. (pqnelson)
 
+- Do you know if anyone is working on a networking subsystem for Brainix, currently? (jdt)
+
 = Devices: Char vs. Block =
 
 This is probably completely naive, but, why do we have a difference between character devices and block devices?  Couldn't a character device be a block device who's position is always at the begining of the data, and it's length be whatever the kernel happens to have buffered at the moment.  I understand certain char devices have needs like terminal devices and serial ports.  But, afaik, these are all handled the same way as special block device options... through ioctl().  I'm thinking with "stdio namespaces" we could replace pipes with subsets of two namespaces.  eg. /stdin /stdout /stderr, but if pipes aren't limited to character devices, the two piped programs could act as though they have a common namespace of files to communicate with each other. (jdt)
@@ -288,3 +290,6 @@ A bibliography for the ZFS:
 - Absolutely.. I've been looking at ZFS and its source.  Truly the best, hrm.. It kinda goes beyond a filesystem, and implements a lot of things that are available in the Linux Volume Manager + Software raid.  The Problem: Brainix is currently under the GPLv2, which is incompatible with Sun's [http://www.sun.com/cddl/ CDDL], unfortunately.  This is why Linux doesn't have native ZFS, but relies on a userspace FUSE version. Truly a shame, but I've heard rumors of Sun releasing parts into GPLv3.  ReiserFSv4, XFS, Extv3 are all good solutions with layered raid and volume management.  I'm looking for a really solid VFS that incorporates many of the things that are considered in this document.  Which filesystem to include is a sidenote. (jdt)
 
 - I was thinking of perhaps a clone of the ZFS, perhaps we should think about it before we try anything though because they may decide to re-release the code under the GPL. Who knows. But I was (poorly attempting to begin) trying to suggest that we could clone it ;) (pqnelson)
+
+- I don't know about cloning it.. that is a massive amount of code.  What I like about OpenSolaris is their scheduler/kernel-threads and ZFS.   I'm just waiting for the gentoo sys-kernel/open-solaris to appear.  (off-topic) their drivers suck.. especially video.  File systems are not _my_ forté. (jdt)
+
