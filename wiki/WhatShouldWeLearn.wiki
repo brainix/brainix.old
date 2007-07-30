@@ -241,6 +241,32 @@ Clearly needs more thought.. My "ultimate" goal is to one day be able to mount m
 
 - Do you know if anyone is working on a networking subsystem for Brainix, currently? (jdt)
 
+- I don't think anyone is, the /brainix/doc/credits file say:
+
+     Alex Nelson <pqnelson@ucdavis.edu>
+     	     · file system hacker
+     	     · debugger
+	     · technical writer
+
+     Doug Taylor <james.d.taylor@gmail.com>
+	     ·
+
+     Jagtesh <jagtesh@gmail.com>
+	     · shell hacker
+
+     Mirat Kadenov <mirat.kadenov@gmail.com>
+	     · ATA hacker
+
+     Rajiv Bakulesh Shah <brainix@gmail.com>
+	     · lead (pronounced "l33t") hacker
+
+     Rick Parrish <rfmobile@swbell.net>
+	     ·
+
+     Sam Morehouse <sam.morehouse@gmail.com>
+	     · terminal hacker
+It appears that no one is working, or has worked, on it. (pqnelson)
+
 = Devices: Char vs. Block =
 
 This is probably completely naive, but, why do we have a difference between character devices and block devices?  Couldn't a character device be a block device who's position is always at the begining of the data, and it's length be whatever the kernel happens to have buffered at the moment.  I understand certain char devices have needs like terminal devices and serial ports.  But, afaik, these are all handled the same way as special block device options... through ioctl().  I'm thinking with "stdio namespaces" we could replace pipes with subsets of two namespaces.  eg. /stdin /stdout /stderr, but if pipes aren't limited to character devices, the two piped programs could act as though they have a common namespace of files to communicate with each other. (jdt)
@@ -301,3 +327,4 @@ A bibliography for the ZFS:
 
 - I don't know about cloning it.. that is a massive amount of code.  What I like about OpenSolaris is their scheduler/kernel-threads and ZFS.   I'm just waiting for the gentoo sys-kernel/open-solaris to appear.  (off-topic) their drivers suck.. especially video.  File systems are not _my_ forté. (jdt)
 
+- File Systems _are_ my forte; but that Indiana project (or whatever the hell its called) appears to try to make OpenSolaris more Linux-like...perhaps they'll end up using Linux drivers? At any rate, I'll need to be studying the ZFS source code more since we'll be using/cloning/blah-ing it. (pqnelson)
