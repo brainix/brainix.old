@@ -332,3 +332,5 @@ A bibliography for the ZFS:
 = Documentation =
 
 - All this talk of OpenSolaris and ZFS has reminded me of how well Sun documents their source code.  Does Brainix want such extensive comments and explanations throughout the code, or would minimal comments be more sufficient?  I happen to have a patch to Brainix which has rather heavy documentation in the parts that I've gone through already.  I did this for my own sake, because I have rather bad memory. ;) (jdt)
+
+- I was always for lengthy documentation using JavaDoc documentation style, but that's just my Java training coming out. The more extensive the in-code documentation, the better. If it's high quality documentation, one might want to consider adding to the manual ;) (pqnelson)
