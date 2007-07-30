@@ -327,4 +327,4 @@ A bibliography for the ZFS:
 
 - I don't know about cloning it.. that is a massive amount of code.  What I like about OpenSolaris is their scheduler/kernel-threads and ZFS.   I'm just waiting for the gentoo sys-kernel/open-solaris to appear.  (off-topic) their drivers suck.. especially video.  File systems are not _my_ forté. (jdt)
 
-- File Systems _are_ my forte; but that Indiana project (or whatever the hell its called) appears to try to make OpenSolaris more Linux-like...perhaps they'll end up using Linux drivers? At any rate, I'll need to be studying the ZFS source code more since we'll be using/cloning/blah-ing it. (pqnelson)
+- File Systems _are_ my forte; but that Indiana project (or whatever the hell its called) appears to try to make Open-Solaris more Linux-like...perhaps they'll end up using Linux drivers? At any rate, I'll need to be studying the ZFS source code more since we'll be using/cloning/blah-ing it. (pqnelson)
