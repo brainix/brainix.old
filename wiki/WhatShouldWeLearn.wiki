@@ -259,4 +259,22 @@ As far as I know, there hasn't been much discussion on the matter. Perhaps Raj h
 
 - Ah, ok, that clears up a lot, thanks :) (pqnelson)
 
+= File System Choice =
 
+There are a million file systems out there that are unix-like. I think that perhaps we should choose the best file system currently around.
+
+The reason for this choice is because the virtual file system will have to be custom tailored to minimize the overhead between the kernel and the file system.
+
+I think that perhaps we should choose, as I stated, the best file system around: the [http://www.opensolaris.org/os/community/zfs/docs/zfs_last.pdf ZFS]. 
+
+A bibliography for the ZFS:
+
+[http://www.opensolaris.org/os/community/zfs/ ZFS Development Community and detailed ZFS Documentation]
+
+[http://www.opensolaris.org/os/community/zfs/source/ ZFS source code]
+
+[http://www.asiabsdcon.org/papers/P16-slides.pdf Porting ZFS file system to FreeBSD]
+
+[http://www.kippdata.de/pdf/Solaris_10_ZFS.pdf Solaris™ ZFS File Storage Solution]
+
+[http://www.techworld.com/storage/features/index.cfm?featureid=2744 ZFS - the future of file systems?]
