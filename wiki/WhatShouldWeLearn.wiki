@@ -328,3 +328,7 @@ A bibliography for the ZFS:
 - I don't know about cloning it.. that is a massive amount of code.  What I like about OpenSolaris is their scheduler/kernel-threads and ZFS.   I'm just waiting for the gentoo sys-kernel/open-solaris to appear.  (off-topic) their drivers suck.. especially video.  File systems are not _my_ forté. (jdt)
 
 - File Systems _are_ my forte; but that Indiana project (or whatever the hell its called) appears to try to make Open-Solaris more Linux-like...perhaps they'll end up using Linux drivers? At any rate, I'll need to be studying the ZFS source code more since we'll be using/cloning/blah-ing it. (pqnelson)
+
+= Documentation =
+
+- All this talk of OpenSolaris and ZFS has reminded me of how well Sun documents their source code.  Does Brainix want such extensive comments and explanations throughout the code, or would minimal comments be more sufficient?  I happen to have a patch to Brainix which has rather heavy documentation in the parts that I've gone through already.  I did this for my own sake, because I have rather bad memory. ;) (jdt)
