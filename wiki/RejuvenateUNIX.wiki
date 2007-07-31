@@ -79,3 +79,15 @@ audio streamer, via gstreamer, to the channel graphically.
 The main implementation would be in specifying the VFS, which afaik,
 Brainix currently doesn't have.  A modified shell and mount would probably
 be needed too.
+
+= How does this help the TCP/IP implementation =
+
+Well, it opens us up to more choices with a simple syscall interface.  Honestly, I don't know.  Maybe something like:
+{{{
+    FILE *fp = fopen("/sys/socket/connect/www.google.com/http", "rw");
+    // blah .. blah
+    int listen_fd = open("/sys/socket/listen/localhost/http", O_RDONLY);
+    // blah... blah... select(2), etc
+}}}
+The main point is.. no connect/listen/sendmsg, etc, and it isn't a hack. (jdt)
+
