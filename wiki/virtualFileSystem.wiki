@@ -1,0 +1,86 @@
+#summary Implementation and perhaps later the history of the virtual file system.
+
+= Introduction =
+
+OK, so I was writing for the manual the history of the virtual file system (because that interests me for some reason) as well as its implementations in: SunOS 4, Minix 3, (perhaps FreeBSD and/or Solaris), and finally Linux's "Common File Model" approach. I'm still studying the implementation in Minix 3 a wee bit, but I'm concentrating more on the FreeBSD/Solaris approach. I don't have the Linux approach written, but I can write it in a Jiffy if anyone cares. 
+
+Well, at any rate, since the virtual file system is becoming increasingly important, it   seems like we should dedicate a whole page to it.
+
+= Details =
+
+Historically, there were two main paradigms that the virtual file system follows: the vnode approach `[1]` (which it appears both Solaris and BSD adopted, and Minix 3 has adopted as well `[3]`) and the so-called "Common File Model" `[2]` (which Linux uses).
+
+== The VNode Model ==
+
+The vnode model is handled far better than I could ever try to handle it in Kleiman `[1]`.
+
+For those that wish to see the [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L74 vopstats], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L156 vtypes], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L214 vnode], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L336 vattr], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L462 vnevent] (vnode events), [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L474 vmodes], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L481 vsecattr], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L493 vsa_mask values], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L532 VNODE_OPS] data structures, I have found them for Solaris. And, of course, the [http://fxr.watson.org/fxr/source/common/fs/?v=OPENSOLARIS directory containing the implementation]. I'm too lazy to go line by line and comment on it myself, but feel free to enjoy.
+
+== The Common File Model ==
+
+The motivation for the Common File Model is to be able to represent any supported file system within one model. It is specifically designed to have minimal overhead with the ext2/ext3 file system. Despite being an object oriented design, the Linux virtual file system is coded entirely in C. That means the "classes" are `struct`s whose "methods" are function pointers.
+
+There are four object types in the Common File Model are:
+
+  * _The Superblock Object_: This stores information that is used for mounting file systems. Generally for disk-based file systems, this object represents the file system control block on disk.
+  * _The Inode Object_: This stores information concerning a specific file. Alternatively for disk-based file systems (e.g. FAT file systems), this corresponds to a file control block on disk. Recall that each inode has a unique inode number which identifies the file within the file system.
+  * _The File Object_: This stores information about interactions between an open file and a process. However it ought to be noted this information exists only in kernel memory during the time interval which a process has the file open.
+  * _The Dentry Object_: This object stores information about the linking of a directory entry ("`d_entry`") with the corresponding file. Linking files in directory entries are handled differently for each individual disk-based file system.
+
+The Linux file system also has a "dentry cache". Generally speaking, a *dentry cache* is a which is held in the *disk cache* to speed up the translations from a file name path to the inode of the last pathname component. A *disk cache* is basically a mechanism which allows a kernel to keep in RAM some information usually stored on disk in order to speed up the operations on the information.
+
+= Compare and Contrast the Approaches =
+
+The approaches have been compared in `[4]`, so we shall only quote it here:
+
+  'All three operating systems use a data abstraction layer to hide file system
+  implementation details from applications. In all three OSes, you use open,
+  close, read, write, stat, etc. system calls to access files, regardless of
+  the underlying implementation and organization of file data. Solaris and
+  FreeBSD call this mechanism VFS ("virtual file system") and the principle
+  data structure is the vnode, or "virtual node." Every file being accessed
+  in Solaris or FreeBSD has a vnode assigned to it. In addition to generic file
+  information, the vnode contains pointers to file-system-specific information.
+  Linux also uses a similar mechanism, also called VFS (for "virtual file
+  switch"). In Linux, the file-system-independent data structure is an inode.
+  This structure is similar to the vnode on Solaris/FreeBSD. (Note that there
+  is an inode structure in Solaris/FreeBSD, but this is file-system-dependent
+  data for UFS file systems). Linux has two different structures, one for file
+  operations and the other for inode operations. Solaris and FreeBSD combine
+  these as "vnode operations."'
+
+= Which Paradigm to Follow? = 
+
+Ideally, we should have a different virtual file system for every file system that exists and then, based on the user's configuration (i.e. choice of file system), automatically compile the virtual file system that will minimize the overhead to the native file system. In practice, we don't have the manpower or the patience to do such a Herculean task.
+
+It seems that the approach we ought to follow, based on [RejuvenateUNIX our rejuvenation of the Unix File System], the FreeBSD/Solaris approach of vnodes. We can more easily tailor the vnode operations to take care of internet related operations. It would be nice to have code such as:
+{{{
+vnode internet = /* ... */;
+
+/* initialization not shown */
+
+internet->v_op.vn_open(); /* opens the internet connexion */
+internet->v_op.vn_rdwr(&internet, struct userIOptrArgs, READ, Flags, userID); /* reads in stuff from the internet */
+
+//etc. 
+}}}
+
+== Revision History and CopyLeft ==
+
+This page is released under the GPL v 3 License.
+
+*Revision History*:
+  * 31 July 2007 (at 2:51 PM PST) - first written by pqnelson.
+
+= Bibliography = 
+
+`[1]` "[http://www.arl.wustl.edu/~fredk/Courses/cs523/fall01/Papers/kleiman86vnodes.pdf Vnodes: An Architecture for Multiple File System Types in Sun UNIX]" by S. R. Kleiman.
+
+`[2]` Chapter 12 of _Understanding the Linux Kernel_ by Daniel P. Bovet, Marco Cesati
+
+`[3]` "[http://www.minix3.org/doc/gerofi_thesis.pdf  Design and Implementation of the MINIX Virtual File System]". Balazs Gerofi, Masters thesis (2006)
+
+`[4]` "[http://www.opensolaris.org/os/article/2005-10-14_a_comparison_of_solaris__linux__and_freebsd_kernels/ A Comparison of Solaris, Linux, and FreeBSD Kernels]" by Max Bruning (October 14, 2005).
+
+
+
