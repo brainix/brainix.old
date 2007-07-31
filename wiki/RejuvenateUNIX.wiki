@@ -11,7 +11,7 @@ With respect to the user, replace the filesystem with a single
 namespace.  Each name in this namespace can encapsulate random access
 data associated with the name, and sub-names delimited by the forward
 slash '/' character.  Every name in this namespace is capable of being
-accessed via an extremely generic system of open/close/read/write/seek.
+accessed via a generic system of VFS ops.
 
 = Migration =
 
@@ -80,4 +80,3 @@ audio streamer, via gstreamer, to the channel graphically.
 The main implementation would be in specifying the VFS, which afaik,
 Brainix currently doesn't have.  A modified shell and mount would probably
 be needed too.
-
