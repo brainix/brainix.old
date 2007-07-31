@@ -2,7 +2,7 @@
 
 = Introduction =
 
-I wrote this because I want to work "top-down" on a TCP/IP implementation for Brainix, and I _hate_ the implementations that I've seen so far in other operating systems.   The design has a lot more to do with a VFS than it does with a network stack. (jdt)
+I wrote this because I want to work "top-down" on a TCP/IP implementation for Brainix, and I _hate_ the implementations that I've seen so far in other operating systems.   This "plan" has a lot more to do with a VFS than it does with a network stack. (jdt)
 
 = Intro =
 
