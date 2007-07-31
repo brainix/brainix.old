@@ -1,0 +1,85 @@
+#summary Rejuvenating the UNIX Filesystem
+
+= Introduction =
+
+I wrote this because I want to work "top-down" on a TCP/IP implementation for Brainix, and I _hate_ the implementations that I've seen so far in other operating systems.  The design has a lot more to do with a VFS than it does with a network stack. (jdt)
+
+_(sorry for the semi-formality)_
+
+= Intro =
+
+With respect to the user, replace the filesystem with a single
+namespace.  Each name in this namespace can encapsulate random access
+data associated with the name, and sub-names delimited by the forward
+slash '/' character.  Every name in this namespace is capable of being
+accessed via an extremely generic system of open/close/read/write/seek.
+
+= Migration =
+
+What would be directories in UNIX would now be a name in the namespace
+with associated sub-names.  An open() and read() on such a name would
+result in the listing of the sub-names that the "directory"
+encapsulates.  What would be a normal file in UNIX would be capable of
+having any number of "sub-files".
+
+= stdio namespace =
+
+With a generic system of names and sub-names, one can consider certain
+standard sub-names as "attributes" of its parent name.  For example,
+permissions could be handled by a sub-name of each file called
+'permissions'. Other examples of standardized attributes could be a
+"mime-type" sub-name which contains, when read, the mime-type of the
+parent name's data.
+
+This name/value pair attribute system could be used for executables.
+For POSIX backwards compatibility, executables could "export" the
+three stdio files for stdin, stdout, and stderr.  As with other data
+files, executables could be instantiated based on their mime-type
+attribute.  This is a bit similar to the first line of shell scripts
+having the #!cmd syntax, but I think this should be handled in
+user-space instead.  Backwards compatibility wouldn't be necessary 
+because '#' is the comment character.
+
+= IPC =
+
+Furthering the power of executables could be in their exportation of
+namespaces with which to communicate with other processes.  With the
+proper shell support, a common subset of two executable's namespaces
+could be automatically linked in the same way that stdio currently
+does with pipes.  Every executable, as a name in the namespace, could
+export their personal namespace in different manners.  Firstly, they
+could export in their current position in the namespace eg.,
+/usr/bin/prog/stdout.  Secondly, they could be pair-wise attached to
+other processes to facilitate inter-process communication.  Thirdly,
+they could be mounted somewhere in the global namespace and act as
+daemons for the lifetime of the process.
+
+= Device Configuration =
+
+This abstraction of a namespace could facilitate in the configuration
+of system resources and devices.  They could both mount themselves
+somewhere on the global namespace such as /dev or /sys, and export
+their configurable settings as name/value attributes cleanly via the
+VFS rather than rely on the overburdened fnctl() and ioctl() system
+calls.  This allows for ease of extensibility for the driver and
+kernel developers, though at the cost of de-standardizing the 
+user-space.
+
+= Dreaming =
+
+Finally, this notion would allow user-space programs to export their
+namespaces which would facilitate IPC and user interaction (possibly
+GUI).  Imagine a cmdline terminal/flow-chart that would allow the users
+to connect programs and link the exported names to other programs
+graphically.  I can see this as a boon for applications like
+gstreamer, IRC, jabber, dbus, etc.. the list goes on and on.  For
+example, say you are on an IRC channel and you want to connect an 
+audio streamer, via gstreamer, to the channel graphically.
+
+= How to do it? =
+
+The main implementation would be in specifying the VFS, which afaik, 
+Brainix currently doesn't have.  A modified shell and mount would probably 
+be needed too.
+
+
