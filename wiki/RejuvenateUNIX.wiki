@@ -84,10 +84,21 @@ be needed too.
 
 Well, it opens us up to more choices with a simple syscall interface.  Honestly, I don't know.  Maybe something like:
 {{{
-    FILE *fp = fopen("/sys/socket/connect/www.google.com/http", "rw");
-    // blah .. blah
-    int listen_fd = open("/sys/socket/listen/localhost/http", O_RDONLY);
-    // blah... blah... select(2), etc
+    // http request to google.com
+    FILE *fp = fopen("/sys/net/connect/www.google.com/http", "rw");
+    fwrite("GET / HTTP/1.0\n\n", 1, 17, fp);
+
+    // simple HTTP server:
+    char socket_filename[PATHMAX];
+    int listen_fd = open("/sys/net/listen/0.0.0.0/http", O_RDONLY);
+    read(listen_fd, socket_filename, PATHMAX); // blocks until connection
+    // socket_filename would contain the filename of the new socket..
+    // something like: /dev/eth0/192.168.1.1/80/192.168.1.2/3743
+    // read and write to this file to communicate over the socket:
+    FILE *fp2 = fopen(socket_filename, "rw");
+    fread(buf, sizeof(buf), 1, fp2);
+    // etc...
 }}}
-The main point is.. no connect/listen/sendmsg, etc, and it isn't a hack. (jdt)
+The main point is.. no connect/listen/sendmsg. It uses the filesystem for special functionality.  It could also be modular given a VFS eg., the network process would register itself with the VFS and tell it where it wants to be mounted... in this case "/sys/net".  Incoming file access requests to the VFS would search these base mount points for the longest match and forward the request to the registered process. (jdt)
+
 
