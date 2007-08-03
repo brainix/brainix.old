@@ -1,4 +1,4 @@
-#summary Proposal for a High-Level Virtual File Systems
+#summary Proposal for a High-Level Virtual File System
 
 = Introduction =
 
@@ -37,5 +37,4 @@ Regarding the many missing routines, see my [http://code.google.com/p/brainix/wi
 I think Brainix needs to set itself apart from other UNIX-clones.  You have already started from the ground up with a micro-kernel, which tells me that Brainix is meant to be "correct" and "elegant", rather than having a "just get it done" attitude.  With respect to this, I think a unique and elegant high-level VFS would complement this existing motive, and set itself apart from other clones.
 
 Also, I think that this respects the spirit of UNIX better by sticking to the "everything is a file" religion.  This VFS also cures many of the issues Alex pointed us to in [http://www.faqs.org/docs/artu/ch20s03.html Problems in the Design of Unix].
-
 
