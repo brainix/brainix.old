@@ -52,6 +52,12 @@ struct vfsops {
 }}}
 Just some historical perspective I guess ;) (pqnelson)
 
+- eg.,
+{{{
+# echo "/mnt/sdc1" | /dev/sdc1/mount
+}}}
+As far as VFS calls go, I see an open() and a write()... no need for a mount(). (jdt)
+
 = Conclusion =
 
 I think Brainix needs to set itself apart from other UNIX-clones.  You have already started from the ground up with a micro-kernel, which tells me that Brainix is meant to be "correct" and "elegant", rather than having a "just get it done" attitude.  With respect to this, I think a unique and elegant high-level VFS would complement this existing motive, and set itself apart from other clones.
