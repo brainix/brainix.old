@@ -56,7 +56,7 @@ Just some historical perspective I guess ;) (pqnelson)
 {{{
 # echo "/mnt/sdc1" | /dev/sdc1/mount
 }}}
-As far as VFS calls go, I see an open(),write(), and close(). No need for a mount(). (jdt)
+As far as VFS calls go, I see an open(),write(), and close(). No need for a mount(). In this case the SCSI disk process would register itself at '/dev/sd', and on the open it would parse "c1/mount" and attach it to the appropriate system for mounting disk 'c' and partition '1'. (jdt)
 
 = Conclusion =
 
