@@ -299,7 +299,7 @@ struct vnodeops {
 };
 }}}
 
-- Wow.  Is it really necessary to have that many ops?  I don't see why a vfs would need more than open(), close(), remove(), read(), write(), seek(), and possibly truncate().  The rest can be performed with namespace attributes within the vfs.  Filenames would become the entry points. (jdt)
+- Wow.  Is it really necessary to have that many ops?  I don't see why a vfs would need more than open(), close(), remove(), read(), write(), seek(), and possibly truncate().  Hell, remove() and seek() could even be special versions of close() and read(), respectively.  The rest can be performed with namespace attributes within the vfs.  Filenames would become the entry points. (jdt)
 
 = Devices: Char vs. Block =
 
