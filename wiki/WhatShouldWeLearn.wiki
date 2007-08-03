@@ -180,6 +180,18 @@ Would also need to somehow test in "try" whether there is a stack overflow... (j
 }}}
 CAPITAL CASE to denote non-standard syntax... Then we just have to pray that longjmp(exception_buffer[-1], val) causes the process to crash. ;) (jdt)
 
+- I'm not sure if anyone cares, but I thought this was an interesting note on Wikipedia about how to disable garbage collection for D:
+
+  Memory is usually managed with garbage collection, but specific objects can be finalized
+  immediately when they go out of scope. *Explicit memory management is possible using the 
+  overloaded operators new and delete, and by simply calling C's malloc and free directly.* 
+  Garbage collection can be disabled for individual objects, or even for a full program, 
+  if more control over memory management is desired. The manual gives many examples of how 
+  to implement different highly optimized memory management schemes for when garbage 
+  collection is inadequate in a program.
+
+Just something to think about ;) (pqnelson)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
