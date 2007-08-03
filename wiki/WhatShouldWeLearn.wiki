@@ -192,6 +192,8 @@ CAPITAL CASE to denote non-standard syntax... Then we just have to pray that lon
 
 Just something to think about ;) (pqnelson)
 
+- The documentation on this exactly is [www.prowiki.org/upload/HelmutLeitner/D_Programming_Language_030418.pdf here] on pages 127-129 or so. If anyone else is interested ;) (pqnelson)
+
 = Device Files =
 
 This seems to be an increasingly obvious problem with the Unix approach...e.g. the Network Device is not really supported as a block or character device file.
