@@ -29,8 +29,8 @@
 
 typedef struct task
 {
-	seg_descr_t *gdt_entry_ptr;
-	tss_t tss;
+	seg_descr_t *gdt_entry_ptr; /* TODO: dunno */
+	tss_t tss;                  /* state of the task. mostly registers */
 } task_t;
 
 /* Global variables: */

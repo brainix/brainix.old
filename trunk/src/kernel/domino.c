@@ -27,6 +27,12 @@
 #define BRAINIX
 #include <kernel/kernel.h>
 
+/*
+ * each rally is associated with one msg_t.  The dominos grow
+ * off of each rally storing first the pid of the sender, then
+ * each pid that the message is being sent to.
+ */
+
 typedef struct domino
 {
 	pid_t pid;
@@ -34,6 +40,11 @@ typedef struct domino
 	struct domino *next;
 } domino_t;
 
+/*
+ * TODO: a heap would be nice here instead of doubly linked list.
+ * 	(see how many times rally_find() is called from	calc_next_mid)?
+ * 	array implementation using NUM_PROCS?
+ */
 typedef struct rally
 {
 	mid_t mid;
@@ -82,6 +93,8 @@ void rally_create(mid_t mid, unsigned char op)
 {
 	rally_t *r;
 
+	/* allocate a rally and insert onto front of 'rally' linked list
+	 */
 	(r = kmalloc(sizeof(rally_t)))->mid = mid;
 	r->op = op;
 	r->domino = NULL;
@@ -107,6 +120,11 @@ void rally_grow(mid_t mid, pid_t from, pid_t to)
 	d->next = first ? d : r->domino;
 	if (first)
 	{
+		/*
+		 * first domino has a pid of the sending process.
+		 * initialize this stub, and add a second domino
+		 * with the process id of the receiver.
+		 */
 		r->domino = d;
 		(d = kmalloc(sizeof(domino_t)))->pid = to;
 		d->prev = (d->next = r->domino)->prev;
@@ -128,6 +146,9 @@ void rally_destroy(mid_t mid)
 #if DEBUG
 	/*rally_print(mid);*/
 #endif
+	/*
+	 * kfree all the dominos of this rally
+	 */
 	for (r = rally_find(mid); (d = r->domino) != NULL; )
 	{
 		if (d == r->domino)
@@ -135,6 +156,9 @@ void rally_destroy(mid_t mid)
 		d->next->prev = (d->prev->next = d->next)->prev->prev;
 		kfree(d);
 	}
+	/*
+	 * remove r from rally linked list, and kfree
+	 */
 	if (r == rally)
 		rally = r == r->next ? NULL : r->next;
 	r->next->prev = (r->prev->next = r->next)->prev->prev;

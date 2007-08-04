@@ -34,6 +34,48 @@
 #define TMP_TBL_MAPPING		(TMP_DIR_MAPPING + PG_SIZE)
 #define PG_STACK_BASE		(TMP_TBL_MAPPING + PG_SIZE)
 
+/*
+ * Base of Physical Memory.
+ *
+ * Every process has its virtual memory identity
+ * mapped below KERNEL_HEAP_BOTTOM.  any address
+ * above this uses the paging system to map its
+ * virtual addresses to its physical addresses.
+ *
+ * Note that even the kernel process uses virtual 
+ * memory, and so addresses pointing to the kernel
+ * heap are also mapped through the pagging system.
+ *
+ * Note that two pages are residing at the base
+ * of the kernel heap space.  These pages are not
+ * identity mapped to this location, so
+ * they don't interfere with any kernel heap slabs.
+ *
+ *
+ * #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~~# 
+ * #                        #
+ * #                  /|\   #
+ * #      Kernel Heap  |    #
+ * #                   |    #
+ * #                        #
+ * # sys page table entries #
+ * #  (directory + tables)  #
+ * #------------------------# KERNEL_HEAP_BOTTOM  ~2MB + 12*num_pgs 
+ * #                        #
+ * #   page stack entries   #
+ * #                        #
+ * #------------------------# PG_STACK_BASE 
+ * #------------------------# 2MB TBL_MAPPING
+ * #                        #
+ * #         kernel         #
+ * #                        #
+ * #------------------------# 1MB KERNEL_BASE
+ * #                        #
+ * #         unused         #
+ * #                        #
+ * ########################## 0
+ */
+
 #define KERNEL_HEAP_BOTTOM	(sys_pgs * PG_SIZE)
 #define KERNEL_HEAP_TOP		(1 * GB)
 #define KERNEL_STACK_BOTTOM	KERNEL_HEAP_TOP
@@ -46,6 +88,13 @@
 #define PG_DIR			true
 #define PG_TBL			false
 
+/*
+ * linked list node to hold reference to one page's
+ * physical address 'phys'.  pg_stack's are allocated
+ * at PG_STACK_BASE and pushed/popped on the 'free_pg'
+ * and 'used_pg' stacks depending on whether the page
+ * of memory it references is being used.
+ */
 typedef struct pg_stack
 {
 	unsigned long phys;
@@ -54,10 +103,10 @@ typedef struct pg_stack
 } pg_stack_t;
 
 /* Global variables: */
-unsigned long num_pgs;
-unsigned long sys_pgs;
-pg_stack_t *free_pg;
-pg_stack_t *used_pg;
+unsigned long num_pgs;	/* total number of pages available */
+unsigned long sys_pgs;	/* number of pages reserved for kernel usage */
+pg_stack_t *free_pg;	/* stack referencing unused pages */
+pg_stack_t *used_pg;	/* ... pages in use */
 
 /* Function prototypes: */
 void pg_stack_init(void);
@@ -122,6 +171,12 @@ unsigned long pg_pop(void)
 
 	if ((free_pg = free_pg->next) != NULL)
 		free_pg->prev = NULL;
+	/*
+	 * tmp->next = used_pg;
+	 * used_pg->prev = tmp;
+	 * used_pg = tmp;
+	 * return tmp->phys;
+	 */
 	return (used_pg = (tmp->next = used_pg)->prev = tmp)->phys;
 }
 
@@ -207,31 +262,66 @@ void pg_tbl_new(pte_t *tbl)
 \*----------------------------------------------------------------------------*/
 unsigned long pg_space_create_init(void)
 {
+ 	/*
+ 	 * paging_init has already popped off enough pages for the system,
+ 	 * so this should return the first page of physical memory where
+ 	 * the kernel heap would reside.
+ 	 *
+ 	 * This page address is returned in order to be mapped onto the
+ 	 * TMP_DIR_MAPPING,etc reserved areas of physical memory.  This
+ 	 * defines the kernel's virtual address mapping.
+ 	 */
 	unsigned long pg_dir = pg_pop();
 	pde_t *dir = (pde_t *) pg_dir;
 	pte_t *tbl;
 	unsigned long phys, lin;
 	unsigned long j;
 
+ 	/*
+ 	 * init one page directory entry for the system pages.  the
+ 	 * numbeer of them won't exceed 1024 pages, so only one is required.
+ 	 */
 	pg_dir_new(dir);
+
+ 	/*
+ 	 * reserve each page of memory that the kernel requires
+ 	 */
 	for (j = 0; j < sys_pgs; j++)
 	{
 		phys = lin = j * PG_SIZE;
+ 		/*
+ 		 * only the first directory entry will be initialized, so this
+ 		 * will only be true the first time around.
+ 		 */
 		if (!dir[PDE(lin)].p)
 		{
+ 			/*
+ 			 * set directory to be used,
+ 			 */
 			dir[PDE(lin)].p = 1;
+ 			/* 
+ 			 * allocate 1 page for all of the table entries of this
+ 			 * directory.  set the directories sign_phys field to
+ 			 * point to the base address of these table entries.
+ 			 */
 			dir[PDE(lin)].sign_phys = pg_pop() / PG_SIZE;
 			tbl = (pte_t *) (dir[PDE(lin)].sign_phys * PG_SIZE);
 			pg_tbl_new(tbl);
 		}
 		else
 			tbl = (pte_t *) (dir[PDE(lin)].sign_phys * PG_SIZE);
+ 
+ 		/*
+ 		 * set table to used, and set its physical address.
+ 		 */
 		tbl[PTE(lin)].p = 1;
 		tbl[PTE(lin)].us = 0;
 		tbl[PTE(lin)].sign_phys = phys / PG_SIZE;
 	}
 
-	/* I've forgotten what this is for, but it looks important. */
+ 	/*
+ 	 * TODO: WTF is this for?  It's apparently important.
+ 	 */
 	lin = TBL_MAPPING;
 	tbl = (pte_t *) (dir[PDE(lin)].sign_phys * PG_SIZE);
 	tbl[PTE(lin)].sign_phys = dir[PDE(lin)].sign_phys;
@@ -249,13 +339,32 @@ void paging_init(unsigned long mem_upper)
 	unsigned long j;
 
 	num_pgs = (mem_upper *= KB) / PG_SIZE;
+	/*
+	 * sys_upper is the address where kernel heap pages will be based,
+	 * and grow upwards from there.  The first few pages of the heap
+	 * are the page directory and table entries.. see ascii art above
+	 */
 	sys_upper = PG_STACK_BASE + num_pgs * sizeof(pg_stack_t);
 	sys_pgs = sys_upper / PG_SIZE + (sys_upper % PG_SIZE > 0);
+	/*
+	 * make a stack entry for every page the system has memory for.
+	 */
 	pg_stack_init();
+	/*
+	 * move all system pages to the used page stack.  the next pg_pop
+	 * after this will occur at the bottom of the kernel heap.
+	 */
 	for (j = 0; j < sys_pgs; j++)
 		pg_pop();
 
+	/*
+	 * reserve and init page dir/table entries for the system pages
+	 * that were just popped.
+	 */
 	pg_dir = pg_space_create_init();
+	/*
+	 * store the kernel's PDE page address in the x86 cr3 register
+	 */
 	load_dir(pg_dir);
 	enable_paging();
 }
@@ -272,7 +381,7 @@ unsigned long pg_dir_tbl_map(unsigned long phys, bool dir)
 	if (tbl[PTE(lin)].sign_phys != sign_phys)
 	{
 		tbl[PTE(lin)].sign_phys = sign_phys;
-		invalidate_tlbs();
+		invalidate_tlbs(); /* translation lookaside buffer */
 	}
 	return lin;
 }
@@ -299,6 +408,9 @@ pte_t *pg_tbl_map(unsigned long pg_tbl)
 void pg_map(unsigned long pg_dir, unsigned long phys, unsigned long lin,
 	unsigned char us)
 {
+	/*
+	 * TODO: this returns TMP_DIR_MAPPING.. still don't know why.. 
+	 */
 	pde_t *dir = pg_dir_map(pg_dir);
 	pte_t *tbl;
 
@@ -329,7 +441,13 @@ void pg_unmap(unsigned long pg_dir, unsigned long lin)
 	unsigned short j;
 	bool found;
 
+	/* set page to unused in it's table entry */
 	tbl[PTE(lin)].p = 0;
+	/*
+	 * check if all pages in this table are unused.  if so, then
+	 * put the table's page back on the free stack and set the
+	 * directory entry to be unused.
+	 */
 	for (j = 0, found = false; j < 1024 && !found; j++)
 		found = tbl[j].p;
 	if (!found)
@@ -348,12 +466,19 @@ void pg_unmap(unsigned long pg_dir, unsigned long lin)
 unsigned long pg_space_create(void)
 {
 	unsigned long pg_dir = pg_pop();
-	pde_t *dir = pg_dir_map(pg_dir);
+	pde_t *dir = pg_dir_map(pg_dir); /* !... returns TMP_DIR_MAPPING? */
 	pte_t *tbl;
 	unsigned long phys, lin;
 	unsigned long j;
 
+	/* 
+	 * called from task_create, it sets up the tasks page tables
+	 */
 	pg_dir_new(dir);
+
+	/*
+	 * map the systems pages directly onto the tasks pages
+	 */
 	for (j = 0; j < sys_pgs; j++)
 	{
 		phys = lin = j * PG_SIZE;
@@ -377,6 +502,9 @@ void pg_space_destroy(unsigned long pg_dir)
 	pte_t *tbl;
 	unsigned short j, k;
 
+	/*
+	 * TODO: I don't understand this.. why 256?  why directory entries.
+	 */
 	for (j = 0; j < 256; j++)
 	{
 		if (!dir[j].p)
@@ -387,6 +515,10 @@ void pg_space_destroy(unsigned long pg_dir)
 	{
 		if (!dir[j].p)
 			continue;
+		/*
+		 * TODO: ditto, maybe translation lookaside that I don't
+		 * understand
+		 */
 		tbl = pg_tbl_map(dir[j].sign_phys * PG_SIZE);
 		for (k = 0; k < 1024; k++)
 		{
@@ -443,6 +575,12 @@ unsigned long pg_next_addr(unsigned long pg_dir, bool kernel, bool heap)
 	lin_addr_t *descr_lin = (lin_addr_t *) &vague_lin;
 
 	while (pg_mapped(pg_dir, vague_lin))
+	{
+		/*
+		 * if the next table entry hits the end of the table depending
+		 * on which way it is growing, increment the directory entry,
+		 * and keep search for an unused page.
+		 */
 		if (descr_lin->pte == heap ? 1023 : 0)
 		{
 			descr_lin->pde += heap ? 1 : -1;
@@ -450,6 +588,7 @@ unsigned long pg_next_addr(unsigned long pg_dir, bool kernel, bool heap)
 		}
 		else
 			descr_lin->pte += heap ? 1 : -1;
+	}
 	return vague_lin;
 }
 
@@ -473,6 +612,10 @@ void pg_free(unsigned long pg_dir, unsigned long lin)
 	pte_t *tbl = pg_tbl_map(dir[PDE(lin)].sign_phys * PG_SIZE);
 	unsigned long phys = tbl[PTE(lin)].sign_phys * PG_SIZE;
 	pg_unmap(pg_dir, lin);
+	/*
+	 * TODO: what if some other process has this page mapped?
+	 * 		I can't find this function being used anywhere
+	 */
 	pg_push(phys);
 }
 
@@ -484,6 +627,10 @@ void pg_copy(unsigned long phys_1, unsigned long phys_2)
 	void *p1, *p2;
 
 	intr_lock();
+	/*
+	 * TODO: ones dir_map the other is tbl_map..  I'm guessing because
+	 * you can only have one mapped at a time?
+	 */
 	p1 = pg_dir_map(phys_1);
 	p2 = pg_tbl_map(phys_2);
 	memcpy(p2, p1, PG_SIZE);
@@ -501,6 +648,10 @@ void pg_fork(unsigned long pg_dir_1, unsigned long pg_dir_2)
 	lin_addr_t *descr_lin = (lin_addr_t *) &vague_lin;
 	unsigned short j, k;
 
+	/*
+	 * TODO it's usless to understand this until the dir/table mapping is
+	 * understood.
+	 */
 	dir = pg_dir_map(pg_dir_2);
 	for (j = 256; j < 1024; j++)
 	{

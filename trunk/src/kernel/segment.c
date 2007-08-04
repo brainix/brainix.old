@@ -28,6 +28,12 @@
 #include <kernel/kernel.h>
 
 /* Global variable: */
+/*
+ * segments for:
+ * 	KERNEL_CODE, KERNEL_DATA,
+ * 	USER_CODE, USER_DATA,
+ * 	and a segment for each process
+ */
 seg_descr_t gdt[NUM_SEGS + NUM_PROCS] __attribute__((aligned(8)));
 
 /* Function prototype: */
