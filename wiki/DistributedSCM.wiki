@@ -1,0 +1,22 @@
+#summary Switching from svn to a distributed Source Code Manager
+
+= Introduction =
+
+Subversion is nice, but I've been looking into [http://en.wikipedia.org/wiki/Revision_control#Distributed_revision_control Distributed SCM's] lately and have been really impressed.  
+
+= Details =
+
+There are lots of open "distributed SCM"'s out there. eg.,
+ * [http://en.wikipedia.org/wiki/Git_%28software%29 Git]
+ * [http://en.wikipedia.org/wiki/Monotone_%28software%29 Monotone]
+ * [http://en.wikipedia.org/wiki/Mercurial_%28software%29 Mercurial]
+ * [http://en.wikipedia.org/wiki/GNU_arch GNU Arch]
+ * [http://en.wikipedia.org/wiki/Comparison_of_revision_control_software .. and tons of others]
+
+Has anyone discussed moving to such a system?
+
+= Argon =
+
+I'm currently developing a code.google.com clone which supports multiple SCM's.  Git is one of them.  One of my goals is to allow each developer of a project to have their own branch available online for people to merge with.
+
+I'll probably never finish Argon, because I never finish anything. :/
