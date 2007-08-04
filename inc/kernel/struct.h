@@ -212,6 +212,13 @@ typedef struct
 
 #define PG_SIZE	(4 * KB)
 
+/*
+ * 1024 page directory entries (PDE)
+ * 1024 page table entries (PTE)
+ *
+ * these calculate the offset into each table
+ * when given the linear address.
+ */
 #define PDE(lin)	((lin & 0xFFC00000) >> 22)
 #define PTE(lin)	((lin & 0x003FF000) >> 12)
 #define OFFSET(lin)	((lin & 0x00000FFF) >> 0)

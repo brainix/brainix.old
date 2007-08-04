@@ -130,6 +130,11 @@ bool heap_init(unsigned long target_pg_dir, bool kernel)
 	else if (target_pg_dir != current_pg_dir)
 		load_dir(target_pg_dir);
 
+	/*
+	 * this will allocate a page right after the systems dir and tbl
+	 * entries on the heap.  It's important to note that the VMM is
+	 * keeping the address spaces from colliding with each other.
+	 */
 	if ((slab = SLAB_NEW(target_pg_dir, kernel)) == NULL)
 		ret_val = false;
 	else
