@@ -101,4 +101,4 @@ Well, it opens us up to more choices with a simple syscall interface.  Honestly,
 }}}
 The main point is.. no connect/listen/sendmsg. It uses the filesystem for special functionality.  It could also be modular given a VFS eg., the network process would register itself with the VFS and tell it where it wants to be mounted... in this case "/sys/net".  Incoming file access requests to the VFS would search these base mount points for the longest match and forward the request to the registered process. (jdt)
 
-
+- I'm going out of town until next Saturday or Sunday, but I am writing a [http://pqnelson.blogspot.com/ series on file systems] if anyone could find it useful. (pqnelson)
