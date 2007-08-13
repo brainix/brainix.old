@@ -28,8 +28,10 @@
 int change(const char *path, inode_t **dir)
 {
 
-/* Perform various checks, and change the specified (root or working) directory
- * to the specified path.  Return 0 on success, or a negative error number. */
+/*
+ | Perform various checks, and change the specified (root or working) directory
+ | to the specified path.  Return 0 on success, or a negative error number.
+ */
 
 	inode_t *inode_ptr = path_to_inode(path);
 
@@ -65,8 +67,10 @@ int change(const char *path, inode_t **dir)
 int do_fs_chroot(const char *path)
 {
 
-/* Change the root directory.  Return 0 on success, or a negative error
- * number. */
+/*
+ | Change the root directory.  Return 0 on success, or a negative error
+ | number.
+ */
 
 	if (!super_user)
 		/* No chroot permission. */
@@ -81,8 +85,10 @@ int do_fs_chroot(const char *path)
 int do_fs_chdir(const char *path)
 {
 
-/* Change the current working directory.  Return 0 on success, or a negative
- * error number. */
+/*
+ | Change the current working directory.  Return 0 on success, or a negative
+ | error number.
+ */
 
 	return change(path, &fs_proc[msg->from].work_dir);
 }

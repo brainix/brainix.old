@@ -66,10 +66,12 @@ void dev_init(void)
 void fs_register(bool block, unsigned char maj, pid_t pid)
 {
 
-/* Register a device driver with the file system - map a device's major number
- * to its driver's PID.  If the driver for the device containing the root file
- * system is being registered, mount the root file system and initialize the
- * root and current working directories. */
+/*
+ | Register a device driver with the file system - map a device's major number
+ | to its driver's PID.  If the driver for the device containing the root file
+ | system is being registered, mount the root file system and initialize the
+ | root and current working directories.
+ */
 
 	dev_t dev;
 
@@ -78,8 +80,10 @@ void fs_register(bool block, unsigned char maj, pid_t pid)
 
 	if (block && maj == ROOT_MAJ)
 	{
-		/* The driver for the device containing the root file system is
-		 * being registered. */
+		/*
+		 | The driver for the device containing the root file system is
+		 | being registered.
+		 */
 		mount_root();
 		dev = maj_min_to_dev(ROOT_MAJ, ROOT_MIN);
 		fs_proc[FS_PID].root_dir = inode_get(dev, EXT2_ROOT_INO);

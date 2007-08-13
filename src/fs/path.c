@@ -28,9 +28,11 @@
 inode_t *path_to_inode(const char *path)
 {
 
-/* Perform various checks, and resolve a path name to an inode in the inode
- * table.  If successful, return a pointer to the inode.  Otherwise, return
- * NULL. */
+/*
+ | Perform various checks, and resolve a path name to an inode in the inode
+ | table.  If successful, return a pointer to the inode.  Otherwise, return
+ | NULL.
+ */
 
 	const char *path_ptr = path;
 	inode_t *inode_ptr = NULL;
@@ -41,9 +43,11 @@ inode_t *path_to_inode(const char *path)
 	unsigned char link_count = 0;
 	super_t *super_ptr;
 
-	/* If the path name is absolute, start at the root file system's root
-	 * directory.  If the path name is relative, start at the process'
-	 * current working directory. */
+	/*
+	 | If the path name is absolute, start at the root file system's root
+	 | directory.  If the path name is relative, start at the process'
+	 | current working directory.
+	 */
 	if (*path_ptr == '\0' || strlen(path_ptr) + 1 >= PATH_MAX)
 	{
 		/* The path name is empty or too long. */
@@ -72,9 +76,11 @@ inode_t *path_to_inode(const char *path)
 	dev = inode_ptr->dev;
 	ino = inode_ptr->ino;
 
-	/* Iterate over each path name component.  For example, for the path
-	 * name "/home/rajiv/porn.jpg", the components would be "home", "rajiv",
-	 * and "porn.jpg". */
+	/*
+	 | Iterate over each path name component.  For example, for the path
+	 | name "/home/rajiv/porn.jpg", the components would be "home", "rajiv",
+	 | and "porn.jpg".
+	 */
 	while (!err_code && *path_ptr != '\0')
 	{
 		/* From the path name, extract the next component name. */
@@ -91,9 +97,11 @@ inode_t *path_to_inode(const char *path)
 		}
 		*name_ptr = '\0';
 
-		/* Find the next component within the current component.  Upon
-		 * completing this step, the next component becomes the current
-		 * component. */
+		/*
+		 | Find the next component within the current component.  Upon
+		 | completing this step, the next component becomes the current
+		 | component.
+		 */
 		if (!perm(inode_ptr, X_OK, false))
 		{
 			/* No search permission in the current component. */
@@ -104,8 +112,10 @@ inode_t *path_to_inode(const char *path)
 		ino = search_dir(inode_ptr, name);
 		if (ino == 0)
 		{
-			/* The next component could not be found in the current
-			 * component. */
+			/*
+			 | The next component could not be found in the current
+			 | component.
+			 */
 			inode_put(inode_ptr);
 			err_code = ENOENT;
 			return NULL;
@@ -113,8 +123,10 @@ inode_t *path_to_inode(const char *path)
 		inode_put(inode_ptr);
 		inode_ptr = inode_get(dev, ino);
 
-		/* If the current component is a symbolic link, jump to wherever
-		 * it points. */
+		/*
+		 | If the current component is a symbolic link, jump to wherever
+		 | it points.
+		 */
 		if (inode_ptr->i_mode & EXT2_S_IFLNK)
 		{
 			if (++link_count >= SYMLOOP_MAX)
@@ -126,8 +138,10 @@ inode_t *path_to_inode(const char *path)
 			/* TODO: Jump to wherever it points. */
 		}
 
-		/* If a file system is mounted on the current component, jump to
-		 * the root directory of the mounted file system. */
+		/*
+		 | If a file system is mounted on the current component, jump to
+		 | the root directory of the mounted file system.
+		 */
 		if (inode_ptr->mounted)
 		{
 			super_ptr = &super[0];
@@ -142,8 +156,10 @@ inode_t *path_to_inode(const char *path)
 		/* Skip past the slashes trailing the current component name. */
 		if (*path_ptr == '/' && !is_dir(inode_ptr))
 		{
-			/* A slash trails the current component name, but the
-			 * current component is not a directory. */
+			/*
+			 | A slash trails the current component name, but the
+			 | current component is not a directory.
+			 */
 			inode_put(inode_ptr);
 			err_code = ENOTDIR;
 			return NULL;

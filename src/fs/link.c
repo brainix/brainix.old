@@ -28,8 +28,10 @@
 int do_fs_link(const char *path1, const char *path2)
 {
 
-/* Perform various checks, and create a new link (directory entry) for an
- * existing file.  Return 0 on success, or a negative error number. */
+/*
+ | Perform various checks, and create a new link (directory entry) for an
+ | existing file.  Return 0 on success, or a negative error number.
+ */
 
 	inode_t *inode_ptr_1 = path_to_inode(path1);
 	inode_t *inode_ptr_2 = path_to_inode(path2);
@@ -77,8 +79,10 @@ int do_fs_link(const char *path1, const char *path2)
 int do_fs_unlink(const char *path)
 {
 
-/* Perform various checks, and remove a link to a file.  Return 0 on success, or
- * a negative error number. */
+/*
+ | Perform various checks, and remove a link to a file.  Return 0 on success, or
+ | a negative error number.
+ */
 
 	inode_t *inode_ptr = path_to_inode(path);
 

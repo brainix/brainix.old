@@ -28,8 +28,10 @@
 void descr_init(void)
 {
 
-/* Initialize the file pointer table and the process-specific file system
- * information table. */
+/*
+ | Initialize the file pointer table and the process-specific file system
+ | information table.
+ */
 
 	int ptr_index;
 	pid_t pid;

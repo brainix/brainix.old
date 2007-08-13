@@ -48,8 +48,10 @@ void kbd_irq(unsigned char scode);
 unsigned char scode_to_ascii(unsigned char scode)
 {
 
-/* Return a scancode's ASCII value, accounting for the keyboard state.  Return 0
- * if the scancode has no associated ASCII value. */
+/*
+ | Return a scancode's ASCII value, accounting for the keyboard state.  Return 0
+ | if the scancode has no associated ASCII value.
+ */
 
 	unsigned char ascii;
 
@@ -82,8 +84,10 @@ unsigned char scode_to_ascii(unsigned char scode)
 bool kbd_state(void)
 {
 
-/* Check the key being pressed/released and, if necessary, modify the keyboard
- * state. */
+/*
+ | Check the key being pressed/released and, if necessary, modify the keyboard
+ | state.
+ */
 
 	bool release = curr_scode & BREAK;
 
@@ -113,13 +117,17 @@ bool kbd_state(void)
 void kbd_irq(unsigned char scode)
 {
 
-/* The keyboard has generated an interrupt (a key is being pressed, is
- * repeating, or is being released).  Handle the interrupt. */
+/*
+ | The keyboard has generated an interrupt (a key is being pressed, is
+ | repeating, or is being released).  Handle the interrupt.
+ */
 
 	msg_t *msg;
 
-	/* Save the previous scancode and ASCII value, and get the current
-	 * scancode and ASCII value. */
+	/*
+	 | Save the previous scancode and ASCII value, and get the current
+	 | scancode and ASCII value.
+	 */
 	prev_scode = curr_scode;
 	prev_ascii = curr_ascii;
 	curr_scode = scode;

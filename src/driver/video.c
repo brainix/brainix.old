@@ -258,6 +258,7 @@ int printf(char *format, ...)
 	}
 	return n;
 }
+
 void debug(int priority, char *message, void *buf)
 {
 	if(priority < DUM_DBUG && DUM_DBUG != -1)

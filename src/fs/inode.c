@@ -49,8 +49,10 @@ void inode_init(void)
 void inode_rw(inode_t *inode_ptr, bool read)
 {
 
-/* If read is true, read an inode from its block into the inode table.
- * Otherwise, write an inode from the table to its block. */
+/*
+ | If read is true, read an inode from its block into the inode table.
+ | Otherwise, write an inode from the table to its block.
+ */
 
 	blkcnt_t blk;
 	size_t offset;
@@ -58,8 +60,10 @@ void inode_rw(inode_t *inode_ptr, bool read)
 	super_t *super_ptr = super_get(inode_ptr->dev);
 
 	if (!inode_ptr->dirty)
-		/* The inode in the table is already synchronized with the inode
-		 * on its block.  No reason to read or write anything. */
+		/*
+		 | The inode in the table is already synchronized with the inode
+		 | on its block.  No reason to read or write anything.
+		 */
 		return;
 
 	/* Get the block on which the inode resides. */
@@ -72,15 +76,19 @@ void inode_rw(inode_t *inode_ptr, bool read)
 			super_ptr->s_inode_size);
 	else
 	{
-		/* Write the inode from the table to its block, and mark the
-		 * block dirty. */
+		/*
+		 | Write the inode from the table to its block, and mark the
+		 | block dirty.
+		 */
 		memcpy(&block_ptr->data[offset], inode_ptr,
 			super_ptr->s_inode_size);
 		block_ptr->dirty = true;
 	}
 
-	/* Put the block on which the inode resides, and mark the inode in the
-	 * table as no longer dirty. */
+	/*
+	 | Put the block on which the inode resides, and mark the inode in the
+	 | table as no longer dirty.
+	 */
 	block_put(block_ptr, IMPORTANT);
 	inode_ptr->dirty = false;
 }
@@ -91,8 +99,10 @@ void inode_rw(inode_t *inode_ptr, bool read)
 inode_t *inode_get(dev_t dev, ino_t ino)
 {
 
-/* Search the inode table for an inode.  If it is found, return a pointer to it.
- * Otherwise, read the inode into the table, and return a pointer to it. */
+/*
+ | Search the inode table for an inode.  If it is found, return a pointer to it.
+ | Otherwise, read the inode into the table, and return a pointer to it.
+ */
 
 	inode_t *inode_ptr;
 
@@ -100,8 +110,10 @@ inode_t *inode_get(dev_t dev, ino_t ino)
 	for (inode_ptr = &inode[0]; inode_ptr < &inode[NUM_INODES]; inode_ptr++)
 		if (inode_ptr->dev == dev && inode_ptr->ino == ino)
 		{
-			/* Found the inode.  Increment the number of times it is
-			 * used, and return a pointer to it. */
+			/*
+			 | Found the inode.  Increment the number of times it is
+			 | used, and return a pointer to it.
+			 */
 			inode_ptr->count++;
 			return inode_ptr;
 		}
@@ -110,8 +122,10 @@ inode_t *inode_get(dev_t dev, ino_t ino)
 	for (inode_ptr = &inode[0]; inode_ptr < &inode[NUM_INODES]; inode_ptr++)
 		if (inode_ptr->count == 0)
 		{
-			/* Found a free slot.  Read the inode into it, and
-			 * return a pointer into it. */
+			/*
+			 | Found a free slot.  Read the inode into it, and
+			 | return a pointer into it.
+			 */
 			inode_ptr->dev = dev;
 			inode_ptr->ino = ino;
 			inode_ptr->count = 1;
@@ -132,8 +146,10 @@ inode_t *inode_get(dev_t dev, ino_t ino)
 void inode_put(inode_t *inode_ptr)
 {
 
-/* Decrement the number of times an inode is used.  If no one is using it,
- * update its access time (if necessary), and write it to its block. */
+/*
+ | Decrement the number of times an inode is used.  If no one is using it,
+ | update its access time (if necessary), and write it to its block.
+ */
 
 	if (inode_ptr == NULL || --inode_ptr->count > 0)
 		return;
@@ -164,8 +180,10 @@ blkcnt_t block_find(inode_t *inode_ptr, blkcnt_t n)
 		/* Yes - return. */
 		return inode_ptr->i_block[n];
 
-	/* Figure out whether the nth block number must be found via the
-	 * indirect, bi-indirect, or tri-indirect block. */
+	/*
+	 | Figure out whether the nth block number must be found via the
+	 | indirect, bi-indirect, or tri-indirect block.
+	 */
 	if (IS_INDIRECT(size, n))
 		blk = inode_ptr->i_block[12];
 	if (IS_BI_INDIRECT(size, n))
@@ -181,9 +199,11 @@ blkcnt_t block_find(inode_t *inode_ptr, blkcnt_t n)
 	/* Iterate. */
 	for (; ; n %= div, div /= NUM_INDIRECT(size))
 	{
-		/* At the beginning of the iteration, if blk is tri-indirect, at
-		 * the end, it'll be bi-indirect.  If it's bi-indirect, it'll be
-		 * indirect.  If it's indirect, it'll be direct. */
+		/*
+		 | At the beginning of the iteration, if blk is tri-indirect, at
+		 | the end, it'll be bi-indirect.  If it's bi-indirect, it'll be
+		 | indirect.  If it's indirect, it'll be direct.
+		 */
 		block_ptr = block_get(dev, blk);
 		blk_ptr = (blkcnt_t *) block_ptr->data;
 		blk = blk_ptr[n / div];

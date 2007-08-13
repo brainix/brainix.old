@@ -50,8 +50,10 @@ void super_init(void)
 super_t *super_get(dev_t dev)
 {
 
-/* Search the superblock table for a superblock.  If it is found, return a
- * pointer to it.  Otherwise, return NULL. */
+/*
+ | Search the superblock table for a superblock.  If it is found, return a
+ | pointer to it.  Otherwise, return NULL.
+ */
 
 	super_t *super_ptr;
 
@@ -71,16 +73,20 @@ super_t *super_get(dev_t dev)
 super_t *super_read(dev_t dev)
 {
 
-/* Read a superblock from its block into the superblock table, and return a
- * pointer to it. */
+/*
+ | Read a superblock from its block into the superblock table, and return a
+ | pointer to it.
+ */
 
 	super_t *super_ptr;
 	block_t *block_ptr;
 
 	/* Find a free slot in the table. */
 	if ((super_ptr = super_get(NO_DEV)) == NULL)
-		/* There are no free slots in the table --- too many mounted
-		 * file systems. */
+		/*
+		 | There are no free slots in the table --- too many mounted
+		 | file systems.
+		 */
 		return NULL;
 
 	/* Copy the superblock from its block into the free slot. */
@@ -102,8 +108,10 @@ void super_write(super_t *super_ptr)
 	block_t *block_ptr;
 
 	if (!super_ptr->dirty)
-		/* The superblock in the table is already synchronized with the
-		 * superblock on its block.  No reason to write anything. */
+		/*
+		 | The superblock in the table is already synchronized with the
+		 | superblock on its block.  No reason to write anything.
+		 */
 		return;
 
 	/* Copy the superblock from the table to its block. */
@@ -112,7 +120,9 @@ void super_write(super_t *super_ptr)
 	block_ptr->dirty = true;
 	block_put(block_ptr, IMPORTANT);
 
-	/* The superblock in the table is now synchronized with the superblock
-	 * on its block. */
+	/*
+	 | The superblock in the table is now synchronized with the superblock
+	 | on its block.
+	 */
 	super_ptr->dirty = false;
 }

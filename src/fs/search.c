@@ -28,8 +28,10 @@
 ino_t search_block(dev_t dev, blkcnt_t blk, char *name)
 {
 
-/* Search a single directory data block for an entry.  If it is found, return
- * its inode number.  Otherwise, return 0. */
+/*
+ | Search a single directory data block for an entry.  If it is found, return
+ | its inode number.  Otherwise, return 0.
+ */
 
 	block_t *block_ptr = block_get(dev, blk);
 	dir_entry_t *dir_entry = (dir_entry_t *) block_ptr->data;
@@ -53,8 +55,10 @@ ino_t search_block(dev_t dev, blkcnt_t blk, char *name)
 ino_t search_dir(inode_t *inode_ptr, char *name)
 {
 
-/* Search an entire directory for an entry.  If it is found, return its inode
- * number.  Otherwise, return 0. */
+/*
+ | Search an entire directory for an entry.  If it is found, return its inode
+ | number.  Otherwise, return 0.
+ */
 
 	blkcnt_t num_blocks, blk, j = 0;
 	ino_t ino;

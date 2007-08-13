@@ -126,8 +126,10 @@ void fdc_main(void);
 unsigned char fdc_handle_alarm(msg_t *m)
 {
 
-/* An alarm has sounded.  Perform any necessary action.  Return the alarm's
- * cause. */
+/*
+ | An alarm has sounded.  Perform any necessary action.  Return the alarm's
+ | cause.
+ */
 
 	/* Perform any necessary action. */
 	switch (m->args.brnx_watch.type)
@@ -148,8 +150,10 @@ unsigned char fdc_handle_alarm(msg_t *m)
 bool fdc_wait_irq(void)
 {
 
-/* Wait for the FDC to generate an IRQ, or time out, whichever happens first.
- * Return true on IRQ; false on timeout. */
+/*
+ | Wait for the FDC to generate an IRQ, or time out, whichever happens first.
+ | Return true on IRQ; false on timeout.
+ */
 
 	msg_t *m;
 	bool irq = true;
@@ -177,14 +181,18 @@ bool fdc_wait_irq(void)
 			}
 			else
 			{
-				/* A previous alarm has sounded - not the
-				 * timeout alarm.  Keep waiting. */
+				/*
+				 | A previous alarm has sounded - not the
+				 | timeout alarm.  Keep waiting.
+				 */
 				msg_free(m);
 				continue;
 			}
 		}
-		/* The FDC has not yet generated an IRQ or timed out.  Keep
-		 * waiting. */
+		/*
+		 | The FDC has not yet generated an IRQ or timed out.  Keep
+		 | waiting.
+		 */
 		proc_nap();
 	}
 	msg_free(m);
@@ -199,8 +207,10 @@ bool fdc_wait_irq(void)
 void fdc_start_motor(void)
 {
 
-/* Turn on the floppy motor and wait for it to spin-up.  This function is called
- * before each floppy access. */
+/*
+ | Turn on the floppy motor and wait for it to spin-up.  This function is called
+ | before each floppy access.
+ */
 
 	/* The floppy is now being accessed. */
 	fdc_motor_required = true;
@@ -332,10 +342,12 @@ void fdc_reset(void)
 	out_byte(0x00, FDC_CCR_PORT); /* Program the data rate.           */
 	fdc_wait_irq();               /* Wait for an IRQ.                 */
 
-	/* For the 1st drive, sense the interrupt status and save the results.
-	 * For the 2nd through 4th drives, sense the interrupt statuses and
-	 * discard the results.  Brainix only supports one floppy drive, but
-	 * this must be done anyway as part of the FDC (re)initialization. */
+	/*
+	 | For the 1st drive, sense the interrupt status and save the results.
+	 | For the 2nd through 4th drives, sense the interrupt statuses and
+	 | discard the results.  Brainix only supports one floppy drive, but
+	 | this must be done anyway as part of the FDC (re)initialization.
+	 */
 	for (j = 0; j < 4; j++)
 	{
 		fdc_send_byte(FDC_CMD_SENSE); /* Send sense intr status cmd. */
@@ -363,8 +375,10 @@ void fdc_reset(void)
 void fdc_punish(void)
 {
 
-/* (Re)initialize the FDC.  This function is called before accessing the FDC,
- * and whenever the FDC is not responding and needs a spanking. */
+/*
+ | (Re)initialize the FDC.  This function is called before accessing the FDC,
+ | and whenever the FDC is not responding and needs a spanking.
+ */
 
 	static bool first_time = true;
 
@@ -395,9 +409,11 @@ void fdc_punish(void)
 		/* Register the floppy driver with the file system. */
 		drvr_reg_fs(BLOCK, FDC_MAJ);
 
-		/* The DMA buffer base will never need to be re-calculated, and
-		 * the floppy driver will never need to be re-registered.  Only
-		 * the brain-damaged FDC may require a reset. */
+		/*
+		 | The DMA buffer base will never need to be re-calculated, and
+		 | the floppy driver will never need to be re-registered.  Only
+		 | the brain-damaged FDC may require a reset.
+		 */
 		first_time = false;
 	}
 }
@@ -408,8 +424,10 @@ void fdc_punish(void)
 void fdc_geom(blkcnt_t block, char *head, char *track, char *sector)
 {
 
-/* Based on the 3.5" 1.44 MB disk geometry, convert a 512-byte block number to
- * head, track, and sector numbers. */
+/*
+ | Based on the 3.5" 1.44 MB disk geometry, convert a 512-byte block number to
+ | head, track, and sector numbers.
+ */
 
 	*head = (block % (GEOM_SPT * GEOM_HEADS)) / GEOM_SPT;
 	*track = block / (GEOM_SPT * GEOM_HEADS);
@@ -525,9 +543,11 @@ bool fdc_rw_try(blkcnt_t block, bool read)
 bool fdc_rw_block(blkcnt_t block, bool read)
 {
 
-/* If read is true, read a 512-byte block from the floppy disk into the DMA
- * buffer.  Otherwise, write a 512-byte block from the DMA buffer to the floppy
- * disk.  Return whether the FDC is behaving. */
+/*
+ | If read is true, read a 512-byte block from the floppy disk into the DMA
+ | buffer.  Otherwise, write a 512-byte block from the DMA buffer to the floppy
+ | disk.  Return whether the FDC is behaving.
+ */
 
 	char seek_try, rw_try;
 	char head, track, sector;
@@ -537,15 +557,19 @@ bool fdc_rw_block(blkcnt_t block, bool read)
 	fdc_start_motor();
 	out_byte(0x00, FDC_CCR_PORT);
 
-	/* Attempt to position the head over the track 3 times, or until the
-	 * read/write has succeeded, whichever happens first. */
+	/*
+	 | Attempt to position the head over the track 3 times, or until the
+	 | read/write has succeeded, whichever happens first.
+	 */
 	for (seek_try = 0; seek_try < 3; seek_try++)
 	{
 		fdc_recal_seek(0);
 		fdc_recal_seek(track);
 
-		/* Attempt the read/write 3 times, or until it has succeeded,
-		 * whichever happens first. */
+		/*
+		 | Attempt the read/write 3 times, or until it has succeeded,
+		 | whichever happens first.
+		 */
 		for (rw_try = 0; rw_try < 3; rw_try++)
 			if (fdc_rw_try(block, read))
 			{
@@ -554,9 +578,11 @@ bool fdc_rw_block(blkcnt_t block, bool read)
 				return fdc_behaving;
 			}
 
-		/* The read/write has failed 3 times.  This persisting failure
-		 * could be due to improper alignment between the head and the 
-		 * track.  Reposition the head and try the read/write again. */
+		/*
+		 | The read/write has failed 3 times.  This persisting failure
+		 | could be due to improper alignment between the head and the 
+		 | track.  Reposition the head and try the read/write again.
+		 */
 		fdc_recal_seek(0);
 	}
 
