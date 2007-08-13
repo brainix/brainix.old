@@ -28,8 +28,10 @@
 int mount(char *dev_name, char *mount_point_name, unsigned long flags)
 {
 
-/* Perform various checks, and mount a file system.  Return 0 on success, or a
- * negative error number. */
+/*
+ | Perform various checks, and mount a file system.  Return 0 on success, or a
+ | negative error number.
+ */
 
 	inode_t *dev_inode_ptr;
 	dev_t dev;
@@ -45,8 +47,10 @@ int mount(char *dev_name, char *mount_point_name, unsigned long flags)
 	dev_inode_ptr = path_to_inode(dev_name);
 	if (dev_inode_ptr == NULL || !is_blk(dev_inode_ptr))
 	{
-		/* The device's path name could not be resolved, or the device
-		 * is not a block device. */
+		/*
+		 | The device's path name could not be resolved, or the device
+		 | is not a block device.
+		 */
 		inode_put(dev_inode_ptr);
 		return dev_inode_ptr == NULL ? -err_code : -ENODEV;
 	}
@@ -57,20 +61,26 @@ int mount(char *dev_name, char *mount_point_name, unsigned long flags)
 	mount_point_inode_ptr = path_to_inode(mount_point_name);
 	if (mount_point_inode_ptr == NULL || !is_dir(mount_point_inode_ptr))
 	{
-		/* The mount point's path name could not be resolved, or the
-		 * mount point is not a directory. */
+		/*
+		 | The mount point's path name could not be resolved, or the
+		 | mount point is not a directory.
+		 */
 		inode_put(mount_point_inode_ptr);
 		return mount_point_inode_ptr == NULL ? -err_code : -ENOTDIR;
 	}
 
-	/* Make sure the device is not already mounted, and the mount point is
-	 * not already mounted on. */
+	/*
+	 | Make sure the device is not already mounted, and the mount point is
+	 | not already mounted on.
+	 */
 	for (super_ptr = &super[0]; super_ptr < &super[NUM_SUPERS]; super_ptr++)
 		if (super_ptr->dev == dev ||
 		    super_ptr->mount_point_inode_ptr == mount_point_inode_ptr)
 		{
-			/* The device is already mounted, or the mount point is
-			 * already mounted on. */
+			/*
+			 | The device is already mounted, or the mount point is
+			 | already mounted on.
+			 */
 			inode_put(mount_point_inode_ptr);
 			return -EBUSY;
 		}
@@ -90,8 +100,10 @@ int mount(char *dev_name, char *mount_point_name, unsigned long flags)
 	    super_ptr->s_magic != EXT2_SUPER_MAGIC ||
 	    super_ptr->s_state != EXT2_VALID_FS)
 	{
-		/* There are too many mounted file systems, or the file system
-		 * is not ext2, or the file system was uncleanly unmounted. */
+		/*
+		 | There are too many mounted file systems, or the file system
+		 | is not ext2, or the file system was uncleanly unmounted.
+		 */
 		inode_put(mount_point_inode_ptr);
 		dev_open_close(dev, BLOCK, CLOSE);
 		return super_ptr == NULL ? -ENFILE : -EINVAL;
@@ -163,8 +175,10 @@ void mount_root(void)
 int umount(char *dev_name)
 {
 
-/* Perform various checks, and unmount a file system.  Return 0 on success, or a
- * negative error number. */
+/*
+ | Perform various checks, and unmount a file system.  Return 0 on success, or a
+ | negative error number.
+ */
 
 	inode_t *dev_inode_ptr;
 	dev_t dev;
@@ -181,8 +195,10 @@ int umount(char *dev_name)
 	dev_inode_ptr = path_to_inode(dev_name);
 	if (dev_inode_ptr == NULL || !is_blk(dev_inode_ptr))
 	{
-		/* The device's path name could not be resolved, or the device
-		 * is not a block device. */
+		/*
+		 | The device's path name could not be resolved, or the device
+		 | is not a block device.
+		 */
 		inode_put(dev_inode_ptr);
 		return dev_inode_ptr == NULL ? -err_code : -ENODEV;
 	}
@@ -209,8 +225,10 @@ int umount(char *dev_name)
 	super_ptr->dirty = true;
 	super_write(super_ptr);
 
-	/* Release the mount point and root directory inodes, flush all buffered
-	 * data, and close the device. */
+	/*
+	 | Release the mount point and root directory inodes, flush all buffered
+	 | data, and close the device.
+	 */
 	inode_put(super_ptr->mount_point_inode_ptr);
 	inode_put(super_ptr->root_dir_inode_ptr);
 	dev_sync(dev);
@@ -243,8 +261,10 @@ void umount_root(void)
 	super_ptr->dirty = true;
 	super_write(super_ptr);
 
-	/* Release the mount point and root directory inodes, flush all buffered
-	 * data, and close the device. */
+	/*
+	 | Release the mount point and root directory inodes, flush all buffered
+	 | data, and close the device.
+	 */
 	inode_put(super_ptr->mount_point_inode_ptr);
 	inode_put(super_ptr->root_dir_inode_ptr);
 	dev_sync(ROOT_DEV);

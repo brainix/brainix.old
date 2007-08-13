@@ -28,8 +28,10 @@
 bool perm(inode_t *inode_ptr, unsigned char requested, bool access)
 {
 
-/* Check an inode's permissions.  If the requested access is permitted, return
- * true.  Otherwise, return false. */
+/*
+ | Check an inode's permissions.  If the requested access is permitted, return
+ | true.  Otherwise, return false.
+ */
 
 	gid_t gid;
 	uid_t uid;
@@ -39,21 +41,27 @@ bool perm(inode_t *inode_ptr, unsigned char requested, bool access)
 	if (inode_ptr == NULL)
 		return false;
 
-	/* If called by access(), use the real IDs.  Otherwise, use the
-	 * effective IDs. */
+	/*
+	 | If called by access(), use the real IDs.  Otherwise, use the
+	 | effective IDs.
+	 */
 	gid = proc_info(msg->from, access ? GID : EGID);
 	uid = proc_info(msg->from, access ? UID : EUID);
 
 	/* At first, grant only default (others') access. */
 	permitted = (inode_ptr->i_mode & EXT2_S_IRWXO) >> 0;
 
-	/* If the current task belongs to the group owning the inode, grant
-	 * group access. */
+	/*
+	 | If the current task belongs to the group owning the inode, grant
+	 | group access.
+	 */
 	if (gid == inode_ptr->i_gid)
 		permitted = (inode_ptr->i_mode & EXT2_S_IRWXG) >> 3;
 
-	/* If the current task belongs to the user owning the inode, grant user
-	 * access. */
+	/*
+	 | If the current task belongs to the user owning the inode, grant user
+	 | access.
+	 */
 	if (uid == inode_ptr->i_uid)
 		permitted = (inode_ptr->i_mode & EXT2_S_IRWXU) >> 6;
 
@@ -61,8 +69,10 @@ bool perm(inode_t *inode_ptr, unsigned char requested, bool access)
 	if (super_user)
 		return true;
 
-	/* If the requested access is a subset of the permitted access, return
-	 * true.  Otherwise, return false. */
+	/*
+	 | If the requested access is a subset of the permitted access, return
+	 | true.  Otherwise, return false.
+	 */
 	return (requested | permitted) == permitted;
 }
 

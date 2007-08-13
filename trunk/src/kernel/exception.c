@@ -31,23 +31,31 @@
  | The following macros are used to examine the page-fault error code:	      |
 \*----------------------------------------------------------------------------*/
 
-/* 0 if the fault was caused by a non-present page;
- * 1 if the fault was caused by a page-level protection violation: */
+/*
+ | 0 if the fault was caused by a non-present page;
+ | 1 if the fault was caused by a page-level protection violation:
+ */
 #define PG_FAULT_P(err_code) \
 	((err_code & 0x1) == 0x1)
 
-/* 0 if the access causing the fault was a read;
- * 1 if the access causing the fault was a write: */
+/*
+ | 0 if the access causing the fault was a read;
+ | 1 if the access causing the fault was a write:
+ */
 #define PG_FAULT_RW(err_code) \
 	((err_code & 0x2) == 0x2)
 
-/* 0 if the access causing the fault originated in supervisor (kernel) mode;
- * 1 if the access causing the fault originated in user mode: */
+/*
+ | 0 if the access causing the fault originated in supervisor (kernel) mode;
+ | 1 if the access causing the fault originated in user mode:
+ */
 #define PG_FAULT_US(err_code) \
 	((err_code & 0x4) == 0x4)
 
-/* 0 if the fault was not caused by reserved bit violation;
- * 1 if the fault was caused by reserved bits set to 1 in a page directory: */
+/*
+ | 0 if the fault was not caused by reserved bit violation;
+ | 1 if the fault was caused by reserved bits set to 1 in a page directory:
+ */
 #define PG_FAULT_RSVD(err_code) \
 	((err_code & 0x8) == 0x8)
 
@@ -107,28 +115,38 @@ void except(unsigned char vector, unsigned long err_code, stack_t s);
 bool pg_fault(unsigned long err_code)
 {
 
-/* A page-fault exception has occurred.  Try to handle it.  Return true on
- * success or false on failure. */
+/*
+ | A page-fault exception has occurred.  Try to handle it.  Return true on
+ | success or false on failure.
+ */
 
 	/* Save the faulting address. */
 	unsigned long addr = get_fault_addr();
 
 	/* Perform a few sanity checks. */
 	if (PG_FAULT_P(err_code) || PG_FAULT_RSVD(err_code))
-		/* The fault was caused by a page-level protection violation or
-		 * reserved bit violation. */
+		/*
+		 | The fault was caused by a page-level protection violation or
+		 | reserved bit violation.
+		 */
 		panic("pg_fault", "protection or reserved bit");
 	if (KERNEL_SPACE(addr) && PG_FAULT_US(err_code))
-		/* The faulting address lies in kernel space but the access
-		 * causing the fault originated in user mode. */
+		/*
+		 | The faulting address lies in kernel space but the access
+		 | causing the fault originated in user mode.
+		 */
 		panic("pg_fault", "kernel space, but user mode");
 	if (USER_SPACE(addr) && !PG_FAULT_US(err_code))
-		/* The faulting address lies in user space but the access
-		 * causing the fault originated in kernel mode. */
+		/*
+		 | The faulting address lies in user space but the access
+		 | causing the fault originated in kernel mode.
+		 */
 		panic("pg_fault", "user space, but kernel mode");
 	if (STACK_SPACE(addr) && !PG_FAULT_RW(err_code))
-		/* The faulting address lies in stack space but the access
-		 * causing the fault was a read. */
+		/*
+		 | The faulting address lies in stack space but the access
+		 | causing the fault was a read.
+		 */
 		panic("pg_fault", "stack space, but read");
 
 	/* Try to resolve the page-fault. */

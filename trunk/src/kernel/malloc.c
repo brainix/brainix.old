@@ -79,8 +79,10 @@ void pg_unmap(unsigned long pg_dir, unsigned long lin);
 bool heap_pg_fault(bool kernel, unsigned long lin)
 {
 
-/* A page-fault exception has occurred in heap space.  Try to handle it.  Return
- * true on success or false on failure. */
+/*
+ | A page-fault exception has occurred in heap space.  Try to handle it.  Return
+ | true on success or false on failure.
+ */
 
 	pde_t *dir;
 	pte_t *tbl;
@@ -89,9 +91,11 @@ bool heap_pg_fault(bool kernel, unsigned long lin)
 	unsigned char us;
 
 	if (!kernel)
-		/* Oops.  The page-fault exception occurred in user heap space.
-		 * Brainix doesn't (yet) support swapping, so this can only be
-		 * the result of shitty programming.  Vomit. */
+		/*
+		 | Oops.  The page-fault exception occurred in user heap space.
+		 | Brainix doesn't (yet) support swapping, so this can only be
+		 | the result of shitty programming.  Vomit.
+		 */
 		return false;
 
 	dir = pg_dir_map(reference_pg_dir);
@@ -113,8 +117,10 @@ bool heap_pg_fault(bool kernel, unsigned long lin)
 bool heap_init(unsigned long target_pg_dir, bool kernel)
 {
 
-/* In the specified virtual address space, initialize either the kernel or user
- * heap.  Return true on success or false on failure. */
+/*
+ | In the specified virtual address space, initialize either the kernel or user
+ | heap.  Return true on success or false on failure.
+ */
 
 	unsigned long current_pg_dir;
 	slab_t *slab;

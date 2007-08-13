@@ -37,8 +37,10 @@
 int elf_verify(char *img)
 {
 
-/* Given the memory image of a file, verify that it is executable by Brainix.
- * Return 0 on success, or a negative error number. */
+/*
+ | Given the memory image of a file, verify that it is executable by Brainix.
+ | Return 0 on success, or a negative error number.
+ */
 
 	Elf32_Ehdr *ehdr = (Elf32_Ehdr *) img;
 
@@ -79,9 +81,11 @@ int elf_val(char *img, Elf32_Word sec_num, unsigned char sym_num,
 	Elf32_Addr *sym_val)
 {
 
-/* Given the memory image of an ELF file, a section number, and a symbol number,
- * find the specified symbol's value.  Return 0 on success, or a negative error
- * number. */
+/*
+ | Given the memory image of an ELF file, a section number, and a symbol number,
+ | find the specified symbol's value.  Return 0 on success, or a negative error
+ | number.
+ */
 
 	Elf32_Ehdr *ehdr = (Elf32_Ehdr *) img;
 	Elf32_Shdr *shdr = SHDR(img, ehdr, sec_num);
@@ -112,9 +116,11 @@ int elf_val(char *img, Elf32_Word sec_num, unsigned char sym_num,
 int elf_rel(char *img, Elf32_Shdr *shdr_1, Elf32_Rela *rela)
 {
 
-/* Given the memory image of an ELF file, a section header, and a relocation
- * entry, perform the specified relocation.  Return 0 on success, or a negative
- * error number. */
+/*
+ | Given the memory image of an ELF file, a section header, and a relocation
+ | entry, perform the specified relocation.  Return 0 on success, or a negative
+ | error number.
+ */
 
 	Elf32_Ehdr *ehdr = (Elf32_Ehdr *) img;
 	Elf32_Shdr *shdr_2 = SHDR(img, ehdr, shdr_1->sh_info);

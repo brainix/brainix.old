@@ -98,12 +98,14 @@ void intr_init(void)
 void intr_lock(void)
 {
 
-/* Disable interrupts and increment the lock count.  The order is important to
- * prevent lock count from getting b0rk3d.  This is obvious, but I learned it
- * the hard way. */
+/*
+ | Disable interrupts and increment the lock count.  The order is important to
+ | prevent lock count from getting b0rk3d.  This is obvious, but I learned it
+ | the hard way.
+ */
+
 	lock_count++;
 	disable_intrs();
-	
 }
 
 /*----------------------------------------------------------------------------*\
@@ -112,9 +114,11 @@ void intr_lock(void)
 void intr_unlock(void)
 {
 
-/* Decrement the lock count; if it equals zero, enable interrupts.  This routine
- * is written this way so calls to intr_lock() and intr_unlock() can be nested.
- * It looks naïve, but it works.  Trust me. */
+/*
+ | Decrement the lock count; if it equals zero, enable interrupts.  This routine
+ | is written this way so calls to intr_lock() and intr_unlock() can be nested.
+ | It looks naïve, but it works.  Trust me.
+ */
 
 	if (--lock_count == 0)
 		enable_intrs();

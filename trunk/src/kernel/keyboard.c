@@ -53,8 +53,10 @@ void kbd_init(void);
 void kbd_out(unsigned char value, unsigned short port)
 {
 
-/* Wait until the keyboard is ready, send a command or control byte, then wait
- * for the keyboard to acknowledge. */
+/*
+ | Wait until the keyboard is ready, send a command or control byte, then wait
+ | for the keyboard to acknowledge.
+ */
 
 	/* Wait until the keyboard is ready. */
 	while (!KBD_READY(in_byte(KBD_STAT_PORT)))
@@ -102,21 +104,27 @@ void kbd_leds(bool caps, bool num, bool scroll)
 void kbd_handler(void)
 {
 
-/* The keyboard has generated an interrupt (a key is being pressed or released).
- * Handle the interrupt. */
+/*
+ | The keyboard has generated an interrupt (a key is being pressed or released).
+ | Handle the interrupt.
+ */
 
 	unsigned char scode = in_byte(KBD_DATA_PORT);
 	msg_t *msg;
 
 	if (scode == 0xE0)
-		/* The keyboard is telling us that the upcoming key did not
-		 * exist on the original AT keyboard.  Raise your hand if you
-		 * give a fuck.  Thank you. */
+		/*
+		 | The keyboard is telling us that the upcoming key did not
+		 | exist on the original AT keyboard.  Raise your hand if you
+		 | give a fuck.  Thank you.
+		 */
 		;
 	else
 	{
-		/* Send the scancode to the terminal driver for further
-		 * processing. */
+		/*
+		 | Send the scancode to the terminal driver for further
+		 | processing.
+		 */
 		(msg = msg_alloc(TTY_PID, IRQ))->from = HARDWARE;
 		msg->args.brnx_irq.scode = scode;
 		msg_send(msg);

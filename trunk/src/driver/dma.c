@@ -61,9 +61,11 @@ void dma_xfer(unsigned char chan, unsigned long addr, unsigned short len,
 	bool read)
 {
 
-/* Set up a DMA transfer over the specified channel, starting at the specified
- * address, for the specified length.  If read is true, the transfer is from the
- * device to RAM.  Otherwise, the transfer is from RAM to the device. */
+/*
+ | Set up a DMA transfer over the specified channel, starting at the specified
+ | address, for the specified length.  If read is true, the transfer is from the
+ | device to RAM.  Otherwise, the transfer is from RAM to the device.
+ */
 
 	unsigned char mode = (read ? DMA_READ : DMA_WRITE) | chan;
 	unsigned char   pg = (addr & 0xFF0000) >> 16;

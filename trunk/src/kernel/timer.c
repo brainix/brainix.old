@@ -174,8 +174,10 @@ void timer_deinit(msg_t *msg)
 void timer_watch(msg_t *msg)
 {
 
-/* Set an alarm -- set the specified message to be returned to its sending
- * process after the specified number of ticks. */
+/*
+ | Set an alarm -- set the specified message to be returned to its sending
+ | process after the specified number of ticks.
+ */
 
 	clock_t uptime_to_send = uptime + msg->args.brnx_watch.ticks;
 	alarm_t *tmp;
@@ -183,8 +185,10 @@ void timer_watch(msg_t *msg)
 
 	intr_lock();
 
-	/* If the requested alarm already exists, remove it from the list.
-	 * We'll reinsert it later (to keep the list sorted by time). */
+	/*
+	 | If the requested alarm already exists, remove it from the list.
+	 | We'll reinsert it later (to keep the list sorted by time).
+	 */
 	for (tmp = next_alarm; tmp != NULL; tmp = tmp->next)
 	{
 		if (tmp->msg->to != msg->to)
@@ -207,10 +211,12 @@ void timer_watch(msg_t *msg)
 	if (new_alarm == NULL)
 		new_alarm = kmalloc(sizeof(alarm_t));
 
-	/* (Re)insert the requested alarm into the list; keep the list sorted
-	 * by time.  If the requested alarm belongs at the front of the list,
-	 * insert it there.  Otherwise, find where it belongs and insert it
-	 * there. */
+	/*
+	 | (Re)insert the requested alarm into the list; keep the list sorted
+	 | by time.  If the requested alarm belongs at the front of the list,
+	 | insert it there.  Otherwise, find where it belongs and insert it
+	 | there.
+	 */
 	new_alarm->uptime = uptime_to_send;
 	new_alarm->msg = msg;
 	if (next_alarm == NULL || next_alarm->uptime > uptime_to_send)
@@ -240,8 +246,10 @@ void timer_watch(msg_t *msg)
 void timer_sigalrm(msg_t *msg)
 {
 
-/* Set a SIGALRM to be generated for the sending process after the specified
- * number of seconds. */
+/*
+ | Set a SIGALRM to be generated for the sending process after the specified
+ | number of seconds.
+ */
 
 	clock_t uptime_to_send = uptime + msg->args.alarm.seconds * HZ;
 	sigalrm_t *tmp;
@@ -250,9 +258,11 @@ void timer_sigalrm(msg_t *msg)
 
 	intr_lock();
 
-	/* If the sender already has a pending SIGALRM, remove it from the list.
-	 * We'll either cancel or reinsert it later (to keep the list sorted by
-	 * time). */
+	/*
+	 | If the sender already has a pending SIGALRM, remove it from the list.
+	 | We'll either cancel or reinsert it later (to keep the list sorted by
+	 | time).
+	 */
 	for (tmp = next_sigalrm; tmp != NULL; tmp = tmp->next)
 	{
 		if (tmp->pid != msg->from)
@@ -271,8 +281,10 @@ void timer_sigalrm(msg_t *msg)
 		break;
 	}
 
-	/* If the sender just wants its pending SIGALRM canceled, free it and
-	 * return. */
+	/*
+	 | If the sender just wants its pending SIGALRM canceled, free it and
+	 | return.
+	 */
 	if (msg->args.alarm.seconds == 0)
 	{
 		kfree(new_sigalrm);
@@ -284,9 +296,11 @@ void timer_sigalrm(msg_t *msg)
 	if (new_sigalrm == NULL)
 		(new_sigalrm = kmalloc(sizeof(sigalrm_t)))->pid = msg->from;
 
-	/* (Re)insert the SIGALRM into the list; keep the list sorted by time.
-	 * If the SIGALRM belongs at the front of the list, insert it there.
-	 * Otherwise, find where it belongs and insert it there. */
+	/*
+	 | (Re)insert the SIGALRM into the list; keep the list sorted by time.
+	 | If the SIGALRM belongs at the front of the list, insert it there.
+	 | Otherwise, find where it belongs and insert it there.
+	 */
 	new_sigalrm->uptime = uptime_to_send;
 	if (next_sigalrm == NULL || next_sigalrm->uptime > uptime_to_send)
 	{
@@ -339,8 +353,10 @@ void timer_main(void)
 				break;
 			case WATCHDOG:
 				timer_watch(msg);
-				/* Subtle: msg is neither sent nor freed -
-				 * rather, it's queued to be sent later. */
+				/*
+				 | Subtle: msg is neither sent nor freed -
+				 | rather, it's queued to be sent later.
+				 */
 				break;
 			case UPTIME:
 				msg->args.brnx_uptime.ret_val = uptime;

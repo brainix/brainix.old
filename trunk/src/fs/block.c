@@ -57,9 +57,11 @@ void block_init(void)
 void recently_used(block_t *block_ptr, bool most)
 {
 
-/* If most is true, move a block to the most recently used position in the
- * cache.  Otherwise, move a block to the least recently used position in the
- * cache. */
+/*
+ | If most is true, move a block to the most recently used position in the
+ | cache.  Otherwise, move a block to the least recently used position in the
+ | cache.
+ */
 
 	/* Remove the block from the cache linked list. */
 	if (block_ptr == lru)
@@ -67,8 +69,10 @@ void recently_used(block_t *block_ptr, bool most)
 	block_ptr->prev->next = block_ptr->next;
 	block_ptr->next->prev = block_ptr->prev;
 
-	/* Reinsert the block into the desired position in the cache linked
-	 * list. */
+	/*
+	 | Reinsert the block into the desired position in the cache linked
+	 | list.
+	 */
 	block_ptr->prev = lru->prev;
 	block_ptr->next = lru;
 	block_ptr->next->prev = block_ptr->prev->next = block_ptr;
@@ -82,8 +86,10 @@ void recently_used(block_t *block_ptr, bool most)
 void block_rw(block_t *block_ptr, bool read)
 {
 
-/* If read is true, read a block from its device into the cache.  Otherwise,
- * write a block from the cache to its device. */
+/*
+ | If read is true, read a block from its device into the cache.  Otherwise,
+ | write a block from the cache to its device.
+ */
 
 	dev_t dev = block_ptr->dev;
 	off_t off = block_ptr->blk * BLOCK_SIZE;
@@ -91,12 +97,16 @@ void block_rw(block_t *block_ptr, bool read)
 	super_t *super_ptr;
 
 	if (!block_ptr->dirty)
-		/* The cached block is already synchronized with the block on
-		 * its device.  No reason to read or write anything. */
+		/*
+		 | The cached block is already synchronized with the block on
+		 | its device.  No reason to read or write anything.
+		 */
 		return;
 
-	/* Read the block from its device into the cache, or write the block
-	 * from the cache to its device. */
+	/*
+	 | Read the block from its device into the cache, or write the block
+	 | from the cache to its device.
+	 */
 	dev_rw(dev, BLOCK, read, off, BLOCK_SIZE, buf);
 
 	/* The cached block is now synchronized with the block on its device. */
@@ -133,10 +143,12 @@ void dev_sync(dev_t dev)
 void dev_purge(dev_t dev)
 {
 
-/* Reinitialize all of a device's cached blocks.  This is done on unmount so
- * that (for example) if an old floppy is unmounted and removed, and a new
- * floppy is inserted and mounted, the cached blocks for the old floppy are not
- * used when accessing the new floppy. */
+/*
+ | Reinitialize all of a device's cached blocks.  This is done on unmount so
+ | that (for example) if an old floppy is unmounted and removed, and a new
+ | floppy is inserted and mounted, the cached blocks for the old floppy are not
+ | used when accessing the new floppy.
+ */
 
 	blkcnt_t j;
 
@@ -145,8 +157,10 @@ void dev_purge(dev_t dev)
 		/* Does the current block reside on the device being purged? */
 		if (block[j].dev == dev)
 		{
-			/* Yes - reinitialize it and force it to the least
-			 * recently used position, as its lifetime has ended. */
+			/*
+			 | Yes - reinitialize it and force it to the least
+			 | recently used position, as its lifetime has ended.
+			 */
 			block[j].dev = NO_DEV;
 			block[j].blk = 0;
 			block[j].count = 0;
@@ -161,9 +175,11 @@ void dev_purge(dev_t dev)
 block_t *block_get(dev_t dev, blkcnt_t blk)
 {
 
-/* Search the cache for a block.  If it is found, return a pointer to it.
- * Otherwise, evict a free block, cache the block, and return a pointer to
- * it. */
+/*
+ | Search the cache for a block.  If it is found, return a pointer to it.
+ | Otherwise, evict a free block, cache the block, and return a pointer to
+ | it.
+ */
 
 	block_t *block_ptr;
 
@@ -171,9 +187,11 @@ block_t *block_get(dev_t dev, blkcnt_t blk)
 	for (block_ptr = lru->prev; ; )
 		if (block_ptr->dev == dev && block_ptr->blk == blk)
 		{
-			/* Found the block.  Increment the number of times it is
-			 * used, mark it recently used, and return a pointer to
-			 * it. */
+			/*
+			 | Found the block.  Increment the number of times it is
+			 | used, mark it recently used, and return a pointer to
+			 | it.
+			 */
 			block_ptr->count++;
 			recently_used(block_ptr, MOST);
 			return block_ptr;
@@ -182,14 +200,18 @@ block_t *block_get(dev_t dev, blkcnt_t blk)
 			/* Oops - we've searched the entire cache already. */
 			break;
 
-	/* The requested block is not cached.  Search the cache for the least
-	 * recently used free block. */
+	/*
+	 | The requested block is not cached.  Search the cache for the least
+	 | recently used free block.
+	 */
 	for (block_ptr = lru; ; )
 		if (block_ptr->count == 0)
 		{
-			/* Found the least recently used free block.  Evict it.
-			 * Cache the requested block, mark it recently used, and
-			 * return a pointer to it. */
+			/*
+			 | Found the least recently used free block.  Evict it.
+			 | Cache the requested block, mark it recently used, and
+			 | return a pointer to it.
+			 */
 			block_rw(block_ptr, WRITE);
 			block_ptr->dev = dev;
 			block_ptr->blk = blk;
@@ -214,8 +236,10 @@ block_t *block_get(dev_t dev, blkcnt_t blk)
 void block_put(block_t *block_ptr, bool important)
 {
 
-/* Decrement the number of times a block is used.  If no one is using it, write
- * it to its device (if necessary). */
+/*
+ | Decrement the number of times a block is used.  If no one is using it, write
+ | it to its device (if necessary).
+ */
 
 	if (block_ptr == NULL || --block_ptr->count > 0)
 		return;
