@@ -6,6 +6,8 @@ I'm putting this here because I don't want to taint [http://code.google.com/p/br
 
 It appears to me that there should be two levels of VFS.  A high-level VFS which abstracts a virtual namespace which is presented to the user, and a low-level VFS which abstracts the physical file-systems that the OS supports.
 
+This would be a bit similar to something like gnome-vfs or [http://mail.gnome.org/archives/gtk-devel-list/2007-February/msg00062.html gvfs], though a micro-kernel has certain aspects that can provide for a more elegant solution instead of add-on "hacks" like gnome-vfs and [http://en.wikipedia.org/wiki/Filesystem_in_Userspace FUSE]
+
 = Details =
 
 Since Alex has already touched on several different low-level implementations of virtual file systems, I'd like to propose a higher-level implementation which would co-exist with a lower-level implementation.
