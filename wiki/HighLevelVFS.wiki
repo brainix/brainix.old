@@ -73,3 +73,31 @@ Just a thought, the Solaris/BSD virtual file system implementation has a `vfs` d
 $ sudo rm -rf /proc/4 # kills the process with the process id of (pid==4)
 }}}
 The various pseudo-file systems would be implemented as `vfs struct`s. The operations wouldn't change as far as the shell is concerned, but "under the hood" the operations would be different. Just a thought that might drastically simplify the implementation of the desired design. (pqnelson)
+
+I like that Alex.
+I noticed some comments [http://code.google.com/p/brainix/wiki/FileSystemAndProcessManager here] about how the HURD has a server/process dedicated to process execution.  I like this idea because the process server could register itself as capable of exporting a namespace/objectmodel and mount at /proc.  The wiki previously mentioned issues about where to place fork() execve() and exit().  Why not make these objects of the process server?  eg.,
+{{{
+#!/bin/sh
+# fork the current process (a pid could be used instead of 'current')
+/proc/current/fork
+if [ $? -eq "0" ]; then
+    do_child
+elif [ $? -gt 0 ]; then
+    do_parent
+else
+    echo "failed to fork current process"
+fi
+}}}
+another example:
+{{{
+# rm /proc/4
+# /proc/4/exit # does the same thing
+# echo "9" | /proc/4/kill # same result
+}}}
+I don't immediately see a way of avoiding execve() because it is the method for instantiating the objects.
+crazy?  I'm not sure, but it would eliminate tons of system calls. (jdt)
+
+
+
+
+
