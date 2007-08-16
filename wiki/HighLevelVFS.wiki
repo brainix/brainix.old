@@ -92,11 +92,10 @@ another example:
 {{{
 # rm /proc/4
 # /proc/4/exit # does the same thing
-# echo "9" | /proc/4/kill # same result
+# /proc/4/kill -9 # same result
 }}}
 I don't immediately see a way of avoiding execve() because it is the method for instantiating the objects.
 crazy?  I'm not sure, but it would eliminate tons of system calls. (jdt)
-
 
 
 
