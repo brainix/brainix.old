@@ -1,0 +1,9 @@
+#Random questions fun for all to ask.
+
+= C++ Microkernel? =
+
+I was thinking about this, and message passing between object in object oriented programming (well, C++/D/Java) is of the form: `object.message(args);`. So, using this type of message passing, let us turn our attention to Microkernels.
+
+I was thinking why not have the servers be implemented as classes. The message passing would be simply `server.sys_call(args);`. But one would need to overload the `new()` and `delete()` operators to be `kmalloc()` and `kfree()` respectively. If one allocates the memory to be in userland, one has effectively a microkernel without the overhead of message passing. 
+
+Something seems slightly wrong with this...what possible problem could there be?
