@@ -8,4 +8,4 @@ I was thinking why not have the servers be implemented as classes. The message p
 
 Something seems slightly wrong with this...what possible problem could there be?
 
-I'm all for a minimal C++ kernel ie., no templates, multiple inheritance, etc.  I don't see how moving to C++ out of ring0 would help wrt message passing though.  You would have to have something like dbus or gstreamer to handle the IPC involved either way, and unless there is a shared memory solution, you end up with a massive amount of system calls. (jdt)
+I'm all for a minimal C++ kernel ie., no templates, multiple inheritance, etc.  I don't see how moving to C++ out of ring0 would help wrt message passing though.  You would have to have something like dbus or gstreamer to handle the IPC involved either way, and unless there is a shared memory solution, you end up with a massive amount of system calls. Out of curiosity, if the servers/processes are in user-space, then why the need for kmalloc and kfree?  (jdt)
