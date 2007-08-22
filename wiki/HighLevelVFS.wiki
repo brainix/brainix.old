@@ -98,4 +98,7 @@ another example:
 I don't immediately see a way of avoiding execve() because it is the method for instantiating the objects.
 crazy?  I'm not sure, but it would eliminate tons of system calls. (jdt)
 
+= RPC vs. REST/CRUD =
 
+I just noticed that the changes I'm proposing are the same as those when converting from an [
+http://en.wikipedia.org/wiki/Representational_State_Transfer#Example RPC representation to a RESTful representation] of the files and functionality abstracted by the kernel.  Notice how instead of defining many different syscalls as in RPC, the REST/CRUD model follows a simple set of 4 I/O operations and access to different files/functionality is moved to a hierarchy of names.  In other words, this high-level VFS proposal is more "web-like". (jdt)
