@@ -106,6 +106,5 @@ I just noticed that the changes I'm proposing are the same as those when convert
 
 = Image of Proposed Layout =
 (this is preliminary)
-http://brainix.googlecode.com/files/high_level_vfs.svg
-
+http://brainix.googlecode.com/files/high_level_vfs.png
 
