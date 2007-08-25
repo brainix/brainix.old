@@ -82,5 +82,4 @@ This page is released under the GPL v 3 License.
 
 `[4]` "[http://www.opensolaris.org/os/article/2005-10-14_a_comparison_of_solaris__linux__and_freebsd_kernels/ A Comparison of Solaris, Linux, and FreeBSD Kernels]" by Max Bruning (October 14, 2005).
 
-
-
+`[5]` "[http://pqnelson.blogspot.com/2007/08/solarisbsd-virtual-file-system-paradigm.html The Solaris/BSD Paradigm of Virtual File Systems]
