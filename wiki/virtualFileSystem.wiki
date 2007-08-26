@@ -16,6 +16,8 @@ The vnode model is handled far better than I could ever try to handle it in Klei
 
 For those that wish to see the [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L74 vopstats], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L156 vtypes], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L214 vnode], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L336 vattr], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L462 vnevent] (vnode events), [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L474 vmodes], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L481 vsecattr], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L493 vsa_mask values], [http://fxr.watson.org/fxr/source/common/sys/vnode.h?v=OPENSOLARIS#L532 VNODE_OPS] data structures, I have found them for Solaris. And, of course, the [http://fxr.watson.org/fxr/source/common/fs/?v=OPENSOLARIS directory containing the implementation]. I'm too lazy to go line by line and comment on it myself, but feel free to enjoy.
 
+- Christ, that is ugly.  The comments are good, but they messed it up by adopting an RPC model for their "high-level" VFS. It doesn't need to be that complicated.  Most of those ops can be moved into names exported by individual resources.  All the high-level VFS needs to do is keep a track of mount points and which server/process registered it. (jdt)
+
 == The Common File Model ==
 
 The motivation for the Common File Model is to be able to represent any supported file system within one model. It is specifically designed to have minimal overhead with the ext2/ext3 file system. Despite being an object oriented design, the Linux virtual file system is coded entirely in C. That means the "classes" are `struct`s whose "methods" are function pointers.
@@ -28,6 +30,8 @@ There are four object types in the Common File Model are:
   * _The Dentry Object_: This object stores information about the linking of a directory entry ("`d_entry`") with the corresponding file. Linking files in directory entries are handled differently for each individual disk-based file system.
 
 The Linux file system also has a "dentry cache". Generally speaking, a *dentry cache* is a which is held in the *disk cache* to speed up the translations from a file name path to the inode of the last pathname component. A *disk cache* is basically a mechanism which allows a kernel to keep in RAM some information usually stored on disk in order to speed up the operations on the information.
+
+- This is all "low-level" VFS.  Linux modules manually register their sysfs capabilities manually. (jdt)
 
 = Compare and Contrast the Approaches =
 
@@ -49,6 +53,8 @@ The approaches have been compared in `[4]`, so we shall only quote it here:
   operations and the other for inode operations. Solaris and FreeBSD combine
   these as "vnode operations."'
 
+- None of which abstracts mount-points to registered capabilities.  Both subscribe to an RPC method of non-generic resource access. (jdt)
+
 = Which Paradigm to Follow? = 
 
 Ideally, we should have a different virtual file system for every file system that exists and then, based on the user's configuration (i.e. choice of file system), automatically compile the virtual file system that will minimize the overhead to the native file system. In practice, we don't have the manpower or the patience to do such a Herculean task.
@@ -64,6 +70,8 @@ internet->v_op.vn_rdwr(&internet, struct userIOptrArgs, READ, Flags, userID); /*
 
 //etc. 
 }}}
+
+- This ignores the core problem of a VFS being RPC-like instead of a generic CRUD-like approach. (jdt)
 
 == Revision History and CopyLeft ==
 
@@ -83,3 +91,9 @@ This page is released under the GPL v 3 License.
 `[4]` "[http://www.opensolaris.org/os/article/2005-10-14_a_comparison_of_solaris__linux__and_freebsd_kernels/ A Comparison of Solaris, Linux, and FreeBSD Kernels]" by Max Bruning (October 14, 2005).
 
 `[5]` "[http://pqnelson.blogspot.com/2007/08/solarisbsd-virtual-file-system-paradigm.html The Solaris/BSD Paradigm of Virtual File Systems]
+
+
+
+
+
+
