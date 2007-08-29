@@ -18,6 +18,8 @@ For those that wish to see the [http://fxr.watson.org/fxr/source/common/sys/vnod
 
 - Christ, that is ugly.  The comments are good, but they messed it up by adopting an RPC model for their "high-level" VFS. It doesn't need to be that complicated.  Most of those ops can be moved into names exported by individual resources.  All the high-level VFS needs to do is keep a track of mount points and which server/process registered it. (jdt)
 
+- The high level virtual file system then is little more than the linked list of `vfs struct`s? Well, a modified version of the original version (see `[5]`). The low level is then the `struct vnode` layer? (pqnelson)
+
 == The Common File Model ==
 
 The motivation for the Common File Model is to be able to represent any supported file system within one model. It is specifically designed to have minimal overhead with the ext2/ext3 file system. Despite being an object oriented design, the Linux virtual file system is coded entirely in C. That means the "classes" are `struct`s whose "methods" are function pointers.
@@ -32,6 +34,8 @@ There are four object types in the Common File Model are:
 The Linux file system also has a "dentry cache". Generally speaking, a *dentry cache* is a which is held in the *disk cache* to speed up the translations from a file name path to the inode of the last pathname component. A *disk cache* is basically a mechanism which allows a kernel to keep in RAM some information usually stored on disk in order to speed up the operations on the information.
 
 - This is all "low-level" VFS.  Linux modules manually register their sysfs capabilities manually. (jdt)
+
+- The Linux virtual file system is entirely low level. Only the original Solaris/BSD implementation was actually cleanly cut, and then they went and screwed that up too. So this needs to be reverted back to the clean cut version. (pqnelson)
 
 = Compare and Contrast the Approaches =
 
@@ -72,6 +76,8 @@ internet->v_op.vn_rdwr(&internet, struct userIOptrArgs, READ, Flags, userID); /*
 }}}
 
 - This ignores the core problem of a VFS being RPC-like instead of a generic CRUD-like approach. (jdt)
+
+- I realize _post factum_ that I did screw up this implementation. Instead, there should be a `vfs net_connexion` with a vnode mount point `vnode net`. (pqnelson)
 
 == Revision History and CopyLeft ==
 
