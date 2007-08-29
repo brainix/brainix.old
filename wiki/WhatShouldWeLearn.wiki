@@ -386,3 +386,38 @@ A bibliography for the ZFS:
 - Well, that's the issue ie., whether to include the documentation inline with the code, or whether to externalize it in order to not bloat the source code.  It's a matter of opinion, but I'm in the inline-with-code camp.  What I have is rather embarrassing because I have a lot of TODO's about parts that I don't completely understand to warrant proper comments.  Is that IRC channel still alive, else what's a good way to ask questions about specific portions?  The VMM and slab allocator in particular.  I usually use [http://www.stack.nl/~dimitri/doxygen/ Doxygen] for my personal projects, but I think it has similar syntax to JavaDoc which I'm not familiar with.  (jdt)
 
 - I'm usually on the FreeNode ##brainix channel, which was generously given to us. So drop in to ask questions. Frankly, just document however you'd like. Having "to-do" lists is a good thing, speaking from my perspective as a scientist ;) (pqnelson)
+
+= Versioning = 
+
+Not to point fingers, but Raj's versioning is a real pain in the ass! No offense Raj :P If you are really paranoid about versioning, add this header:
+
+{{{
+#ifndef VERSION_H
+#define VERSION_H
+
+/* The various versioning */
+#define DEPRECATE 0
+#define DEBUG 1
+#define ALPHA 2
+#define BETA  3
+#define FINAL 4
+
+/* The versioning */
+#define _VERSION   FINAL //Change this depending on what version you want
+#define version(x) if(x == _VERSION)
+#define deprecate  if(DEPRECATE)
+
+#endif
+}}}
+
+It allows for code like:
+
+{{{
+version(debug) {
+    //blah blah blah
+} else {
+    //a different, stable blah blah blah
+}
+}}}
+
+This is inspired from the D versioning system. Plus it lets us get to work faster! (pqnelson)
