@@ -20,6 +20,8 @@ For those that wish to see the [http://fxr.watson.org/fxr/source/common/sys/vnod
 
 - The high level virtual file system then is little more than the linked list of `vfs struct`s? Well, a modified version of the original version (see `[5]`). The low level is then the `struct vnode` layer? (pqnelson)
 
+- Essentially.. yes.  Though probably a hash on the mount-point name rather than a linked list.  The low level VFS would strictly be for abstracting physical file systems, and would probably need to demultiplex a lot of the common operations on file systems.  This would be needed so that each implementation behaves in a uniform manner when it comes to "traditional" vfsops... also for DRY. (jdt)
+
 == The Common File Model ==
 
 The motivation for the Common File Model is to be able to represent any supported file system within one model. It is specifically designed to have minimal overhead with the ext2/ext3 file system. Despite being an object oriented design, the Linux virtual file system is coded entirely in C. That means the "classes" are `struct`s whose "methods" are function pointers.
