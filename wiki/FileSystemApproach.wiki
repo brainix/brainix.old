@@ -1,0 +1,40 @@
+#summary The approach of the file system.
+
+= Introduction =
+
+I have decided to tweak the structure of the file system by following a more orthodox approach with respect to algorithms. The "orthodox algorithms" I refer to are those described in the book _The Design of the UNIX Operating System_ by Maurice J. Bach (chapters 3 through 5).
+
+I am going to make the attempt to keep as many of the pre-existing data structures as possible defined in the various headers (viz. the `block_t`, `struct inode`, `struct superblock`, etc.).
+
+I will also be using the following prototypes:
+{{{
+block_t* getblk(dev_t dev, blkcnt_t blk);
+void brelease(block_t* buffer);
+block_t* bread(block_t *block_ptr);
+block_t* breada(block_t *immediate, block_t *async);
+void bwrite(block_t* buffer);
+block_t* alloc(struct superblock* sb);
+unsigned int bmap(struct inode *ip, unsigned int bn);
+
+struct inode* iget(unsigned int inum);
+void iput(struct inode *iptr);
+struct inode* namei(char *path);
+struct inode* ialloc(struct superblock* sb);
+void ifree(unsigned int inum);
+}}}
+This will allow us to do the various system calls supported by the file system (e.g. `open()` and `read()`).
+
+I don't know when I'll be done, but this should make the file system more stable until I can get the Ext2 file system algorithms working.
+
+= On the Virtual File System =
+
+I have been investigating the Ext2 file system, and since the data structures are already there, I decided to use it as the native file system for Brainix for the time being. It would be nice if we could have something like a clone of ZFS that is compatible for the GPL, but hope springs eternal ;)
+
+The approach I am taking is the Solaris/BSD approach using `struct vnode`s and `struct vfs`es.
+
+The vnode will be based on the Ext2 inode, and the `struct vfs` will be based on the original implementation of the virtual file system.
+
+I am thinking about the vnode operations and any suggestions would be great.
+ 
+ 
+ 
