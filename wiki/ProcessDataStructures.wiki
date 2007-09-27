@@ -1,0 +1,69 @@
+#summary Wouldn't it make more sense if...
+
+= Introduction =
+
+I was looking at some of our data structures, e.g. in /brainix/include/fs/fildes.h:
+{{{
+/* Process-specific file system information: */
+typedef struct
+{
+	inode_t *root_dir;                /* Root directory.            */
+	inode_t *work_dir;                /* Current working directory. */
+	mode_t cmask;                     /* File mode creation mask.   */
+	file_ptr_t *open_descr[OPEN_MAX]; /* File descriptor table.     */
+} fs_proc_t;
+}}}
+and in /brainix/src/kernel/process.c:
+{{{
+typedef struct proc
+{
+	gid_t egid; /* Effective group ID. */
+	uid_t euid; /* Effective user ID.  */
+	gid_t gid;  /* Real group ID.      */
+	pid_t pgrp; /* Process group ID.   */
+	pid_t pid;  /* Process ID.         */
+	pid_t ppid; /* Parent process ID.  */
+	uid_t uid;  /* Real user ID.       */
+
+	clock_t utime;  /* User time.                                 */
+	clock_t stime;  /* System time.                               */
+	clock_t cutime; /* User time of terminated child processes.   */
+	clock_t cstime; /* System time of terminated child processes. */
+
+	unsigned char state;
+	unsigned char kernel_time;
+	struct proc *prev;
+	struct proc *next;
+} proc_t;
+}}}
+Wouldn't it make more sense to consolidate these two as one data structure? E.g.
+{{{
+typedef struct {
+	inode_t *root_dir;                /* Root directory.            */
+	inode_t *work_dir;                /* Current working directory. */
+	mode_t cmask;                     /* File mode creation mask.   */
+        int opendescr[OPEN_MAX];
+
+	gid_t egid; /* Effective group ID. */
+	uid_t euid; /* Effective user ID.  */
+	gid_t gid;  /* Real group ID.      */
+	pid_t pgrp; /* Process group ID.   */
+	pid_t pid;  /* Process ID.         */
+	pid_t ppid; /* Parent process ID.  */
+	uid_t uid;  /* Real user ID.       */
+
+	clock_t utime;  /* User time.                                 */
+	clock_t stime;  /* System time.                               */
+	clock_t cutime; /* User time of terminated child processes.   */
+	clock_t cstime; /* System time of terminated child processes. */
+
+	unsigned char state;
+	unsigned char kernel_time;
+	struct proc *prev;
+	struct proc *next;
+} proc_t;
+}}}
+
+I also realize that the first data structure is based off of minix, but I think that perhaps we should not be using Minix for data structures. E.g. the process should have an array of integers (file descriptors) which is then used on the file table (or the file_ptr_t table to be precise). This scheme we have now is kind of maddening. 
+
+Also, I'm not sure if this would work, but if it would be possible to have a function that gets the current process running, `proc_t* get_current_process()` or something like that, it would save me a lot of time writing the file system.
