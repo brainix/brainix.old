@@ -67,3 +67,7 @@ typedef struct {
 I also realize that the first data structure is based off of minix, but I think that perhaps we should not be using Minix for data structures. E.g. the process should have an array of integers (file descriptors) which is then used on the file table (or the file_ptr_t table to be precise). This scheme we have now is kind of maddening. 
 
 Also, I'm not sure if this would work, but if it would be possible to have a function that gets the current process running, `proc_t* get_current_process()` or something like that, it would save me a lot of time writing the file system.
+
+= VFS issue =
+
+The only issue I see is that the combined data structure "cuts" through any future VFS layer.  mode_t and the filedescriptors are fine, but having to #include "fs/inode.h" might cause a headache.  Would it be feasible to have "root_dir" and "work_dir" as open files? Then in proc_t, you could simply reference them as int fd's instead of inode_t.  I'm not sure what kind of trouble that might cause wrt performance and file-locking issues... plus it would allow for having any type of VFS object for the root and cwd files.  I don't see why the root and cwd should be limited to just directories. (jdt)
