@@ -71,3 +71,5 @@ Also, I'm not sure if this would work, but if it would be possible to have a fun
 = VFS issue =
 
 The only issue I see is that the combined data structure "cuts" through any future VFS layer.  mode_t and the filedescriptors are fine, but having to #include "fs/inode.h" might cause a headache.  Would it be feasible to have "root_dir" and "work_dir" as open files? Then in proc_t, you could simply reference them as int fd's instead of inode_t.  I'm not sure what kind of trouble that might cause wrt performance and file-locking issues... plus it would allow for having any type of VFS object for the root and cwd files.  I don't see why the root and cwd should be limited to just directories. (jdt)
+
+Hrm.. seems src/kernel/process.c includes kernel.h, which includes freaking _everything_.    (jdt)
