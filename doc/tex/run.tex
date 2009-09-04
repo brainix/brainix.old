@@ -12,15 +12,17 @@ It should start downloading. You wait until its downloading is complete. I assum
 \verb|$ mkdir mnt|
 
 Then go into the Brainix directory. Create several scripts:
-\begin{code}{brainix/compile.sh}
+\begin{code}
 #!/usr/bin/bash
+# from brainix/compile.sh
 
 make clean
 make
 \end{code}
 The \verb|compile.sh| script.
-\begin{code}{brainix/update\_bootdisk.sh}
+\begin{code}
 #!/usr/bin/bash
+# brainix/update_bootdisk.sh
 
 sudo mount -o loop Bootdisk.img ../mnt/
 sudo cp ./bin/Brainix ../mnt
@@ -31,8 +33,9 @@ sudo umount ../mnt/
 This is the \verb|update_bootdisk| script that updates the boot disk with the Brainix binary image (the Brainix binary image is made after compilation and put in /brainix/bin). Now, to make a bochs \verb|bochsrc| file. I have included a \verb|dot-bochsrc| file in this documentation (its external to this file), I use it to run Brainix in bochs.
 
 Now to put it all together:
-\begin{code}{brainix/run.sh}
+\begin{code}
 #!/usr/bin/bash
+# brainix/run.sh
 
 sh compile.sh
 sudo sh update-bootdisk.sh
@@ -42,11 +45,9 @@ This is the script you invoke in order to compile and run the compiled image in 
 
 I have included sample scripts \textbf{THAT YOU NEED TO MOVE TO THE BRAINIX FOLDER}, i.e. type into the command line:
 \\
-\verb|$ mv compile.sh ../|
-\\
-\verb|$ mv update-bootdisk.sh ../|
-\\
-\verb|$ mv dot-bochsrc ../|
-\\
-\verb|$ mv run.sh ../|
-
+\begin{commandLine}
+$ mv compile.sh ../
+$ mv update-bootdisk.sh ../
+$ mv dot-bochsrc ../
+$ mv run.sh ../
+\end{commandLine}

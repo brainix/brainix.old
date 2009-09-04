@@ -5,27 +5,27 @@ So you're an eager young (or not so young) programmer who wants to start fiddlin
 First and foremost, if you modify pre-existing code, logically it changes how the code works. So you need to modify the documentation. It's important that other people know what the hell is going on, and no one knows that better than the person who changed it!\footnote{A funny anecdote, one day Brainix and Pqnelson were hacking on the kernel and Pqnelson randomly tinkered with some of the code hoping to solve a problem at the time. He succeeded but had no clue what he did. In rare events like this, make sure that the problem is solved and upload your modifications; then you can see what changes were made by the SVN interface on the command line. You can then go and change the documentation} It helps no one if the explanation is in your noodle!
 
 To add a chapter to the Brainix manual, be sure to make your new file a .tex file and make it begin:
-\\
-\\
-\verb| \chapter{My Chapter Name} |
-\\
-\\
+
+\begin{Verbatim}
+\chapter{My Chapter Name} 
+\end{Verbatim}
 If you would like to add code, simply type:
-\\
-\\
-\verb| \begin{code}{path/to/code/file} ... \end{code}|
-\\
-\\
+\begin{Verbatim}[gobble=-4]
+\begin{code}[numbers=left, 
+             firstnumber=...,
+             label={[Beginning of /path/to/code]End of /path/to/code}]
+ ... 
+\end{code}
+\end{Verbatim}
 Then you are golden...provided you add the code and have a unix-like file path.
 
 Also, don't forget that you \textbf{should} comment at the top the changelog. That is, the date, your name, and a one line explanation of what you did. Take for example:
-\\
-\\
-\verb| /* 20 June 2007 A. R. Hacker, modified the main()|
-\\
-\verb|  * function to include a better idle() implementation. */ |
-\\
-\\
+
+\begin{Verbatim} 
+ /*  June 2007 A. R. Hacker, modified the main()
+  * function to include a better idle() implementation. 
+  */ 
+\end{Verbatim}
 There is enough information to know exactly where to look for the changed code. Be sure not to have too much information, e.g. ``modified the main() function to include a modified idle() process fork such that an infinite for-loop is used rather than an infinite for-loop so the operating system won't go to hell after the file system registers the floppy disk.'' This is like listening to the crazy Aunt that rambles on about everything at the family reunion. On the other hand, don't include too little information, e.g. ``modified main()''. This tells us nothing about what you did! It's too cryptic and short, what happened with the \verb|main()| function? Was it completely revamped or did you add a semicolon somewhere?
 
 Don't forget, if you add a completely new file, to include the GPL copyright information. This is in addition to writing the documentation for it, of course.
