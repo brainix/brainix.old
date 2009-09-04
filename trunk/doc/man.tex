@@ -1,18 +1,7 @@
-\documentclass{book}
-\pagestyle{plain}
-\usepackage{amsmath,amssymb,amsfonts}	% Typical maths resource packages
-\usepackage{graphics}			% Packages to allow inclusion of graphics
-\usepackage{color}			% For creating coloured text and background
-\usepackage{hyperref}			% For creating hyperlinks in cross references
-\usepackage{code}			% For the code examples
+\documentclass[oneside]{book}
+\usepackage{manmac}
+%\usepackage[toc,page]{appendix}
 %\pagenumbering{arabic}
-
-\hypersetup{colorlinks, 
-           citecolor=black,
-           filecolor=black,
-           linkcolor=black,
-           urlcolor=black,
-           bookmarksopen=true}
 
 \title{The Brainix Manual}
 
@@ -21,7 +10,7 @@
 
 \date{ }
 \begin{document}
-%\frontmatter 
+\frontmatter
 
 
 \maketitle
@@ -30,20 +19,23 @@
 \tableofcontents
 
 %\mainmatter
-%\part*{Boring Copyright Legalese}
-%\include{fdl}
 \part{Introductory matters}
-\include{todo}
+\include{tex/todo}
+\mainmatter
 \part{Understanding the Brainix Operating System}
-\include{fs}
-\include{vfs}
+\include{tex/fs}
+%\include{tex/vfs}
 \part{Tutorials on Using the Brainix Operating System}
-\include{run}
-\include{hack}
-\include{debug}
+\include{tex/run}
+\include{tex/hack}
+\include{tex/debug}
 
 
-%\backmatter 
+\part{Appendices}
+\appendix
+\include{tex/fdl}
+\backmatter 
+%\renewcommand{\refname}{\chapter{Bibliography}}
 \addcontentsline{toc}{chapter}{Bibliography}
 \begin{thebibliography}{10}
 \bibitem{skelix} The Skelix Operating System Introduction to writing (an operating system including) a file system from scratch \url{http://en.skelix.org/skelixos/tutorial07.php}
@@ -72,6 +64,5 @@
 \bibitem{20} \url{http://fxr.watson.org/fxr/source/sys/?v=RELENG62}
 \bibitem{21} Remy Card, Theodore Ts'o, and Stephen Tweedie, \textit{The Design and Implementation of the Ext2 File System} (1994) \url{http://web.mit.edu/tytso/www/linux/ext2intro.html}
 \bibitem{22} Anon. \textit{The Ext2 Linux Documentation} (for kernel 2.6.20.1)  \url{http://lxr.linux.no/source/Documentation/filesystems/ext2.txt}
-
 \end{thebibliography}
 \end{document}

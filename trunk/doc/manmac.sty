@@ -1,0 +1,109 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{manmac}[2009/08/06 Macros for manual]
+
+\usepackage[final]{hyperref}
+\hypersetup{colorlinks, 
+           citecolor=black,
+           filecolor=black,
+           linkcolor=black,
+           urlcolor=black,
+           bookmarksopen=true}
+
+% the following is the TeXbook's exact specifications
+%\usepackage[textheight=38pc,headsep=10pc,top=16pc,textwidth=30pc,inner=6pc,marginparwidth=8pc,marginparsep=1cm]{geometry}
+% the following is OUR preferred specifications!
+\usepackage[top=6pc,textwidth=30pc,inner=6pc,%
+marginparwidth=10pc,marginparsep=1cm]{geometry}
+\usepackage{amsmath,amsfonts,amscd}
+\usepackage{amssymb}
+\usepackage{float}			% advanced float environment
+\usepackage{framed}			% for boxed text sections
+\usepackage{ifpdf}
+\usepackage{graphics}			% Packages to allow inclusion of graphics
+\usepackage{color}			% For creating coloured text and background
+\usepackage[final]{graphicx}
+\ifpdf
+\DeclareGraphicsRule{*}{mps}{*}{}	% for metapost graphics in pdflatex
+\fi
+\usepackage{comment}			% for the comment environment
+\usepackage[T1]{fontenc}		% utf8 encoding...
+\usepackage{marginnote}			% a better margin note system
+\usepackage{manfnt}			% for the dangerous bend symbols
+\usepackage{fancyvrb}			% for the code environment
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We customize our style...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\normalbaselineskip=12pt
+\baselineskip=12pt
+\abovedisplayskip=6pt plus 3pt minus 1pt
+\belowdisplayskip=6pt plus 3pt minus 1pt
+\abovedisplayshortskip=0pt plus 3pt
+\belowdisplayshortskip=4pt plus 3pt
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\if@twoside
+\fancyhead[LE,RO]{\thepage}
+\fancyheadoffset[OR,EL]{8pc}
+\else
+\fancyhead[R]{\thepage}
+\fancyheadoffset[R]{8pc}
+\fi
+\cfoot{}
+\renewcommand{\headrulewidth}{0.5pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We also customize commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\re}{\mathop{\rm Re}}
+\newcommand{\im}{\mathop{\rm Im}}
+\newcommand{\tr}{\mathop{\rm Tr}}
+\renewcommand{\ker}{\mathop{\rm Ker}}
+\newcommand{\coker}{\mathop{\rm Coker}}
+\newcommand{\erfi}{\mathop{\rm erfi}}
+\newcommand{\erf}{\mathop{\rm erf}}
+\newcommand{\<}{\langle}
+\renewcommand{\>}{\rangle}
+\newcommand{\iso}{\cong}
+\newcommand{\equalsdef}{\stackrel{\text{def}}{=}}
+\newcommand{\eqdef}{\stackrel{\text{def}}{=}}
+\newcommand{\define}[1] {\textbf{#1}\index{#1}}
+\newcommand{\cov}[2]{{#1}_{#2}}
+\newcommand{\contrav}[2]{{#1}^{#2}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We also make the marin notes look prettier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\if@twoside
+\renewcommand\marginpar[1]{\-\marginnote{\footnotesize{\emph{#1}}}}
+\else
+\renewcommand\marginpar[1]{\-\marginnote{\raggedright\footnotesize{\emph{#1}}}}%
+\fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This macro header is what controls the ``dangerous bend'' paragraph
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\font\manual=manfnt
+\def\dbend{{\manual\char127}} % dangerous bend sign
+
+% Danger, Will Robinson!
+\def\danger{\begin{trivlist}\begin{footnotesize}\item[]\noindent%
+\begingroup\hangindent=3pc\hangafter=-2%\clubpenalty=10000%
+\def\par{\endgraf\endgroup}%
+\hbox to0pt{\hskip-\hangindent\dbend\hfill}\ignorespaces}
+\def\enddanger{\par\end{footnotesize}\end{trivlist}}
+
+% Danger! Danger!
+\def\ddanger{\begin{trivlist}\begin{footnotesize}\item[]\noindent%
+\begingroup\hangindent=3pc\hangafter=-2%\clubpenalty=10000%
+\def\par{\endgraf\endgroup}%
+\hbox to0pt{\hskip-\hangindent\dbend\kern2pt\dbend\hfill}\ignorespaces}
+\def\endddanger{\par\end{footnotesize}\end{trivlist}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% These macros are responsible for the code segments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DefineVerbatimEnvironment{commandLine}{Verbatim}{frame=single}
+\DefineVerbatimEnvironment{code}{Verbatim}{numbersep=3pt,fontsize=\footnotesize,frame=lines}
